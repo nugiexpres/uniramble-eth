@@ -1,5 +1,5 @@
-export * from "./Board";
 export * from "./CollectionPanel";
+export * from "./EnvioBoard";
 export * from "./GameBoard";
 export * from "./GameCombine";
 export * from "./GameControls";

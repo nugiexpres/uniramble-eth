@@ -1,8 +1,8 @@
 import { useState } from "react";
-import CreateTBA from "~~/app/account/CreateTBA";
-import { FinalSmartAccount } from "~~/app/account/FinalSmartAccount";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Link, User } from "lucide-react";
+import CreateTBA from "~~/app/account/CreateTBA";
+import { FinalSmartAccount } from "~~/app/account/FinalSmartAccount";
 import { useSmartAccountTBA } from "~~/hooks/envio/useSmartAccountTBA";
 
 interface GameDashboardProps {

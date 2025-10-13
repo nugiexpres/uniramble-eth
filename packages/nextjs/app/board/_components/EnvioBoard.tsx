@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { GameBoard } from "./GameBoard";
+import { GameCombine } from "./GameCombine";
 import { GameControls } from "./GameControls";
 import { GameDashboard } from "./GameDashboard";
 import { MobilePanels } from "./MobilePanels";
@@ -123,21 +124,26 @@ export const EnvioBoard = () => {
       )}
 
       {/* Desktop Layout */}
-      <div className="hidden lg:flex h-full w-full px-[250px] pt-[40px] ">
+      <div className="hidden lg:flex h-full w-full pt-[40px] relative">
         {/* Desktop Header */}
         <div className="fixed top-0 left-0 w-full z-50 bg-gradient-to-r from-purple-600 to-blue-600">
           <HeaderBanner />
         </div>
 
-        {/* Top Left Panel - Create Token Bound Accounts */}
-        <div className="fixed top-[55px] h-[390px] w-[445px] ml-1 pl-5w-80 p-4 flex flex-col h-full">
+        {/* Top Left Panel - Smart Account Dashboard */}
+        <div className="fixed top-[60px] left-[10px] w-[445px] z-40">
           <GameDashboard tbaAddress={tbaAddress} />
+        </div>
+
+        {/* Top Right Panel - Game Combine */}
+        <div className="fixed top-[60px] right-[10px] w-[445px] z-40">
+          <GameCombine tbaAddress={tbaAddress} />
         </div>
 
         {/* Center - Game Board */}
         <div className="flex-1 flex flex-col items-center justify-start pt-8">
           {/* Game Board */}
-          <div className="fixed top-18 left-1/2 transform -translate-x-1/2">
+          <div className="fixed top-18 left-1/2 transform -translate-x-1/2 z-30">
             {(() => {
               try {
                 return <GameBoard gridData={gridData} playerPositionData={finalEnvioPlayerPosition} />;
@@ -156,7 +162,7 @@ export const EnvioBoard = () => {
           </div>
 
           {/* Game Controls */}
-          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2">
+          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-30">
             <GameControls
               handleRoll={handleRoll}
               handleBuy={handleBuy}
@@ -263,5 +269,3 @@ export const EnvioBoard = () => {
     </div>
   );
 };
-
-export default EnvioBoard;

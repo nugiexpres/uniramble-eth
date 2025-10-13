@@ -22,6 +22,14 @@ export const GameCombine = ({ tbaAddress, className = "" }: GameCombineProps) =>
   // Use Smart Account TBA if available, otherwise use prop TBA
   const effectiveTbaAddress = smartAccountTbaAddress || tbaAddress;
 
+  // Debug: Log render
+  console.log("🎮 GameCombine Rendered:", {
+    tbaAddress,
+    smartAccountTbaAddress,
+    effectiveTbaAddress,
+    className,
+  });
+
   return (
     <div className={`relative w-[445px] ${className}`}>
       {/* Gaming Style Container with Animated Border */}

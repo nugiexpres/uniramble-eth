@@ -8,8 +8,8 @@ const BoardPage: NextPage = () => {
   return (
     <>
       <EnvioBoard />
-      {/* Envio Analytic - Positioned at top right, below header and wallet menu */}
-      <div className="fixed top-24 right-4 hidden lg:block">
+      {/* Envio Analytic - Positioned at bottom right, below GameCombine panel */}
+      <div className="fixed bottom-4 right-4 z-20 hidden lg:block">
         <EnvioAnalytics />
       </div>
       {/* Mobile Analytic - Positioned at bottom */}
