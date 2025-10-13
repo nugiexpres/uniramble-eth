@@ -1,0 +1,42 @@
+{
+  "name": "envio-indexer",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "tsc --clean",
+    "codegen": "envio codegen",
+    "dev": "envio dev",
+    "mocha": "ts-mocha test/**/*.ts",
+    "start": "envio start",
+    "test": "pnpm mocha",
+    "update": "ts-node se-integration/updateEnvio.ts",
+    "envio:start": "ts-node scripts/envioStart.ts",
+    "envio:deploy": "ts-node scripts/envioDeploy.ts",
+    "envio:generate": "envio codegen",
+    "envio:build": "npm run build",
+    "envio:dev": "envio dev --watch",
+    "envio:update": "ts-node scripts/auto-update.ts update",
+    "envio:watch": "ts-node scripts/auto-update.ts watch"
+  },
+  "dependencies": {
+    "envio": "2.28.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.20",
+    "@types/js-yaml": "^4.0.9",
+    "@types/mocha": "10.0.6",
+    "@types/node": "20.8.8",
+    "chai": "4.3.10",
+    "js-yaml": "^4.1.0",
+    "mocha": "10.2.0",
+    "ts-mocha": "^10.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "5.2.2"
+  },
+  "optionalDependencies": {
+    "generated": "link:generated"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

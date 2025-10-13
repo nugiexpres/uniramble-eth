@@ -1,0 +1,188 @@
+{
+  "address": "0x4db4aF4d8Bdbe6B72D4Bf913f9D516c43646cb8a",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "funder",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "BalanceFunded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "BalanceWithdrawn",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "allowedCaller",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "faucet",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "fundFaucet",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_caller",
+          "type": "address"
+        }
+      ],
+      "name": "setAllowedCaller",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "withdrawBalance",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    }
+  ],
+  "transactionHash": "0x7c5fabbc71d4514437fb451f5c119b9f4fedcf0fb25621178ae03577f38be429",
+  "receipt": {
+    "to": null,
+    "from": "0x9bF68A0f0be9A9B6dCeb4D5675745c2f7cFb9483",
+    "contractAddress": "0x4db4aF4d8Bdbe6B72D4Bf913f9D516c43646cb8a",
+    "transactionIndex": 63,
+    "gasUsed": "348039",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xcb5a7706241ec4bdfcc8be977fd8b0366ef2e03eb1f8370df347929ad7bf0d68",
+    "transactionHash": "0x7c5fabbc71d4514437fb451f5c119b9f4fedcf0fb25621178ae03577f38be429",
+    "logs": [],
+    "blockNumber": 9278656,
+    "cumulativeGasUsed": "11634343",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "ed37094505bf83d875a270fede9cec20",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.23+commit.f704f362\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"funder\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"BalanceFunded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"BalanceWithdrawn\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"allowedCaller\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"faucet\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"fundFaucet\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_caller\",\"type\":\"address\"}],\"name\":\"setAllowedCaller\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"withdrawBalance\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/FaucetMon.sol\":\"FaucetMon\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/FaucetMon.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity >=0.8.0 <0.9.0;\\n\\ncontract FaucetMon {\\n    address public owner;\\n    address public allowedCaller;\\n\\n    event BalanceFunded(address indexed funder, uint256 amount);\\n    event BalanceWithdrawn(address indexed owner, uint256 amount);\\n\\n    modifier onlyOwner() {\\n        require(msg.sender == owner, \\\"Not the contract owner\\\");\\n        _;\\n    }\\n\\n    constructor() {\\n        owner = msg.sender;\\n    }\\n\\n    function setAllowedCaller(address _caller) external onlyOwner {\\n        allowedCaller = _caller;\\n    }\\n\\n    function faucet(address to, uint256 amount) external {\\n        require(msg.sender == allowedCaller, \\\"Caller not set\\\");\\n        require(address(this).balance >= amount, \\\"Not enough balance\\\");\\n        payable(to).transfer(amount);\\n    }\\n\\n    // Function to fund the faucet balance\\n    function fundFaucet() external payable {\\n        require(msg.value > 0, \\\"Must send native token to fund the faucet\\\");\\n        emit BalanceFunded(msg.sender, msg.value);\\n    }\\n\\n    // Function to withdraw the faucet balance (only owner)\\n    function withdrawBalance(uint256 amount) external onlyOwner {\\n        require(address(this).balance >= amount, \\\"Insufficient balance in the faucet\\\");\\n        payable(owner).transfer(amount);\\n        emit BalanceWithdrawn(owner, amount);\\n    }\\n\\n    // Allow the contract to receive Ether\\n    receive() external payable {}\\n}\\n\",\"keccak256\":\"0xbbf89bb0a54b2d88bdfa90877ca1004313a62835a6f3282101844ce937200e5f\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b50600080546001600160a01b031916331790556104ed806100326000396000f3fe6080604052600436106100595760003560e01c80633895d938146100655780636a211d6a146100a15780637b56c2b2146100ab5780638da5cb5b146100cb578063b16d6436146100eb578063da76d5cd1461010b57600080fd5b3661006057005b600080fd5b34801561007157600080fd5b50600154610085906001600160a01b031681565b6040516001600160a01b03909116815260200160405180910390f35b6100a961012b565b005b3480156100b757600080fd5b506100a96100c6366004610452565b6101c9565b3480156100d757600080fd5b50600054610085906001600160a01b031681565b3480156100f757600080fd5b506100a961010636600461047c565b610294565b34801561011757600080fd5b506100a961012636600461049e565b610309565b600034116101925760405162461bcd60e51b815260206004820152602960248201527f4d7573742073656e64206e617469766520746f6b656e20746f2066756e6420746044820152681a194819985d58d95d60ba1b60648201526084015b60405180910390fd5b60405134815233907fe7765cbdc1b48b4b15642a6dadba14a2bfff6298f44152508a14f634fead42c49060200160405180910390a2565b6001546001600160a01b031633146102145760405162461bcd60e51b815260206004820152600e60248201526d10d85b1b195c881b9bdd081cd95d60921b6044820152606401610189565b804710156102595760405162461bcd60e51b81526020600482015260126024820152714e6f7420656e6f7567682062616c616e636560701b6044820152606401610189565b6040516001600160a01b0383169082156108fc029083906000818181858888f1935050505015801561028f573d6000803e3d6000fd5b505050565b6000546001600160a01b031633146102e75760405162461bcd60e51b81526020600482015260166024820152752737ba103a34329031b7b73a3930b1ba1037bbb732b960511b6044820152606401610189565b600180546001600160a01b0319166001600160a01b0392909216919091179055565b6000546001600160a01b0316331461035c5760405162461bcd60e51b81526020600482015260166024820152752737ba103a34329031b7b73a3930b1ba1037bbb732b960511b6044820152606401610189565b804710156103b75760405162461bcd60e51b815260206004820152602260248201527f496e73756666696369656e742062616c616e636520696e207468652066617563604482015261195d60f21b6064820152608401610189565b600080546040516001600160a01b039091169183156108fc02918491818181858888f193505050501580156103f0573d6000803e3d6000fd5b506000546040518281526001600160a01b03909116907fddc398b321237a8d40ac914388309c2f52a08c134e4dc4ce61e32f57cb7d80f19060200160405180910390a250565b80356001600160a01b038116811461044d57600080fd5b919050565b6000806040838503121561046557600080fd5b61046e83610436565b946020939093013593505050565b60006020828403121561048e57600080fd5b61049782610436565b9392505050565b6000602082840312156104b057600080fd5b503591905056fea2646970667358221220ca2eff385e6abf7de9906d7f6f55dcf66f3dc0ea912da11747bdef604b36872664736f6c63430008170033",
+  "deployedBytecode": "0x6080604052600436106100595760003560e01c80633895d938146100655780636a211d6a146100a15780637b56c2b2146100ab5780638da5cb5b146100cb578063b16d6436146100eb578063da76d5cd1461010b57600080fd5b3661006057005b600080fd5b34801561007157600080fd5b50600154610085906001600160a01b031681565b6040516001600160a01b03909116815260200160405180910390f35b6100a961012b565b005b3480156100b757600080fd5b506100a96100c6366004610452565b6101c9565b3480156100d757600080fd5b50600054610085906001600160a01b031681565b3480156100f757600080fd5b506100a961010636600461047c565b610294565b34801561011757600080fd5b506100a961012636600461049e565b610309565b600034116101925760405162461bcd60e51b815260206004820152602960248201527f4d7573742073656e64206e617469766520746f6b656e20746f2066756e6420746044820152681a194819985d58d95d60ba1b60648201526084015b60405180910390fd5b60405134815233907fe7765cbdc1b48b4b15642a6dadba14a2bfff6298f44152508a14f634fead42c49060200160405180910390a2565b6001546001600160a01b031633146102145760405162461bcd60e51b815260206004820152600e60248201526d10d85b1b195c881b9bdd081cd95d60921b6044820152606401610189565b804710156102595760405162461bcd60e51b81526020600482015260126024820152714e6f7420656e6f7567682062616c616e636560701b6044820152606401610189565b6040516001600160a01b0383169082156108fc029083906000818181858888f1935050505015801561028f573d6000803e3d6000fd5b505050565b6000546001600160a01b031633146102e75760405162461bcd60e51b81526020600482015260166024820152752737ba103a34329031b7b73a3930b1ba1037bbb732b960511b6044820152606401610189565b600180546001600160a01b0319166001600160a01b0392909216919091179055565b6000546001600160a01b0316331461035c5760405162461bcd60e51b81526020600482015260166024820152752737ba103a34329031b7b73a3930b1ba1037bbb732b960511b6044820152606401610189565b804710156103b75760405162461bcd60e51b815260206004820152602260248201527f496e73756666696369656e742062616c616e636520696e207468652066617563604482015261195d60f21b6064820152608401610189565b600080546040516001600160a01b039091169183156108fc02918491818181858888f193505050501580156103f0573d6000803e3d6000fd5b506000546040518281526001600160a01b03909116907fddc398b321237a8d40ac914388309c2f52a08c134e4dc4ce61e32f57cb7d80f19060200160405180910390a250565b80356001600160a01b038116811461044d57600080fd5b919050565b6000806040838503121561046557600080fd5b61046e83610436565b946020939093013593505050565b60006020828403121561048e57600080fd5b61049782610436565b9392505050565b6000602082840312156104b057600080fd5b503591905056fea2646970667358221220ca2eff385e6abf7de9906d7f6f55dcf66f3dc0ea912da11747bdef604b36872664736f6c63430008170033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 10746,
+        "contract": "contracts/FaucetMon.sol:FaucetMon",
+        "label": "owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 10748,
+        "contract": "contracts/FaucetMon.sol:FaucetMon",
+        "label": "allowedCaller",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_address"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      }
+    }
+  }
+}

@@ -1,20 +1,25 @@
 import "@rainbow-me/rainbowkit/styles.css";
 import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithProviders";
 import { ThemeProvider } from "~~/components/ThemeProvider";
+import { MetaMaskProvider } from "~~/providers/MetaMaskProvider";
 import "~~/styles/globals.css";
 import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
+// import { Web3AuthProvider } from "~~/components/Web3AuthProvider"; // Opt-in: uncomment when configured
+
 export const metadata = getMetadata({
-  title: "Scaffold-ETH 2 App",
-  description: "Built with 🏗 Scaffold-ETH 2",
+  title: "UniRamble GamiFi",
+  description: "Combine NFT and explore the world of GamiFi with Smart Account + EIP-7710 delegation features",
 });
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   return (
-    <html suppressHydrationWarning className={``}>
+    <html suppressHydrationWarning>
       <body>
         <ThemeProvider enableSystem>
-          <ScaffoldEthAppWithProviders>{children}</ScaffoldEthAppWithProviders>
+          <MetaMaskProvider>
+            <ScaffoldEthAppWithProviders>{children}</ScaffoldEthAppWithProviders>
+          </MetaMaskProvider>
         </ThemeProvider>
       </body>
     </html>

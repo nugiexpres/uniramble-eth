@@ -1,0 +1,11 @@
+# config untuk single chain index Sepolia
+name: envio-indexer
+contracts:
+  # ... semua contracts tetap sama ...
+networks:
+  - id: 11155111 # Hanya Sepolia
+    start_block: 9278645
+    contracts:
+      # ... semua contracts Sepolia ...
+unordered_multichain_mode: false # Single chain mode
+preload_handlers: true

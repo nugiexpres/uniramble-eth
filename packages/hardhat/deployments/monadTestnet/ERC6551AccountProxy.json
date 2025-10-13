@@ -1,0 +1,68 @@
+{
+  "address": "0x15114D83C6F26d7e8fb9C2690C7d9c5Cd0f88dcf",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "implementation",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes",
+          "name": "initData",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "constructor"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "fallback"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    }
+  ],
+  "transactionHash": "0x82b34306030efd210a4b9b2fcd0e21f6879526ff12760114908f8169fc805f5a",
+  "receipt": {
+    "to": null,
+    "from": "0x9bF68A0f0be9A9B6dCeb4D5675745c2f7cFb9483",
+    "contractAddress": "0x15114D83C6F26d7e8fb9C2690C7d9c5Cd0f88dcf",
+    "transactionIndex": 6,
+    "gasUsed": "116749",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x8ecff9f16d9a2fd0ad10c76cfe0e8954eb8427600cbdaba81d9f7a3af1f6eb3d",
+    "transactionHash": "0x82b34306030efd210a4b9b2fcd0e21f6879526ff12760114908f8169fc805f5a",
+    "logs": [],
+    "blockNumber": 41886091,
+    "cumulativeGasUsed": "11039906",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x7FB58EE97CA8a444Edfe0123708DaB97Db4AbcD5",
+    "0x"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "71a4177d3c394030068775462831b2af",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.23+commit.f704f362\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"initData\",\"type\":\"bytes\"}],\"stateMutability\":\"payable\",\"type\":\"constructor\"},{\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/ERC6551AccountProxy.sol\":\"ERC6551AccountProxy\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/ERC6551AccountProxy.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.20;\\n\\ncontract ERC6551AccountProxy {\\n    // Gunakan slot standar EIP-1967 untuk implementasi proxy\\n    bytes32 private constant IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;\\n\\n    constructor(address implementation, bytes memory initData) payable {\\n        require(implementation != address(0), \\\"Zero implementation\\\");\\n\\n        // Simpan alamat implementasi di storage slot\\n        bytes32 slot = IMPLEMENTATION_SLOT;\\n        assembly {\\n            sstore(slot, implementation)\\n        }\\n\\n        // delegatecall ke implementasi\\n        if (initData.length > 0) {\\n            (bool success, ) = implementation.delegatecall(initData);\\n            require(success, \\\"Initialization failed\\\");\\n        }\\n    }\\n\\n    fallback() external payable {\\n        bytes32 slot = IMPLEMENTATION_SLOT;\\n        assembly {\\n            let impl := sload(slot)\\n            calldatacopy(0, 0, calldatasize())\\n            let result := delegatecall(gas(), impl, 0, calldatasize(), 0, 0)\\n            returndatacopy(0, 0, returndatasize())\\n            switch result\\n            case 0 {\\n                revert(0, returndatasize())\\n            }\\n            default {\\n                return(0, returndatasize())\\n            }\\n        }\\n    }\\n\\n    receive() external payable {}\\n}\\n\",\"keccak256\":\"0x42171c609eb8254dcc84016427b08aa616e6b04e3d02e0eb5a9038e633d7030c\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608060405260405161031738038061031783398101604081905261002291610197565b6001600160a01b03821661007d5760405162461bcd60e51b815260206004820152601360248201527f5a65726f20696d706c656d656e746174696f6e0000000000000000000000000060448201526064015b60405180910390fd5b7f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc828155815115610155576000836001600160a01b0316836040516100c29190610265565b600060405180830381855af49150503d80600081146100fd576040519150601f19603f3d011682016040523d82523d6000602084013e610102565b606091505b50509050806101535760405162461bcd60e51b815260206004820152601560248201527f496e697469616c697a6174696f6e206661696c656400000000000000000000006044820152606401610074565b505b505050610281565b634e487b7160e01b600052604160045260246000fd5b60005b8381101561018e578181015183820152602001610176565b50506000910152565b600080604083850312156101aa57600080fd5b82516001600160a01b03811681146101c157600080fd5b60208401519092506001600160401b03808211156101de57600080fd5b818501915085601f8301126101f257600080fd5b8151818111156102045761020461015d565b604051601f8201601f19908116603f0116810190838211818310171561022c5761022c61015d565b8160405282815288602084870101111561024557600080fd5b610256836020830160208801610173565b80955050505050509250929050565b60008251610277818460208701610173565b9190910192915050565b60888061028f6000396000f3fe608060405236600a57005b7f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc80543660008037600080366000845af490503d6000803e808015604d573d6000f35b3d6000fdfea264697066735822122047ab1983f96f4a3cee6cdc8b912cba97d6826a65e8ec6c97a818b045448af28264736f6c63430008170033",
+  "deployedBytecode": "0x608060405236600a57005b7f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc80543660008037600080366000845af490503d6000803e808015604d573d6000f35b3d6000fdfea264697066735822122047ab1983f96f4a3cee6cdc8b912cba97d6826a65e8ec6c97a818b045448af28264736f6c63430008170033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}

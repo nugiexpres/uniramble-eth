@@ -1,0 +1,11 @@
+/**
+ * BACKUP: Original RainbowKit Connect Button
+ * This file is preserved as fallback in case Web3Auth integration has issues
+ * 
+ * To restore: rename to index.tsx
+ */
+
+// Original RainbowKit implementation would be here
+// This serves as a backup reference
+export { default } from "./RainbowKitCustomConnectButton.backup";
+

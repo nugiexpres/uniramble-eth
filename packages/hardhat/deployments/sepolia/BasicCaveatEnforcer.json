@@ -1,0 +1,567 @@
+{
+  "address": "0xF6B400C7F9B5bdE70c86c1Da1560F67a423850b9",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "initialOwner",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "delegationHash",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "maxAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "validUntil",
+          "type": "uint256"
+        }
+      ],
+      "name": "SpendingLimitSet",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "delegationHash",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "target",
+          "type": "address"
+        }
+      ],
+      "name": "TargetAllowed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "delegationHash",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "validUntil",
+          "type": "uint256"
+        }
+      ],
+      "name": "TimeLimitSet",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "terms",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "executionCalldata",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "delegationHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "afterHook",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "allowedTargets",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "terms",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "executionCalldata",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "delegationHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "beforeHook",
+      "outputs": [],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "delegationHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "target",
+          "type": "address"
+        }
+      ],
+      "name": "setAllowedTarget",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "delegationHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "validUntilTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "setSpendingLimit",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "delegationHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "validUntilTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "setTimeLimit",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "spendingLimits",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "spentAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "validUntil",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "validUntil",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x44cfa7554610997a17f7ded50f02ff08959a0331448f6a4af4af6fc132e1444a",
+  "receipt": {
+    "to": null,
+    "from": "0x9bF68A0f0be9A9B6dCeb4D5675745c2f7cFb9483",
+    "contractAddress": "0xF6B400C7F9B5bdE70c86c1Da1560F67a423850b9",
+    "transactionIndex": 53,
+    "gasUsed": "844121",
+    "logsBloom": "0x00000000000000000000000000000000000000000002000000800000000000000000000000000000000000000000000000000000000000000000000400000000200000000000000000000080000000000001000000000000000000000000000000000000020000000000000000000800000000000000000000000000010000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xbffda24ce9e43e89893cedb5b328e3c0d2224aae0515cf2b873f8b0b3ea30739",
+    "transactionHash": "0x44cfa7554610997a17f7ded50f02ff08959a0331448f6a4af4af6fc132e1444a",
+    "logs": [
+      {
+        "transactionIndex": 53,
+        "blockNumber": 9278659,
+        "transactionHash": "0x44cfa7554610997a17f7ded50f02ff08959a0331448f6a4af4af6fc132e1444a",
+        "address": "0xF6B400C7F9B5bdE70c86c1Da1560F67a423850b9",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x0000000000000000000000009bf68a0f0be9a9b6dceb4d5675745c2f7cfb9483"
+        ],
+        "data": "0x",
+        "logIndex": 65,
+        "blockHash": "0xbffda24ce9e43e89893cedb5b328e3c0d2224aae0515cf2b873f8b0b3ea30739"
+      }
+    ],
+    "blockNumber": 9278659,
+    "cumulativeGasUsed": "7292655",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x9bF68A0f0be9A9B6dCeb4D5675745c2f7cFb9483"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "ed37094505bf83d875a270fede9cec20",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.23+commit.f704f362\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"initialOwner\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"delegationHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"maxAmount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"validUntil\",\"type\":\"uint256\"}],\"name\":\"SpendingLimitSet\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"delegationHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"target\",\"type\":\"address\"}],\"name\":\"TargetAllowed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"delegationHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"validUntil\",\"type\":\"uint256\"}],\"name\":\"TimeLimitSet\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"terms\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"executionCalldata\",\"type\":\"bytes\"},{\"internalType\":\"bytes32\",\"name\":\"delegationHash\",\"type\":\"bytes32\"}],\"name\":\"afterHook\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"allowedTargets\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"terms\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"executionCalldata\",\"type\":\"bytes\"},{\"internalType\":\"bytes32\",\"name\":\"delegationHash\",\"type\":\"bytes32\"}],\"name\":\"beforeHook\",\"outputs\":[],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"delegationHash\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"target\",\"type\":\"address\"}],\"name\":\"setAllowedTarget\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"delegationHash\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"maxAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"validUntilTime\",\"type\":\"uint256\"}],\"name\":\"setSpendingLimit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"delegationHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"validUntilTime\",\"type\":\"uint256\"}],\"name\":\"setTimeLimit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"spendingLimits\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"maxAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"spentAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"validUntil\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"validUntil\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Basic implementation of ICaveatEnforcer for delegation restrictions This is a simplified version - in production you'd use the official MetaMask caveat enforcers\",\"errors\":{\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}]},\"kind\":\"dev\",\"methods\":{\"afterHook(bytes,bytes,uint256,bytes,bytes32)\":{\"details\":\"Enforces conditions after execution\"},\"beforeHook(bytes,bytes,uint256,bytes,bytes32)\":{\"details\":\"Enforces conditions before execution\"},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"setAllowedTarget(bytes32,address)\":{\"details\":\"Sets allowed target for a delegation\"},\"setSpendingLimit(bytes32,address,uint256,uint256)\":{\"details\":\"Sets spending limit for a delegation\"},\"setTimeLimit(bytes32,uint256)\":{\"details\":\"Sets time limit for a delegation\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"title\":\"BasicCaveatEnforcer\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/CaveatEnforcer.sol\":\"BasicCaveatEnforcer\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {Context} from \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * The initial owner is set to the address provided by the deployer. This can\\n * later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    /**\\n     * @dev The caller account is not authorized to perform an operation.\\n     */\\n    error OwnableUnauthorizedAccount(address account);\\n\\n    /**\\n     * @dev The owner is not a valid owner account. (eg. `address(0)`)\\n     */\\n    error OwnableInvalidOwner(address owner);\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the address provided by the deployer as the initial owner.\\n     */\\n    constructor(address initialOwner) {\\n        if (initialOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(initialOwner);\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        if (owner() != _msgSender()) {\\n            revert OwnableUnauthorizedAccount(_msgSender());\\n        }\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby disabling any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        if (newOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    function _contextSuffixLength() internal view virtual returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\"},\"contracts/CaveatEnforcer.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.23;\\n\\nimport \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\n\\n/**\\n * @title BasicCaveatEnforcer\\n * @dev Basic implementation of ICaveatEnforcer for delegation restrictions\\n * This is a simplified version - in production you'd use the official MetaMask caveat enforcers\\n */\\ncontract BasicCaveatEnforcer is Ownable {\\n    struct SpendingLimit {\\n        address token;\\n        uint256 maxAmount;\\n        uint256 spentAmount;\\n        uint256 validUntil;\\n    }\\n\\n    mapping(bytes32 => SpendingLimit) public spendingLimits;\\n    mapping(bytes32 => bool) public allowedTargets;\\n    mapping(bytes32 => uint256) public validUntil;\\n\\n    event SpendingLimitSet(bytes32 indexed delegationHash, address token, uint256 maxAmount, uint256 validUntil);\\n    event TargetAllowed(bytes32 indexed delegationHash, address target);\\n    event TimeLimitSet(bytes32 indexed delegationHash, uint256 validUntil);\\n\\n    constructor(address initialOwner) Ownable(initialOwner) {}\\n\\n    /**\\n     * @dev Enforces conditions before execution\\n     */\\n    function beforeHook(\\n        bytes calldata terms,\\n        bytes calldata /* args */,\\n        uint256 /* mode */,\\n        bytes calldata executionCalldata,\\n        bytes32 delegationHash\\n    ) external view {\\n        // Decode terms based on caveat type\\n        (string memory caveatType, bytes memory caveatData) = abi.decode(terms, (string, bytes));\\n\\n        if (keccak256(bytes(caveatType)) == keccak256(bytes(\\\"spendingLimit\\\"))) {\\n            _enforceSpendingLimit(caveatData, delegationHash);\\n        } else if (keccak256(bytes(caveatType)) == keccak256(bytes(\\\"allowedTargets\\\"))) {\\n            _enforceAllowedTargets(caveatData, delegationHash, executionCalldata);\\n        } else if (keccak256(bytes(caveatType)) == keccak256(bytes(\\\"timeLimit\\\"))) {\\n            _enforceTimeLimit(caveatData, delegationHash);\\n        }\\n    }\\n\\n    /**\\n     * @dev Enforces conditions after execution\\n     */\\n    function afterHook(\\n        bytes calldata terms,\\n        bytes calldata /* args */,\\n        uint256 /* mode */,\\n        bytes calldata executionCalldata,\\n        bytes32 delegationHash\\n    ) external {\\n        // Update spent amounts for spending limit caveats\\n        (string memory caveatType, bytes memory caveatData) = abi.decode(terms, (string, bytes));\\n\\n        if (keccak256(bytes(caveatType)) == keccak256(bytes(\\\"spendingLimit\\\"))) {\\n            _updateSpendingAmount(caveatData, delegationHash, executionCalldata);\\n        }\\n    }\\n\\n    /**\\n     * @dev Sets spending limit for a delegation\\n     */\\n    function setSpendingLimit(\\n        bytes32 delegationHash,\\n        address token,\\n        uint256 maxAmount,\\n        uint256 validUntilTime\\n    ) external onlyOwner {\\n        spendingLimits[delegationHash] = SpendingLimit({\\n            token: token,\\n            maxAmount: maxAmount,\\n            spentAmount: 0,\\n            validUntil: validUntilTime\\n        });\\n\\n        emit SpendingLimitSet(delegationHash, token, maxAmount, validUntilTime);\\n    }\\n\\n    /**\\n     * @dev Sets allowed target for a delegation\\n     */\\n    function setAllowedTarget(bytes32 delegationHash, address target) external onlyOwner {\\n        allowedTargets[keccak256(abi.encodePacked(delegationHash, target))] = true;\\n        emit TargetAllowed(delegationHash, target);\\n    }\\n\\n    /**\\n     * @dev Sets time limit for a delegation\\n     */\\n    function setTimeLimit(bytes32 delegationHash, uint256 validUntilTime) external onlyOwner {\\n        validUntil[delegationHash] = validUntilTime;\\n        emit TimeLimitSet(delegationHash, validUntilTime);\\n    }\\n\\n    /**\\n     * @dev Enforces spending limit\\n     */\\n    function _enforceSpendingLimit(bytes memory caveatData, bytes32 delegationHash) internal view {\\n        (address token, uint256 amount) = abi.decode(caveatData, (address, uint256));\\n\\n        SpendingLimit memory limit = spendingLimits[delegationHash];\\n        require(limit.token == token, \\\"Token mismatch\\\");\\n        require(limit.validUntil > block.timestamp, \\\"Spending limit expired\\\");\\n        require(limit.spentAmount + amount <= limit.maxAmount, \\\"Spending limit exceeded\\\");\\n    }\\n\\n    /**\\n     * @dev Enforces allowed targets\\n     */\\n    function _enforceAllowedTargets(\\n        bytes memory caveatData,\\n        bytes32 /* delegationHash */,\\n        bytes calldata executionCalldata\\n    ) internal pure {\\n        address[] memory targets = abi.decode(caveatData, (address[]));\\n\\n        // Extract target from execution calldata (first 20 bytes)\\n        require(executionCalldata.length >= 20, \\\"Invalid calldata length\\\");\\n        address target;\\n        assembly {\\n            target := shr(96, calldataload(executionCalldata.offset))\\n        }\\n\\n        bool isAllowed = false;\\n        for (uint256 i = 0; i < targets.length; i++) {\\n            if (targets[i] == target) {\\n                isAllowed = true;\\n                break;\\n            }\\n        }\\n        require(isAllowed, \\\"Target not allowed\\\");\\n    }\\n\\n    /**\\n     * @dev Enforces time limit\\n     */\\n    function _enforceTimeLimit(bytes memory caveatData, bytes32 /* delegationHash */) internal view {\\n        uint256 validUntilTime = abi.decode(caveatData, (uint256));\\n        require(block.timestamp <= validUntilTime, \\\"Delegation expired\\\");\\n    }\\n\\n    /**\\n     * @dev Updates spent amount after execution\\n     */\\n    function _updateSpendingAmount(\\n        bytes memory caveatData,\\n        bytes32 delegationHash,\\n        bytes calldata /* executionCalldata */\\n    ) internal {\\n        (, uint256 amount) = abi.decode(caveatData, (address, uint256));\\n\\n        SpendingLimit storage limit = spendingLimits[delegationHash];\\n        limit.spentAmount += amount;\\n    }\\n}\\n\\n// Interface that should match ICaveatEnforcer from MetaMask Delegation Toolkit\\ninterface ICaveatEnforcer {\\n    function beforeHook(\\n        bytes calldata terms,\\n        bytes calldata args,\\n        uint256 mode,\\n        bytes calldata executionCalldata,\\n        bytes32 delegationHash\\n    ) external view;\\n\\n    function afterHook(\\n        bytes calldata terms,\\n        bytes calldata args,\\n        uint256 mode,\\n        bytes calldata executionCalldata,\\n        bytes32 delegationHash\\n    ) external;\\n}\\n\",\"keccak256\":\"0x83921e3e9f4c853fd54a4049114b4d1219f04f9eabebbdb0d547b2d6da951b39\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b50604051610ecb380380610ecb83398101604081905261002f916100be565b806001600160a01b03811661005e57604051631e4fbdf760e01b81526000600482015260240160405180910390fd5b6100678161006e565b50506100ee565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b6000602082840312156100d057600080fd5b81516001600160a01b03811681146100e757600080fd5b9392505050565b610dce806100fd6000396000f3fe608060405234801561001057600080fd5b50600436106100a95760003560e01c80639e8b9525116100715780639e8b952514610131578063a2a2d30814610144578063a304543f146101b0578063cd666297146101c3578063d53fcbec146101d6578063f2fde38b1461020457600080fd5b80632a0aabfc146100ae57806339796955146100e65780636b594ccd146100fb578063715018a61461010e5780638da5cb5b14610116575b600080fd5b6100d16100bc36600461095f565b60026020526000908152604090205460ff1681565b60405190151581526020015b60405180910390f35b6100f96100f43660046109c1565b610217565b005b6100f9610109366004610a81565b61034c565b6100f96103fe565b6000546040516001600160a01b0390911681526020016100dd565b6100f961013f3660046109c1565b610412565b61018661015236600461095f565b600160208190526000918252604090912080549181015460028201546003909201546001600160a01b039093169290919084565b604080516001600160a01b03909516855260208501939093529183015260608201526080016100dd565b6100f96101be366004610ab1565b610483565b6100f96101d1366004610ad3565b6104d0565b6101f66101e436600461095f565b60036020526000908152604090205481565b6040519081526020016100dd565b6100f9610212366004610b10565b610588565b600080610226898b018b610bd3565b60408051808201909152600d81526c1cdc195b991a5b99d31a5b5a5d609a1b60209182015282519083012091935091507f1ebb2c3c329772f0bf9016cb7b6e0fc6cd884fa3d60a986ea3f882434596af2b0161028b5761028681846105cb565b610340565b60408051808201909152600e81526d616c6c6f7765645461726765747360901b6020918201528251908301207f14d1cc92269128a7f462c427b6c4761966d55eb0441ee724daf313672e8ab53c016102e95761028681848787610729565b6040805180820190915260098152681d1a5b59531a5b5a5d60ba1b6020918201528251908301207f1cd78c64331fe88a151d2a352952c7b81c81885722ee6bdce6e217ff32be5bdb01610340576103408184610833565b50505050505050505050565b610354610895565b600160026000848460405160200161038892919091825260601b6bffffffffffffffffffffffff1916602082015260340190565b60408051808303601f190181529181528151602092830120835282820193909352908201600020805460ff191693151593909317909255516001600160a01b038316815283917f9841b8f666499655a4c2056ccf86dc0ec2e948a7b6a69fd380a50113bc2aedac91015b60405180910390a25050565b610406610895565b61041060006108c2565b565b600080610421898b018b610bd3565b60408051808201909152600d81526c1cdc195b991a5b99d31a5b5a5d609a1b60209182015282519083012091935091507f1ebb2c3c329772f0bf9016cb7b6e0fc6cd884fa3d60a986ea3f882434596af2b016103405761034081848787610912565b61048b610895565b600082815260036020526040908190208290555182907f59ab0ada8e461df8a5b8cf1ae5ee6c0a0a122358a516ee7408a9797089d6a157906103f29084815260200190565b6104d8610895565b604080516080810182526001600160a01b038581168083526020808401878152600085870181815260608088018a81528d84526001808752938a9020985189546001600160a01b03191698169790971788559251918701919091555160028601559251600390940193909355835190815291820185905291810183905285917f771eee540acff3c18d8bcd58b1fef44dcacf641804ec85270ee99711028b51a5910160405180910390a250505050565b610590610895565b6001600160a01b0381166105bf57604051631e4fbdf760e01b8152600060048201526024015b60405180910390fd5b6105c8816108c2565b50565b600080838060200190518101906105e29190610c62565b600085815260016020818152604092839020835160808101855281546001600160a01b039081168083529483015493820193909352600282015494810194909452600301546060840152939550919350918416146106735760405162461bcd60e51b815260206004820152600e60248201526d0a8ded6cadc40dad2e6dac2e8c6d60931b60448201526064016105b6565b428160600151116106bf5760405162461bcd60e51b815260206004820152601660248201527514dc195b991a5b99c81b1a5b5a5d08195e1c1a5c995960521b60448201526064016105b6565b80602001518282604001516106d49190610c90565b11156107225760405162461bcd60e51b815260206004820152601760248201527f5370656e64696e67206c696d697420657863656564656400000000000000000060448201526064016105b6565b5050505050565b60008480602001905181019061073f9190610cb7565b905060148210156107925760405162461bcd60e51b815260206004820152601760248201527f496e76616c69642063616c6c64617461206c656e67746800000000000000000060448201526064016105b6565b823560601c6000805b83518110156107e757826001600160a01b03168482815181106107c0576107c0610d69565b60200260200101516001600160a01b0316036107df57600191506107e7565b60010161079b565b508061082a5760405162461bcd60e51b815260206004820152601260248201527115185c99d95d081b9bdd08185b1b1bddd95960721b60448201526064016105b6565b50505050505050565b6000828060200190518101906108499190610d7f565b9050804211156108905760405162461bcd60e51b815260206004820152601260248201527111195b1959d85d1a5bdb88195e1c1a5c995960721b60448201526064016105b6565b505050565b6000546001600160a01b031633146104105760405163118cdaa760e01b81523360048201526024016105b6565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b6000848060200190518101906109289190610c62565b60008681526001602052604081206002810180549395509093508492909190610952908490610c90565b9091555050505050505050565b60006020828403121561097157600080fd5b5035919050565b60008083601f84011261098a57600080fd5b50813567ffffffffffffffff8111156109a257600080fd5b6020830191508360208285010111156109ba57600080fd5b9250929050565b60008060008060008060008060a0898b0312156109dd57600080fd5b883567ffffffffffffffff808211156109f557600080fd5b610a018c838d01610978565b909a50985060208b0135915080821115610a1a57600080fd5b610a268c838d01610978565b909850965060408b0135955060608b0135915080821115610a4657600080fd5b50610a538b828c01610978565b999c989b50969995989497949560800135949350505050565b6001600160a01b03811681146105c857600080fd5b60008060408385031215610a9457600080fd5b823591506020830135610aa681610a6c565b809150509250929050565b60008060408385031215610ac457600080fd5b50508035926020909101359150565b60008060008060808587031215610ae957600080fd5b843593506020850135610afb81610a6c565b93969395505050506040820135916060013590565b600060208284031215610b2257600080fd5b8135610b2d81610a6c565b9392505050565b634e487b7160e01b600052604160045260246000fd5b604051601f8201601f1916810167ffffffffffffffff81118282101715610b7357610b73610b34565b604052919050565b600067ffffffffffffffff831115610b9557610b95610b34565b610ba8601f8401601f1916602001610b4a565b9050828152838383011115610bbc57600080fd5b828260208301376000602084830101529392505050565b60008060408385031215610be657600080fd5b823567ffffffffffffffff80821115610bfe57600080fd5b818501915085601f830112610c1257600080fd5b610c2186833560208501610b7b565b93506020850135915080821115610c3757600080fd5b508301601f81018513610c4957600080fd5b610c5885823560208401610b7b565b9150509250929050565b60008060408385031215610c7557600080fd5b8251610c8081610a6c565b6020939093015192949293505050565b80820180821115610cb157634e487b7160e01b600052601160045260246000fd5b92915050565b60006020808385031215610cca57600080fd5b825167ffffffffffffffff80821115610ce257600080fd5b818501915085601f830112610cf657600080fd5b815181811115610d0857610d08610b34565b8060051b9150610d19848301610b4a565b8181529183018401918481019088841115610d3357600080fd5b938501935b83851015610d5d5784519250610d4d83610a6c565b8282529385019390850190610d38565b98975050505050505050565b634e487b7160e01b600052603260045260246000fd5b600060208284031215610d9157600080fd5b505191905056fea264697066735822122047e8cab5dd36f9d2d5694fa9e5bd0385813683568defabfed3e4ebf1e09d074c64736f6c63430008170033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100a95760003560e01c80639e8b9525116100715780639e8b952514610131578063a2a2d30814610144578063a304543f146101b0578063cd666297146101c3578063d53fcbec146101d6578063f2fde38b1461020457600080fd5b80632a0aabfc146100ae57806339796955146100e65780636b594ccd146100fb578063715018a61461010e5780638da5cb5b14610116575b600080fd5b6100d16100bc36600461095f565b60026020526000908152604090205460ff1681565b60405190151581526020015b60405180910390f35b6100f96100f43660046109c1565b610217565b005b6100f9610109366004610a81565b61034c565b6100f96103fe565b6000546040516001600160a01b0390911681526020016100dd565b6100f961013f3660046109c1565b610412565b61018661015236600461095f565b600160208190526000918252604090912080549181015460028201546003909201546001600160a01b039093169290919084565b604080516001600160a01b03909516855260208501939093529183015260608201526080016100dd565b6100f96101be366004610ab1565b610483565b6100f96101d1366004610ad3565b6104d0565b6101f66101e436600461095f565b60036020526000908152604090205481565b6040519081526020016100dd565b6100f9610212366004610b10565b610588565b600080610226898b018b610bd3565b60408051808201909152600d81526c1cdc195b991a5b99d31a5b5a5d609a1b60209182015282519083012091935091507f1ebb2c3c329772f0bf9016cb7b6e0fc6cd884fa3d60a986ea3f882434596af2b0161028b5761028681846105cb565b610340565b60408051808201909152600e81526d616c6c6f7765645461726765747360901b6020918201528251908301207f14d1cc92269128a7f462c427b6c4761966d55eb0441ee724daf313672e8ab53c016102e95761028681848787610729565b6040805180820190915260098152681d1a5b59531a5b5a5d60ba1b6020918201528251908301207f1cd78c64331fe88a151d2a352952c7b81c81885722ee6bdce6e217ff32be5bdb01610340576103408184610833565b50505050505050505050565b610354610895565b600160026000848460405160200161038892919091825260601b6bffffffffffffffffffffffff1916602082015260340190565b60408051808303601f190181529181528151602092830120835282820193909352908201600020805460ff191693151593909317909255516001600160a01b038316815283917f9841b8f666499655a4c2056ccf86dc0ec2e948a7b6a69fd380a50113bc2aedac91015b60405180910390a25050565b610406610895565b61041060006108c2565b565b600080610421898b018b610bd3565b60408051808201909152600d81526c1cdc195b991a5b99d31a5b5a5d609a1b60209182015282519083012091935091507f1ebb2c3c329772f0bf9016cb7b6e0fc6cd884fa3d60a986ea3f882434596af2b016103405761034081848787610912565b61048b610895565b600082815260036020526040908190208290555182907f59ab0ada8e461df8a5b8cf1ae5ee6c0a0a122358a516ee7408a9797089d6a157906103f29084815260200190565b6104d8610895565b604080516080810182526001600160a01b038581168083526020808401878152600085870181815260608088018a81528d84526001808752938a9020985189546001600160a01b03191698169790971788559251918701919091555160028601559251600390940193909355835190815291820185905291810183905285917f771eee540acff3c18d8bcd58b1fef44dcacf641804ec85270ee99711028b51a5910160405180910390a250505050565b610590610895565b6001600160a01b0381166105bf57604051631e4fbdf760e01b8152600060048201526024015b60405180910390fd5b6105c8816108c2565b50565b600080838060200190518101906105e29190610c62565b600085815260016020818152604092839020835160808101855281546001600160a01b039081168083529483015493820193909352600282015494810194909452600301546060840152939550919350918416146106735760405162461bcd60e51b815260206004820152600e60248201526d0a8ded6cadc40dad2e6dac2e8c6d60931b60448201526064016105b6565b428160600151116106bf5760405162461bcd60e51b815260206004820152601660248201527514dc195b991a5b99c81b1a5b5a5d08195e1c1a5c995960521b60448201526064016105b6565b80602001518282604001516106d49190610c90565b11156107225760405162461bcd60e51b815260206004820152601760248201527f5370656e64696e67206c696d697420657863656564656400000000000000000060448201526064016105b6565b5050505050565b60008480602001905181019061073f9190610cb7565b905060148210156107925760405162461bcd60e51b815260206004820152601760248201527f496e76616c69642063616c6c64617461206c656e67746800000000000000000060448201526064016105b6565b823560601c6000805b83518110156107e757826001600160a01b03168482815181106107c0576107c0610d69565b60200260200101516001600160a01b0316036107df57600191506107e7565b60010161079b565b508061082a5760405162461bcd60e51b815260206004820152601260248201527115185c99d95d081b9bdd08185b1b1bddd95960721b60448201526064016105b6565b50505050505050565b6000828060200190518101906108499190610d7f565b9050804211156108905760405162461bcd60e51b815260206004820152601260248201527111195b1959d85d1a5bdb88195e1c1a5c995960721b60448201526064016105b6565b505050565b6000546001600160a01b031633146104105760405163118cdaa760e01b81523360048201526024016105b6565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b6000848060200190518101906109289190610c62565b60008681526001602052604081206002810180549395509093508492909190610952908490610c90565b9091555050505050505050565b60006020828403121561097157600080fd5b5035919050565b60008083601f84011261098a57600080fd5b50813567ffffffffffffffff8111156109a257600080fd5b6020830191508360208285010111156109ba57600080fd5b9250929050565b60008060008060008060008060a0898b0312156109dd57600080fd5b883567ffffffffffffffff808211156109f557600080fd5b610a018c838d01610978565b909a50985060208b0135915080821115610a1a57600080fd5b610a268c838d01610978565b909850965060408b0135955060608b0135915080821115610a4657600080fd5b50610a538b828c01610978565b999c989b50969995989497949560800135949350505050565b6001600160a01b03811681146105c857600080fd5b60008060408385031215610a9457600080fd5b823591506020830135610aa681610a6c565b809150509250929050565b60008060408385031215610ac457600080fd5b50508035926020909101359150565b60008060008060808587031215610ae957600080fd5b843593506020850135610afb81610a6c565b93969395505050506040820135916060013590565b600060208284031215610b2257600080fd5b8135610b2d81610a6c565b9392505050565b634e487b7160e01b600052604160045260246000fd5b604051601f8201601f1916810167ffffffffffffffff81118282101715610b7357610b73610b34565b604052919050565b600067ffffffffffffffff831115610b9557610b95610b34565b610ba8601f8401601f1916602001610b4a565b9050828152838383011115610bbc57600080fd5b828260208301376000602084830101529392505050565b60008060408385031215610be657600080fd5b823567ffffffffffffffff80821115610bfe57600080fd5b818501915085601f830112610c1257600080fd5b610c2186833560208501610b7b565b93506020850135915080821115610c3757600080fd5b508301601f81018513610c4957600080fd5b610c5885823560208401610b7b565b9150509250929050565b60008060408385031215610c7557600080fd5b8251610c8081610a6c565b6020939093015192949293505050565b80820180821115610cb157634e487b7160e01b600052601160045260246000fd5b92915050565b60006020808385031215610cca57600080fd5b825167ffffffffffffffff80821115610ce257600080fd5b818501915085601f830112610cf657600080fd5b815181811115610d0857610d08610b34565b8060051b9150610d19848301610b4a565b8181529183018401918481019088841115610d3357600080fd5b938501935b83851015610d5d5784519250610d4d83610a6c565b8282529385019390850190610d38565b98975050505050505050565b634e487b7160e01b600052603260045260246000fd5b600060208284031215610d9157600080fd5b505191905056fea264697066735822122047e8cab5dd36f9d2d5694fa9e5bd0385813683568defabfed3e4ebf1e09d074c64736f6c63430008170033",
+  "devdoc": {
+    "details": "Basic implementation of ICaveatEnforcer for delegation restrictions This is a simplified version - in production you'd use the official MetaMask caveat enforcers",
+    "errors": {
+      "OwnableInvalidOwner(address)": [
+        {
+          "details": "The owner is not a valid owner account. (eg. `address(0)`)"
+        }
+      ],
+      "OwnableUnauthorizedAccount(address)": [
+        {
+          "details": "The caller account is not authorized to perform an operation."
+        }
+      ]
+    },
+    "kind": "dev",
+    "methods": {
+      "afterHook(bytes,bytes,uint256,bytes,bytes32)": {
+        "details": "Enforces conditions after execution"
+      },
+      "beforeHook(bytes,bytes,uint256,bytes,bytes32)": {
+        "details": "Enforces conditions before execution"
+      },
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+      },
+      "setAllowedTarget(bytes32,address)": {
+        "details": "Sets allowed target for a delegation"
+      },
+      "setSpendingLimit(bytes32,address,uint256,uint256)": {
+        "details": "Sets spending limit for a delegation"
+      },
+      "setTimeLimit(bytes32,uint256)": {
+        "details": "Sets time limit for a delegation"
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "title": "BasicCaveatEnforcer",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 387,
+        "contract": "contracts/CaveatEnforcer.sol:BasicCaveatEnforcer",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 9375,
+        "contract": "contracts/CaveatEnforcer.sol:BasicCaveatEnforcer",
+        "label": "spendingLimits",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_bytes32,t_struct(SpendingLimit)9370_storage)"
+      },
+      {
+        "astId": 9379,
+        "contract": "contracts/CaveatEnforcer.sol:BasicCaveatEnforcer",
+        "label": "allowedTargets",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_bytes32,t_bool)"
+      },
+      {
+        "astId": 9383,
+        "contract": "contracts/CaveatEnforcer.sol:BasicCaveatEnforcer",
+        "label": "validUntil",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_bytes32,t_uint256)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_mapping(t_bytes32,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_bytes32,t_struct(SpendingLimit)9370_storage)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => struct BasicCaveatEnforcer.SpendingLimit)",
+        "numberOfBytes": "32",
+        "value": "t_struct(SpendingLimit)9370_storage"
+      },
+      "t_mapping(t_bytes32,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_struct(SpendingLimit)9370_storage": {
+        "encoding": "inplace",
+        "label": "struct BasicCaveatEnforcer.SpendingLimit",
+        "members": [
+          {
+            "astId": 9363,
+            "contract": "contracts/CaveatEnforcer.sol:BasicCaveatEnforcer",
+            "label": "token",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address"
+          },
+          {
+            "astId": 9365,
+            "contract": "contracts/CaveatEnforcer.sol:BasicCaveatEnforcer",
+            "label": "maxAmount",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 9367,
+            "contract": "contracts/CaveatEnforcer.sol:BasicCaveatEnforcer",
+            "label": "spentAmount",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 9369,
+            "contract": "contracts/CaveatEnforcer.sol:BasicCaveatEnforcer",
+            "label": "validUntil",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "128"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

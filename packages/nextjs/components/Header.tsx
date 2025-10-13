@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { hardhat } from "viem/chains";
-import { Bars3Icon, BugAntIcon } from "@heroicons/react/24/outline";
+import { ArchiveBoxIcon, Bars3Icon, BugAntIcon, MapIcon, WalletIcon } from "@heroicons/react/24/outline";
 import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { useOutsideClick, useTargetNetwork } from "~~/hooks/scaffold-eth";
 
@@ -21,19 +21,39 @@ export const menuLinks: HeaderMenuLink[] = [
     href: "/",
   },
   {
+    label: "Smart Account",
+    href: "/account",
+    icon: <WalletIcon className="h-4 w-4" />,
+  },
+  {
+    label: "Board Game",
+    href: "/board",
+    icon: <ArchiveBoxIcon className="h-4 w-4" />,
+  },
+  {
     label: "Debug Contracts",
     href: "/debug",
     icon: <BugAntIcon className="h-4 w-4" />,
+  },
+  {
+    label: "Envio",
+    href: "/envio",
+    icon: <MapIcon className="h-4 w-4" />,
   },
 ];
 
 export const HeaderMenuLinks = () => {
   const pathname = usePathname();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
     <>
       {menuLinks.map(({ label, href, icon }) => {
-        const isActive = pathname === href;
+        const isActive = isClient && pathname === href;
         return (
           <li key={href}>
             <Link

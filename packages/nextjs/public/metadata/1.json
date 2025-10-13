@@ -1,0 +1,10 @@
+{
+  "name": "Burger Box Ticket Entry",
+  "description": "Special access ticket to Burger Cooking Game",
+  "image": "https://ipfs.4everland.io/ipfs/bafybeigl3nwkgeeo6ycwwosvd4ti5imalkqsnx7vtcluxcymmucfoufhvy",
+  "attributes": [
+    { "trait_type": "Game Type", "value": "Burger Cooking" },
+    { "trait_type": "Rarity", "value": "Common" },
+    { "trait_type": "Power", "value": "Basic" }
+  ]
+}

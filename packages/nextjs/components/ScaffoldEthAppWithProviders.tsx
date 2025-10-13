@@ -7,10 +7,13 @@ import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
 import { useTheme } from "next-themes";
 import { Toaster } from "react-hot-toast";
 import { WagmiProvider } from "wagmi";
+import { ErrorBoundary } from "~~/components/ErrorBoundary";
 import { Footer } from "~~/components/Footer";
 import { Header } from "~~/components/Header";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
+import { SmartAccountProvider } from "~~/contexts/SmartAccountContext";
 import { useInitializeNativeCurrencyPrice } from "~~/hooks/scaffold-eth";
+import { GraphQLProvider } from "~~/providers/GraphQLProvider";
 import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
@@ -32,6 +35,9 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 30000, // 30 seconds
+      gcTime: 300000, // 5 minutes (replaces cacheTime)
     },
   },
 });
@@ -45,17 +51,41 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
     setMounted(true);
   }, []);
 
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="loading loading-spinner loading-lg"></div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider
-          avatar={BlockieAvatar}
-          theme={mounted ? (isDarkMode ? darkTheme() : lightTheme()) : lightTheme()}
-        >
-          <ProgressBar height="3px" color="#2299dd" />
-          <ScaffoldEthApp>{children}</ScaffoldEthApp>
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <ErrorBoundary>
+      <WagmiProvider config={wagmiConfig}>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKitProvider
+            avatar={BlockieAvatar}
+            theme={isDarkMode ? darkTheme() : lightTheme()}
+            appInfo={{
+              appName: "UniRamble GamiFi",
+              learnMoreUrl: "https://uniramble.xyz",
+            }}
+            modalSize="compact"
+            showRecentTransactions={false}
+            initialChain={undefined}
+          >
+            <ProgressBar height="3px" color="#2299dd" />
+            <SmartAccountProvider>
+              <GraphQLProvider>
+                <ScaffoldEthApp>{children}</ScaffoldEthApp>
+              </GraphQLProvider>
+            </SmartAccountProvider>
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </ErrorBoundary>
   );
 };

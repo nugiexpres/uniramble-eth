@@ -121,3 +121,382 @@
 .link:hover {
   opacity: 80%;
 }
+
+.grid-1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.grid-2 {
+  position: absolute;
+  top: 0;
+  left: 75px;
+}
+
+.grid-3 {
+  position: absolute;
+  top: 0;
+  left: 150px;
+}
+
+.grid-4 {
+  position: absolute;
+  top: 0;
+  left: 225px;
+}
+
+.grid-5 {
+  position: absolute;
+  top: 0;
+  left: 300px;
+}
+
+.grid-6 {
+  position: absolute;
+  top: 0;
+  left: 375px;
+  z-index: 0 !important;
+}
+
+.grid-7 {
+  position: absolute;
+  top: 75px;
+  left: 375px;
+}
+
+.grid-8 {
+  position: absolute;
+  top: 150px;
+  left: 375px;
+}
+
+.grid-9 {
+  position: absolute;
+  top: 225px;
+  left: 375px;
+}
+
+.grid-10 {
+  position: absolute;
+  top: 300px;
+  left: 375px;
+}
+
+.grid-11 {
+  position: absolute;
+  top: 375px;
+  left: 375px;
+}
+
+.grid-12 {
+  position: absolute;
+  top: 375px;
+  left: 300px;
+}
+
+.grid-13 {
+  position: absolute;
+  top: 375px;
+  left: 225px;
+}
+
+.grid-14 {
+  position: absolute;
+  top: 375px;
+  left: 150px;
+}
+
+.grid-15 {
+  position: absolute;
+  top: 375px;
+  left: 75px;
+}
+
+.grid-16 {
+  position: absolute;
+  top: 375px;
+  left: 0;
+  z-index: 0 !important;
+}
+
+.grid-17 {
+  position: absolute;
+  top: 300px;
+  left: 0;
+}
+
+.grid-18 {
+  position: absolute;
+  top: 225px;
+  left: 0;
+}
+
+.grid-19 {
+  position: absolute;
+  top: 150px;
+  left: 0;
+}
+
+.grid-20 {
+  position: absolute;
+  top: 75px;
+  left: 0px;
+}
+
+.track {
+  position: absolute;
+  top: -30px;
+  right: 155px;
+  transform: rotate(45deg);
+}
+
+.chef {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-10%, -30%);
+}
+
+.stoveImage {
+  margin-top: -10px;
+}
+
+/* Mobile View - Responsive Grid (768px and below) */
+@media (max-width: 768px) {
+  /* Calculate center positions for mobile */
+  /* Assuming board size is around 350px (90vw) and cell size is 50px */
+
+  .grid-1 {
+    top: 10px;
+    left: 10px;
+  }
+
+  .grid-2 {
+    top: 10px;
+    left: 70px;
+  }
+
+  .grid-3 {
+    top: 10px;
+    left: 130px;
+  }
+
+  .grid-4 {
+    top: 10px;
+    left: 190px;
+  }
+
+  .grid-5 {
+    top: 10px;
+    left: 250px;
+  }
+
+  .grid-6 {
+    top: 10px;
+    left: 310px;
+  }
+
+  .grid-7 {
+    top: 70px;
+    left: 310px;
+  }
+
+  .grid-8 {
+    top: 130px;
+    left: 310px;
+  }
+
+  .grid-9 {
+    top: 190px;
+    left: 310px;
+  }
+
+  .grid-10 {
+    top: 250px;
+    left: 310px;
+  }
+
+  .grid-11 {
+    top: 310px;
+    left: 310px;
+  }
+
+  .grid-12 {
+    top: 310px;
+    left: 250px;
+  }
+
+  .grid-13 {
+    top: 310px;
+    left: 190px;
+  }
+
+  .grid-14 {
+    top: 310px;
+    left: 130px;
+  }
+
+  .grid-15 {
+    top: 310px;
+    left: 70px;
+  }
+
+  .grid-16 {
+    top: 310px;
+    left: 10px;
+  }
+
+  .grid-17 {
+    top: 250px;
+    left: 10px;
+  }
+
+  .grid-18 {
+    top: 190px;
+    left: 10px;
+  }
+
+  .grid-19 {
+    top: 130px;
+    left: 10px;
+  }
+
+  .grid-20 {
+    top: 70px;
+    left: 10px;
+  }
+
+  /* Center track for mobile */
+  .track {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    right: auto;
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+}
+
+/* Tablet devices (1024px and down) */
+@media (max-width: 1024px) {
+  /* Adjust for tablet screens */
+  .grid-1 {
+    top: 15px;
+    left: 15px;
+  }
+  .grid-2 {
+    top: 15px;
+    left: 85px;
+  }
+  .grid-3 {
+    top: 15px;
+    left: 155px;
+  }
+  .grid-4 {
+    top: 15px;
+    left: 225px;
+  }
+  .grid-5 {
+    top: 15px;
+    left: 295px;
+  }
+  .grid-6 {
+    top: 15px;
+    left: 365px;
+  }
+
+  .grid-7 {
+    top: 85px;
+    left: 365px;
+  }
+  .grid-8 {
+    top: 155px;
+    left: 365px;
+  }
+  .grid-9 {
+    top: 225px;
+    left: 365px;
+  }
+  .grid-10 {
+    top: 295px;
+    left: 365px;
+  }
+  .grid-11 {
+    top: 365px;
+    left: 365px;
+  }
+
+  .grid-12 {
+    top: 365px;
+    left: 295px;
+  }
+  .grid-13 {
+    top: 365px;
+    left: 225px;
+  }
+  .grid-14 {
+    top: 365px;
+    left: 155px;
+  }
+  .grid-15 {
+    top: 365px;
+    left: 85px;
+  }
+  .grid-16 {
+    top: 365px;
+    left: 15px;
+  }
+
+  .grid-17 {
+    top: 295px;
+    left: 15px;
+  }
+  .grid-18 {
+    top: 225px;
+    left: 15px;
+  }
+  .grid-19 {
+    top: 155px;
+    left: 15px;
+  }
+  .grid-20 {
+    top: 85px;
+    left: 15px;
+  }
+}
+
+/* Dynamic centering class for mobile boards */
+.mobile-board-container {
+  position: relative;
+  margin: 0 auto;
+}
+
+.mobile-grid-cell {
+  position: absolute;
+  transition: all 0.3s ease;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.item-pop {
+  animation: pop 0.4s ease-in-out;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

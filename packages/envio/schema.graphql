@@ -1,0 +1,404 @@
+type BasicCaveatEnforcer_OwnershipTransferred {
+  id: ID!
+  previousOwner: String!
+  newOwner: String!
+}
+
+type BasicCaveatEnforcer_SpendingLimitSet {
+  id: ID!
+  delegationHash: String!
+  token: String!
+  maxAmount: BigInt!
+  validUntil: BigInt!
+}
+
+type BasicCaveatEnforcer_TargetAllowed {
+  id: ID!
+  delegationHash: String!
+  target: String!
+}
+
+type BasicCaveatEnforcer_TimeLimitSet {
+  id: ID!
+  delegationHash: String!
+  validUntil: BigInt!
+}
+
+type BreadToken_Approval {
+  id: ID!
+  owner: String!
+  spender: String!
+  value: BigInt!
+}
+
+type BreadToken_OwnershipTransferred {
+  id: ID!
+  previousOwner: String!
+  newOwner: String!
+}
+
+type BreadToken_Transfer {
+  id: ID!
+  from: String!
+  to: String!
+  value: BigInt!
+}
+
+type ERC6551Account_NFTReceived {
+  id: ID!
+  operator: String!
+  from: String!
+  tokenId: BigInt!
+  data: String!
+}
+
+type ERC6551Account_Withdraw {
+  id: ID!
+  owner: String!
+  amount: BigInt!
+}
+
+type ERC6551Registry_AccountCreated {
+  id: ID!
+  account: String!
+  implementation: String!
+  chainId: BigInt!
+  tokenContract: String!
+  tokenId: BigInt!
+  salt: BigInt!
+}
+
+type FaucetMon_BalanceFunded {
+  id: ID!
+  funder: String!
+  amount: BigInt!
+}
+
+type FaucetMon_BalanceWithdrawn {
+  id: ID!
+  owner: String!
+  amount: BigInt!
+}
+
+type FoodNFT_Approval {
+  id: ID!
+  owner: String!
+  approved: String!
+  tokenId: BigInt!
+}
+
+type FoodNFT_ApprovalForAll {
+  id: ID!
+  owner: String!
+  operator: String!
+  approved: Boolean!
+}
+
+type FoodNFT_BatchMetadataUpdate {
+  id: ID!
+  _fromTokenId: BigInt!
+  _toTokenId: BigInt!
+}
+
+type FoodNFT_FoodBurned {
+  id: ID!
+  tokenId: BigInt!
+  owner: String!
+  burner: String!
+  timestamp: BigInt!
+}
+
+type FoodNFT_MetadataUpdate {
+  id: ID!
+  _tokenId: BigInt!
+}
+
+type FoodNFT_MintPriceUpdated {
+  id: ID!
+  oldPrice: BigInt!
+  newPrice: BigInt!
+}
+
+type FoodNFT_OwnershipTransferred {
+  id: ID!
+  previousOwner: String!
+  newOwner: String!
+}
+
+type FoodNFT_Transfer {
+  id: ID!
+  from: String!
+  to: String!
+  tokenId: BigInt!
+}
+
+type FoodScramble_FaucetAmountUpdated {
+  id: ID!
+  oldAmount: BigInt!
+  newAmount: BigInt!
+}
+
+type FoodScramble_FaucetCooldownUpdated {
+  id: ID!
+  oldCooldown: BigInt!
+  newCooldown: BigInt!
+}
+
+type FoodScramble_IngredientPurchased {
+  id: ID!
+  player: String!
+  ingredientType: BigInt!
+}
+
+type FoodScramble_PlayerCreated {
+  id: ID!
+  tba: String!
+  gridIndex: BigInt!
+}
+
+type FoodScramble_PlayerMoved {
+  id: ID!
+  player: String!
+  newPosition: BigInt!
+}
+
+type FoodScramble_TokenBoundAccountCreated {
+  id: ID!
+  eoa: String!
+  tba: String!
+  startPosition: BigInt!
+}
+
+type LettuceToken_Approval {
+  id: ID!
+  owner: String!
+  spender: String!
+  value: BigInt!
+}
+
+type LettuceToken_OwnershipTransferred {
+  id: ID!
+  previousOwner: String!
+  newOwner: String!
+}
+
+type LettuceToken_Transfer {
+  id: ID!
+  from: String!
+  to: String!
+  value: BigInt!
+}
+
+type MeatToken_Approval {
+  id: ID!
+  owner: String!
+  spender: String!
+  value: BigInt!
+}
+
+type MeatToken_OwnershipTransferred {
+  id: ID!
+  previousOwner: String!
+  newOwner: String!
+}
+
+type MeatToken_Transfer {
+  id: ID!
+  from: String!
+  to: String!
+  value: BigInt!
+}
+
+type PaymentGateway_ERC20PaymentReceived {
+  id: ID!
+  payer: String!
+  token: String!
+  amount: BigInt!
+  metadata: String!
+}
+
+type PaymentGateway_ERC20Withdrawn {
+  id: ID!
+  token: String!
+  receiver: String!
+  amount: BigInt!
+}
+
+type PaymentGateway_NativePaymentReceived {
+  id: ID!
+  payer: String!
+  amount: BigInt!
+  metadata: String!
+}
+
+type PaymentGateway_OwnershipTransferred {
+  id: ID!
+  previousOwner: String!
+  newOwner: String!
+}
+
+type PaymentGateway_Withdrawn {
+  id: ID!
+  receiver: String!
+  amount: BigInt!
+}
+
+type RewardPool_DistributorUpdated {
+  id: ID!
+  distributor: String!
+  authorized: Boolean!
+}
+
+type RewardPool_FundsDeposited {
+  id: ID!
+  from: String!
+  amount: BigInt!
+}
+
+type RewardPool_OwnershipTransferred {
+  id: ID!
+  previousOwner: String!
+  newOwner: String!
+}
+
+type RewardPool_RewardDistributed {
+  id: ID!
+  to: String!
+  amount: BigInt!
+  distributor: String!
+}
+
+type SpiceToken_Approval {
+  id: ID!
+  owner: String!
+  spender: String!
+  value: BigInt!
+}
+
+type SpiceToken_Transfer {
+  id: ID!
+  from: String!
+  to: String!
+  value: BigInt!
+}
+
+type TomatoToken_Approval {
+  id: ID!
+  owner: String!
+  spender: String!
+  value: BigInt!
+}
+
+type TomatoToken_OwnershipTransferred {
+  id: ID!
+  previousOwner: String!
+  newOwner: String!
+}
+
+type TomatoToken_Transfer {
+  id: ID!
+  from: String!
+  to: String!
+  value: BigInt!
+}
+
+type SpecialBox_Approval {
+  id: ID!
+  owner: String!
+  approved: String!
+  tokenId: BigInt!
+}
+
+type SpecialBox_ApprovalForAll {
+  id: ID!
+  owner: String!
+  operator: String!
+  approved: Boolean!
+}
+
+type SpecialBox_BoxPriceUpdated {
+  id: ID!
+  newPrice: BigInt!
+}
+
+type SpecialBox_Burn {
+  id: ID!
+  user: String!
+  tba: String!
+  tokenId: BigInt!
+}
+
+type SpecialBox_MintBox {
+  id: ID!
+  user: String!
+  tba: String!
+  tokenId: BigInt!
+}
+
+type SpecialBox_OwnershipTransferred {
+  id: ID!
+  previousOwner: String!
+  newOwner: String!
+}
+
+type SpecialBox_PaymentGatewayUpdated {
+  id: ID!
+  newGateway: String!
+}
+
+type SpecialBox_Transfer {
+  id: ID!
+  from: String!
+  to: String!
+  tokenId: BigInt!
+}
+
+type SpecialBoxStake_OwnershipTransferred {
+  id: ID!
+  previousOwner: String!
+  newOwner: String!
+}
+
+type SpecialBoxStake_SpecialBoxMinted {
+  id: ID!
+  user: String!
+  tba: String!
+  amount: BigInt!
+}
+
+type SpecialBoxStake_Stake {
+  id: ID!
+  user: String!
+  tba: String!
+  tokenId: BigInt!
+}
+
+type SpecialBoxStake_StakeAll {
+  id: ID!
+  user: String!
+  tba: String!
+  tokenIds: [BigInt!]!
+  totalStaked: BigInt!
+}
+
+type SpecialBoxStake_StakeBatch {
+  id: ID!
+  user: String!
+  tba: String!
+  tokenIds: [BigInt!]!
+}
+
+type SpecialBoxStake_Unstake {
+  id: ID!
+  user: String!
+  tba: String!
+  tokenId: BigInt!
+}
+
+type SpecialBoxStake_UnstakeBatch {
+  id: ID!
+  user: String!
+  tba: String!
+  tokenIds: [BigInt!]!
+}
+

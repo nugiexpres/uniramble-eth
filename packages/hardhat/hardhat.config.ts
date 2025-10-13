@@ -19,6 +19,9 @@ const providerApiKey = process.env.ALCHEMY_API_KEY || "oKxs-03sij-U_N0iOlrSsZFr2
 // You can generate a random account with `yarn generate` or `yarn account:import` to import your existing PK
 const deployerPrivateKey =
   process.env.__RUNTIME_DEPLOYER_PRIVATE_KEY ?? "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
+
+const deployerLocal =
+  process.env.DEPLOYER_LOCAL ?? "0x3526922c7cbaf38364c8d3c1979ecf71a95673124a300d4fae8ef76024be8f6d7";
 // If not set, it uses our block explorers default API keys.
 const etherscanApiKey = process.env.ETHERSCAN_V2_API_KEY || "DNXJA8RX2Q3VZ4URQIWP7Z68CJXQZSC6AW";
 
@@ -26,7 +29,7 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: "0.8.20",
+        version: "0.8.23",
         settings: {
           optimizer: {
             enabled: true,
@@ -53,13 +56,18 @@ const config: HardhatUserConfig = {
         enabled: process.env.MAINNET_FORKING_ENABLED === "true",
       },
     },
+    localhost: {
+      url: "http://127.0.0.1:8545",
+      accounts: [deployerLocal],
+    },
     mainnet: {
       url: "https://mainnet.rpc.buidlguidl.com",
       accounts: [deployerPrivateKey],
     },
     sepolia: {
       url: `https://eth-sepolia.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
+      chainId: 11155111,
+      accounts: [deployerLocal],
     },
     arbitrum: {
       url: `https://arb-mainnet.g.alchemy.com/v2/${providerApiKey}`,
@@ -124,6 +132,16 @@ const config: HardhatUserConfig = {
     celoSepolia: {
       url: "https://forno.celo-sepolia.celo-testnet.org/",
       accounts: [deployerPrivateKey],
+    },
+    monadTestnet: {
+      url: `https://monad-testnet.g.alchemy.com/v2/${providerApiKey}`,
+      chainId: 10143,
+      accounts: [deployerLocal],
+      // Rate limiting optimizations
+      timeout: 30000, // 30 seconds timeout
+      gas: "auto",
+      gasPrice: "auto",
+      gasMultiplier: 1.1,
     },
   },
   // Configuration for harhdat-verify plugin
