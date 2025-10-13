@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Ingredient } from "./Ingredient";
 import { SpecialBox } from "./SpecialBox";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Gift, Package } from "lucide-react";
+import { ChevronLeft, ChevronRight, Gift } from "lucide-react";
+import { useAccount } from "wagmi";
 import { useSmartAccountTBA } from "~~/hooks/envio/useSmartAccountTBA";
 
 interface GameCombineProps {
@@ -16,21 +17,17 @@ interface GameCombineProps {
   tbaBalance?: bigint | undefined;
 }
 
-export const GameCombine = ({ tbaAddress, className = "" }: GameCombineProps) => {
+export const GameCombine = ({ className = "" }: GameCombineProps) => {
   const [activePanel, setActivePanel] = useState<"combine" | "ingredient">("combine");
+  const { address } = useAccount(); // Track wallet changes
 
-  // Get Smart Account TBA (priority over prop)
+  // Get Smart Account TBA (reactive to wallet changes - like SpecialBox)
   const { tbaAddress: smartAccountTbaAddress } = useSmartAccountTBA();
 
-  // Use Smart Account TBA if available, otherwise use prop TBA
-  const effectiveTbaAddress = smartAccountTbaAddress || tbaAddress;
-
-  // Debug: Log render
-  console.log("🎮 GameCombine Rendered:", {
-    tbaAddress,
+  // Debug: Log wallet and TBA changes
+  console.log("🎮 GameCombine Wallet Update:", {
+    eoaAddress: address,
     smartAccountTbaAddress,
-    effectiveTbaAddress,
-    className,
     activePanel,
   });
 
@@ -110,7 +107,7 @@ export const GameCombine = ({ tbaAddress, className = "" }: GameCombineProps) =>
               {/* Right Tab - Ingredient */}
               <motion.button
                 onClick={() => setActivePanel("ingredient")}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-md font-semibold text-xs transition-all duration-300 flex-1 ml-1.5 cursor-pointer ${
+                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-md font-semibold text-xs transition-all duration-300 flex-1 ml-1.5 cursor-pointer ${
                   activePanel === "ingredient"
                     ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/25"
                     : "bg-slate-700/50 text-slate-400 hover:bg-slate-700 hover:text-slate-300"
@@ -118,7 +115,6 @@ export const GameCombine = ({ tbaAddress, className = "" }: GameCombineProps) =>
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}
               >
-                <Package size={14} />
                 <span>INGREDIENT</span>
                 {activePanel === "ingredient" && (
                   <motion.div
@@ -154,7 +150,7 @@ export const GameCombine = ({ tbaAddress, className = "" }: GameCombineProps) =>
                   </div>
                 ) : (
                   <div className="space-y-4 h-full overflow-y-auto pr-2">
-                    <Ingredient tbaAddress={effectiveTbaAddress} className="mb-6" />
+                    <Ingredient tbaAddress={smartAccountTbaAddress} className="mb-6" />
                   </div>
                 )}
               </motion.div>
@@ -186,12 +182,12 @@ export const GameCombine = ({ tbaAddress, className = "" }: GameCombineProps) =>
           </div>
 
           {/* TBA Address Indicator (if exists) */}
-          {effectiveTbaAddress && (
+          {smartAccountTbaAddress && (
             <div className="mt-2 p-2 bg-gradient-to-r from-orange-500/10 to-yellow-500/10 border border-orange-500/20 rounded-lg">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-slate-400">Using TBA:</span>
                 <span className="text-orange-300 font-medium">
-                  {effectiveTbaAddress.slice(0, 6)}...{effectiveTbaAddress.slice(-4)}
+                  {smartAccountTbaAddress.slice(0, 6)}...{smartAccountTbaAddress.slice(-4)}
                 </span>
               </div>
             </div>

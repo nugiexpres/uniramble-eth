@@ -5,6 +5,7 @@ import { createBundlerClient, createPaymasterClient } from "viem/account-abstrac
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { getBundlerConfig } from "~~/config/bundler";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
+import { emitCreateSmartAccountEvent } from "~~/utils/envio/emitGameEvent";
 
 interface FinalSmartAccountState {
   smartAccount: any | null;
@@ -528,6 +529,9 @@ export const useFinalSmartAccount = () => {
 
       // Save smart account state to sessionStorage
       saveSmartAccountState(smartAccount, true, address);
+
+      // Emit event for EnvioAnalytics
+      emitCreateSmartAccountEvent(address, smartAccount.address);
 
       return true;
     } catch (error: any) {

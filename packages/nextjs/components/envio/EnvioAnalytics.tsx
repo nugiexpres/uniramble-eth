@@ -56,15 +56,13 @@ export const EnvioAnalytics = () => {
   const { latestPositions } = usePlayerPositions();
   const { ingredientPurchases, specialBoxMints, faucetEvents, tbaCreations, loading: eventsLoading } = useGameEvents();
 
-  // Listen to local optimistic events emitted by UI (see GameControls.tsx)
+  // Listen to local game events for instant UI feedback
   useEffect(() => {
     const handler = (e: Event) => {
       try {
-        // CustomEvent detail carries a minimal shape — normalize to GameEvent here
-        // @ts-ignore
         const detail = (e as CustomEvent).detail as Partial<GameEvent> | undefined;
         if (!detail) return;
-
+        
         const localEvent: GameEvent = {
           id: detail.id || `local_${Date.now()}`,
           type: (detail.type as EventType) || "movement",
@@ -76,21 +74,20 @@ export const EnvioAnalytics = () => {
           optimistic: true,
           optimisticKey: (detail as any).optimisticKey,
         };
-
+        
         setOptimisticEvents(prev => {
-          // keep at most one optimistic item per optimisticKey (avoid duplicates)
-          // and cap the optimistic buffer to 20 entries so UI shows only 20 total
+          // Remove old event with same key to avoid duplicates
           if (localEvent.optimisticKey) {
             const filtered = prev.filter(p => p.optimisticKey !== localEvent.optimisticKey);
-            return [localEvent, ...filtered].slice(0, 20);
+            return [localEvent, ...filtered].slice(0, 10); // Keep max 10 optimistic
           }
-          return [localEvent, ...prev].slice(0, 20);
+          return [localEvent, ...prev].slice(0, 10);
         });
       } catch (err) {
         console.warn("EnvioAnalytics: failed to handle localGameAction", err);
       }
     };
-
+    
     window.addEventListener("localGameAction", handler as EventListener);
     return () => window.removeEventListener("localGameAction", handler as EventListener);
   }, []);
@@ -162,34 +159,32 @@ export const EnvioAnalytics = () => {
     return out.sort((a, b) => b.timestamp - a.timestamp).slice(0, 16);
   }, [latestPositions, ingredientPurchases, specialBoxMints, faucetEvents, tbaCreations]);
 
-  // Merge optimistic + on-chain events with simple deduplication heuristics.
-  // Dedup and replace optimistic events when an authoritative on-chain event arrives.
-  // We use optimisticKey if present to deterministically match optimistic -> on-chain.
+  // Merge optimistic (instant feedback) + on-chain events with smart deduplication
   const events = useMemo(() => {
     const merged: GameEvent[] = [];
+    const seenKeys = new Set<string>();
 
-    // Copy optimistic events into a map by optimisticKey (if present) or by fallback key
-    const optimisticMap = new Map<string, GameEvent>();
-    for (const opt of optimisticEvents) {
-      const key = opt.optimisticKey ?? `${opt.type}:${opt.player}`;
-      if (!optimisticMap.has(key)) optimisticMap.set(key, opt);
-    }
-
-    // Start with on-chain authoritative events; if an on-chain event matches an optimisticKey,
-    // replace the optimistic event entry with the authoritative one (preserve ordering by timestamp)
+    // Add on-chain events first (authoritative)
     for (const oc of onChainEvents) {
-      const key = `${oc.type}:${oc.player}`;
-      if (optimisticMap.has(key)) {
-        // remove optimistic placeholder and use authoritative event
-        optimisticMap.delete(key);
-      }
+      const key = `${oc.type}:${oc.player}:${oc.data?.position || oc.data?.ingredientType || ""}`;
+      seenKeys.add(key);
       merged.push(oc);
     }
 
-    // Now add remaining optimistic events (those that haven't been confirmed)
-    for (const opt of optimisticMap.values()) merged.push(opt);
+    // Add optimistic events that haven't been confirmed yet
+    // Auto-remove optimistic after 30 seconds (assumed indexed by Envio)
+    const now = Date.now();
+    for (const opt of optimisticEvents) {
+      const age = now - opt.timestamp;
+      if (age > 30000) continue; // Skip old optimistic events (>30s)
+      
+      const key = `${opt.type}:${opt.player}:${opt.data?.position || opt.data?.ingredientType || ""}`;
+      if (!seenKeys.has(key)) {
+        merged.push(opt);
+      }
+    }
 
-    // Keep a concise feed (show only the 16 most recent events)
+    // Sort and limit to 16 most recent
     return merged.sort((a, b) => b.timestamp - a.timestamp).slice(0, 16);
   }, [onChainEvents, optimisticEvents]);
 
@@ -350,7 +345,7 @@ export const EnvioAnalytics = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -4 }}
                   transition={{ duration: 0.15 }}
-                  className={`p-2 rounded-lg border ${colors[e.type]} ${e.optimistic ? "opacity-90 ring-1 ring-yellow-400/20" : ""}`}
+                  className={`p-2 rounded-lg border ${colors[e.type]}`}
                 >
                   <div className="flex items-start gap-2">
                     <div className="text-base leading-none mt-0.5">{icons[e.type]}</div>
@@ -363,7 +358,6 @@ export const EnvioAnalytics = () => {
                       </div>
                       <div className="text-[10px] text-slate-400 mt-0.5 truncate">
                         <span className="font-mono">{formatAddress(e.tbaAddress)}</span>
-                        {e.optimistic && <span className="ml-1 text-yellow-300">(pending)</span>}
                       </div>
                     </div>
                   </div>

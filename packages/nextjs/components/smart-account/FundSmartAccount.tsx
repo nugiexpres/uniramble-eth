@@ -11,6 +11,7 @@ import { getBundlerConfig } from "~~/config/bundler";
 import { useSmartAccountContext } from "~~/contexts/SmartAccountContext";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { useFinalSmartAccount } from "~~/hooks/smart-account/useFinalSmartAccount";
+import { emitSendNativeEvent } from "~~/utils/envio/emitGameEvent";
 import { notification } from "~~/utils/scaffold-eth";
 
 export const FundSmartAccount = () => {
@@ -182,6 +183,9 @@ export const FundSmartAccount = () => {
         if (txHash) {
           notification.success("Funds sent to Smart Account!");
           console.log("Normal transaction hash:", txHash);
+
+          // Emit event for EnvioAnalytics
+          emitSendNativeEvent(address!, smartAccountAddress!, amount);
         }
       } else {
         // Smart Account -> EOA (gasless transaction)
@@ -190,6 +194,9 @@ export const FundSmartAccount = () => {
         if (txHash) {
           notification.success("Funds withdrawn from Smart Account!");
           console.log("Gasless withdrawal hash:", txHash);
+
+          // Emit event for EnvioAnalytics
+          emitSendNativeEvent(smartAccountAddress!, address!, amount);
         }
       }
     } catch (error) {

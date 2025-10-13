@@ -134,7 +134,7 @@ export const EnvioBoard = () => {
         <div className="fixed top-20 left-1/2 transform -translate-x-1/2 flex items-start gap-2 z-30">
           {/* Left Panel - Smart Account Dashboard */}
           <div className="w-[340px] flex-shrink-0">
-            <GameDashboard tbaAddress={tbaAddress} />
+            <GameDashboard />
           </div>
 
           {/* Center - Game Board Container */}
@@ -190,7 +190,7 @@ export const EnvioBoard = () => {
 
           {/* Right Panel - Game Combine */}
           <div className="w-[340px] flex-shrink-0">
-            <GameCombine tbaAddress={tbaAddress} />
+            <GameCombine />
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Link, User } from "lucide-react";
+import { useAccount } from "wagmi";
 import CreateTBA from "~~/app/account/CreateTBA";
 import { FinalSmartAccount } from "~~/app/account/FinalSmartAccount";
 import { useSmartAccountTBA } from "~~/hooks/envio/useSmartAccountTBA";
@@ -18,9 +19,17 @@ interface GameDashboardProps {
 
 export const GameDashboard = ({ className = "" }: GameDashboardProps) => {
   const [activePanel, setActivePanel] = useState<"account" | "tba">("account");
+  const { address } = useAccount(); // Track wallet changes
 
-  // Get Smart Account TBA (for info purposes)
+  // Get Smart Account TBA (reactive to wallet changes - like SpecialBox)
   const { tbaAddress: smartAccountTbaAddress } = useSmartAccountTBA();
+
+  // Debug: Log wallet and TBA changes
+  console.log("🎮 GameDashboard Wallet Update:", {
+    eoaAddress: address,
+    smartAccountTbaAddress,
+    activePanel,
+  });
 
   const slideVariants = {
     enter: (direction: number) => ({

@@ -2,6 +2,7 @@ import { useAccount } from "wagmi";
 import { useFoodTokens } from "~~/hooks/board/useFoodTokens";
 import { useSmartAccountTBA } from "~~/hooks/envio/useSmartAccountTBA";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
+import { useFinalSmartAccount } from "~~/hooks/smart-account/useFinalSmartAccount";
 
 interface GameControlsProps {
   handleRoll: () => void;
@@ -60,16 +61,33 @@ export const GameControls = ({
 }: GameControlsProps) => {
   const scale = isMobile ? "scale-75" : "scale-100";
 
-  // Get connection status and chain info
-  const { isConnected } = useAccount();
+  // Get connection status and chain info - track wallet changes
+  const { address, isConnected } = useAccount();
   const { targetNetwork } = useTargetNetwork();
   const currentChain = targetNetwork;
 
-  // Get Smart Account TBA (priority over prop)
+  // Get Smart Account state from connected wallet (like SpecialBox)
+  const { smartAccountAddress: connectedSmartAccount, isDeployed: isConnectedSmartAccountDeployed } =
+    useFinalSmartAccount();
+
+  // Get Smart Account TBA (reactive to wallet changes - like SpecialBox)
   const { tbaAddress: hookSmartAccountTba } = useSmartAccountTBA();
 
-  // Use Smart Account TBA if available, otherwise use prop TBA
-  const effectiveTbaAddress = hookSmartAccountTba || smartAccountTbaAddress || tbaAddress;
+  // Use ONLY hook data from connected wallet, ignore stale props
+  const effectiveSmartAccount = connectedSmartAccount || null;
+  const effectiveTbaAddress = hookSmartAccountTba || null;
+  const effectiveIsSmartAccountDeployed = isConnectedSmartAccountDeployed;
+
+  // Debug: Log wallet and TBA changes
+  console.log("🎮 GameControls Wallet Update:", {
+    eoaAddress: address,
+    connectedSmartAccount,
+    hookSmartAccountTba,
+    effectiveTbaAddress,
+    effectiveIsSmartAccountDeployed,
+    propSmartAccount: smartAccountAddress,
+    propTbaAddress: tbaAddress,
+  });
 
   // Get food tokens data using the effective TBA address (Smart Account TBA priority)
   const { breadAmount, meatAmount, lettuceAmount, tomatoAmount } = useFoodTokens(effectiveTbaAddress);
@@ -161,13 +179,13 @@ export const GameControls = ({
             <div
               className={`px-4 py-1 rounded-full text-xs font-medium shadow-lg ${
                 isConnected
-                  ? isSmartAccountDeployed
+                  ? effectiveIsSmartAccountDeployed
                     ? "bg-gradient-to-r from-purple-500 to-purple-700 text-white"
                     : "bg-gradient-to-r from-green-500 to-green-700 text-white"
                   : "bg-gradient-to-r from-red-500 to-red-700 text-white"
               }`}
             >
-              {isConnected ? (isSmartAccountDeployed ? "GASLESS MODE" : "CONNECTED") : "DISCONNECTED"}
+              {isConnected ? (effectiveIsSmartAccountDeployed ? "GASLESS MODE" : "CONNECTED") : "DISCONNECTED"}
             </div>
           </div>
 
@@ -440,12 +458,12 @@ export const GameControls = ({
           {/* Smart Account & TBA Account Info */}
           <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex flex-col items-center space-y-1">
             {/* Smart Account */}
-            {isConnected && isSmartAccountDeployed && smartAccountAddress && (
+            {isConnected && effectiveIsSmartAccountDeployed && effectiveSmartAccount && (
               <div className="bg-gradient-to-r from-purple-500/40 to-purple-700/40 backdrop-blur-sm border border-purple-400/60 rounded-md px-2 py-1 shadow-lg">
                 <div className="flex items-center space-x-1">
                   <div className="w-1.5 h-1.5 bg-purple-300 rounded-full animate-pulse"></div>
                   <span className="text-[10px] text-purple-100 font-bold">
-                    Smart: {smartAccountAddress.slice(0, 4)}...{smartAccountAddress.slice(-4)}
+                    Smart: {effectiveSmartAccount.slice(0, 4)}...{effectiveSmartAccount.slice(-4)}
                   </span>
                 </div>
               </div>
@@ -476,7 +494,7 @@ export const GameControls = ({
                   <div className="bg-gradient-to-r from-orange-500/40 to-orange-700/40 backdrop-blur-sm border border-orange-400/60 rounded-md px-2 py-1 shadow-lg">
                     <div className="flex items-center space-x-1">
                       <div className="w-1.5 h-1.5 bg-orange-300 rounded-full animate-pulse"></div>
-                      <span className="text-[10px] text-orange-100 font-bold">Smart Account Not Deployed</span>
+                      <span className="text-[10px] text-orange-100 font-bold">TBA Not Deployed</span>
                     </div>
                   </div>
                 )}

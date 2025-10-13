@@ -106,17 +106,20 @@ export const Ingredient = ({ tbaAddress, className = "" }: IngredientProps) => {
   console.log("Contract total:", totalIngredients);
   console.log("==========================================");
 
-  // Show loading if address is not available
+  // Show message if TBA not available
   if (!effectiveTbaAddress) {
     return (
       <div className={`relative ${className}`}>
-        <div
-          className="relative bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 rounded-2xl shadow-2xl border border-purple-400/30 backdrop-blur-sm"
-          style={{ width: "430px", height: "280px" }}
-        >
-          <div className="flex items-center justify-center h-full">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-400"></div>
-            <span className="ml-2 text-slate-400 text-sm">Loading...</span>
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 rounded-2xl blur-sm opacity-75 animate-pulse"></div>
+        <div className="relative bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 rounded-2xl shadow-2xl border border-purple-400/30 backdrop-blur-sm min-h-[280px] p-4">
+          <div className="flex flex-col items-center justify-center h-full py-12">
+            <div className="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center mb-4 border border-purple-400/30">
+              <Package size={32} className="text-purple-400" />
+            </div>
+            <p className="text-purple-300 text-sm font-semibold text-center mb-2">TBA Not Created</p>
+            <p className="text-slate-400 text-xs text-center max-w-[260px]">
+              Create your Token Bound Account first to start collecting ingredients
+            </p>
           </div>
         </div>
       </div>
@@ -128,11 +131,8 @@ export const Ingredient = ({ tbaAddress, className = "" }: IngredientProps) => {
       {/* Animated Border Effect */}
       <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 rounded-2xl blur-sm opacity-75 animate-pulse"></div>
 
-      {/* Main Container - Fixed Size */}
-      <div
-        className="relative bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 rounded-2xl shadow-2xl border border-purple-400/30 backdrop-blur-sm"
-        style={{ width: "425px", height: "280px" }}
-      >
+      {/* Main Container - Responsive */}
+      <div className="relative bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 rounded-2xl shadow-2xl border border-purple-400/30 backdrop-blur-sm min-h-[280px]">
         {/* Header - Compact */}
         <div className="mb-2">
           <motion.h3
@@ -174,12 +174,28 @@ export const Ingredient = ({ tbaAddress, className = "" }: IngredientProps) => {
 
         {/* No Ingredients State */}
         {!hasIngredients && (
-          <div className="flex flex-col items-center justify-center h-48">
-            <div className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center mb-3 border border-slate-600">
-              <Package size={20} className="text-slate-500" />
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mb-4 border border-slate-600">
+              <Package size={28} className="text-slate-500" />
             </div>
-            <p className="text-slate-400 text-sm text-center">No ingredients available</p>
-            <p className="text-slate-500 text-xs text-center mt-1">Start playing to collect!</p>
+            <p className="text-slate-300 text-sm font-semibold text-center mb-2">No Ingredients Yet</p>
+            <p className="text-slate-400 text-xs text-center max-w-[260px]">Play the game to collect ingredients!</p>
+            <div className="mt-4 flex gap-2 text-xs">
+              <div className="bg-yellow-500/20 border border-yellow-400/30 rounded-lg px-3 py-1.5">
+                <span className="text-yellow-300">🍞 Bread</span>
+              </div>
+              <div className="bg-red-500/20 border border-red-400/30 rounded-lg px-3 py-1.5">
+                <span className="text-red-300">🥩 Meat</span>
+              </div>
+            </div>
+            <div className="mt-2 flex gap-2 text-xs">
+              <div className="bg-green-500/20 border border-green-400/30 rounded-lg px-3 py-1.5">
+                <span className="text-green-300">🥬 Lettuce</span>
+              </div>
+              <div className="bg-pink-500/20 border border-pink-400/30 rounded-lg px-3 py-1.5">
+                <span className="text-pink-300">🍅 Tomato</span>
+              </div>
+            </div>
           </div>
         )}
 

@@ -291,13 +291,33 @@ export const useGaslessTBA = () => {
 
       const { bundlerClient, paymasterClient } = clients;
 
-      // Create MetaMask Smart Account instance using Hybrid implementation
-      const smartAccountInstance = await toMetaMaskSmartAccount({
-        client: publicClient,
-        implementation: Implementation.Hybrid,
-        address: smartAccountAddress as `0x${string}`,
-        signer: { walletClient: walletClient },
+      // Check if smart account is deployed on-chain
+      const code = await publicClient.getCode({ address: smartAccountAddress as `0x${string}` });
+      const isActuallyDeployed = code !== undefined && code !== "0x";
+
+      console.log("Smart Account deployment check:", {
+        smartAccountAddress,
+        isActuallyDeployed,
+        code: code?.slice(0, 10),
       });
+
+      // Create MetaMask Smart Account instance - conditional based on deployment status
+      const smartAccountInstance = !isActuallyDeployed
+        ? // NOT deployed yet - need deployParams
+          await toMetaMaskSmartAccount({
+            client: publicClient,
+            implementation: Implementation.Hybrid,
+            deployParams: [address as `0x${string}`, [], [], []],
+            deploySalt: "0x",
+            signer: { walletClient: walletClient },
+          })
+        : // Already deployed - use address only
+          await toMetaMaskSmartAccount({
+            client: publicClient,
+            implementation: Implementation.Hybrid,
+            address: smartAccountAddress as `0x${string}`,
+            signer: { walletClient: walletClient },
+          });
 
       // Get current nonce using MetaMask Smart Account's getNonce method
       let nonce;
@@ -498,13 +518,33 @@ export const useGaslessTBA = () => {
         console.log("🚀 Creating TBA with Paymaster sponsorship on", targetNetwork.name, "...");
         console.log("📦 Using bundler config:", getBundlerConfig(targetNetwork.id));
 
-        // Create MetaMask Smart Account instance using Hybrid implementation
-        const smartAccountInstance = await toMetaMaskSmartAccount({
-          client: publicClient,
-          implementation: Implementation.Hybrid,
-          address: smartAccountAddress as `0x${string}`,
-          signer: { walletClient: walletClient },
+        // Check if smart account is deployed on-chain
+        const code = await publicClient.getCode({ address: smartAccountAddress as `0x${string}` });
+        const isActuallyDeployed = code !== undefined && code !== "0x";
+
+        console.log("Smart Account deployment check for TBA:", {
+          smartAccountAddress,
+          isActuallyDeployed,
+          code: code?.slice(0, 10),
         });
+
+        // Create MetaMask Smart Account instance - conditional based on deployment status
+        const smartAccountInstance = !isActuallyDeployed
+          ? // NOT deployed yet - need deployParams
+            await toMetaMaskSmartAccount({
+              client: publicClient,
+              implementation: Implementation.Hybrid,
+              deployParams: [address as `0x${string}`, [], [], []],
+              deploySalt: "0x",
+              signer: { walletClient: walletClient },
+            })
+          : // Already deployed - use address only
+            await toMetaMaskSmartAccount({
+              client: publicClient,
+              implementation: Implementation.Hybrid,
+              address: smartAccountAddress as `0x${string}`,
+              signer: { walletClient: walletClient },
+            });
 
         // Get current nonce using MetaMask Smart Account's getNonce method
         const nonce = await smartAccountInstance.getNonce();
