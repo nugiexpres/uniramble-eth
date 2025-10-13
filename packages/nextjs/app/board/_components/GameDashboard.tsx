@@ -43,31 +43,31 @@ export const GameDashboard = ({ className = "" }: GameDashboardProps) => {
   };
 
   return (
-    <div className={`relative w-[445px] ${className}`}>
+    <div className={`relative w-[360px] ${className}`}>
       {/* Gaming Style Container with Animated Border */}
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-2xl blur-sm opacity-60 animate-pulse"></div>
 
         <div className="relative bg-gradient-to-br from-slate-900 to-slate-800 p-2 rounded-2xl shadow-2xl border border-purple-400/40">
-          {/* Toggle Header */}
-          <div className="mb-4 mt-7">
-            <div className="flex items-center justify-between bg-slate-800/80 rounded-xl p-3 border border-slate-700/50">
+          {/* Toggle Header - Compact */}
+          <div className="mb-3 mt-4">
+            <div className="flex items-center justify-between bg-slate-800/80 rounded-lg p-2 border border-slate-700/50">
               {/* Left Tab - Smart Account */}
               <motion.button
                 onClick={() => setActivePanel("account")}
-                className={`flex items-center gap-3 px-4 py-2 rounded-lg font-bold text-sm transition-all duration-300 flex-1 mr-2 cursor-pointer ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md font-semibold text-xs transition-all duration-300 flex-1 mr-1.5 cursor-pointer ${
                   activePanel === "account"
                     ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/25"
                     : "bg-slate-700/50 text-slate-400 hover:bg-slate-700 hover:text-slate-300"
                 }`}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
               >
-                <User size={16} />
+                <User size={14} />
                 <span>SMART ACCOUNT</span>
                 {activePanel === "account" && (
                   <motion.div
-                    className="w-2 h-2 bg-white rounded-full"
+                    className="w-1.5 h-1.5 bg-white rounded-full"
                     animate={{ opacity: [1, 0.5, 1] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
                   />
@@ -75,42 +75,42 @@ export const GameDashboard = ({ className = "" }: GameDashboardProps) => {
               </motion.button>
 
               {/* Toggle Visual Indicator */}
-              <div className="flex items-center gap-2">
-                <motion.div animate={{ x: activePanel === "account" ? -10 : 10 }} className="text-cyan-400">
-                  {activePanel === "account" ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+              <div className="flex items-center gap-1.5">
+                <motion.div animate={{ x: activePanel === "account" ? -6 : 6 }} className="text-cyan-400">
+                  {activePanel === "account" ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
                 </motion.div>
 
-                <div className="relative w-12 h-6 bg-slate-600 rounded-full p-1">
+                <div className="relative w-8 h-4 bg-slate-600 rounded-full p-0.5">
                   <motion.div
-                    className="w-4 h-4 bg-gradient-to-r from-emerald-400 to-cyan-500 rounded-full shadow-lg"
+                    className="w-3 h-3 bg-gradient-to-r from-emerald-400 to-cyan-500 rounded-full shadow-lg"
                     animate={{
-                      x: activePanel === "account" ? 0 : 20,
+                      x: activePanel === "account" ? 0 : 16,
                     }}
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
                   />
                 </div>
 
-                <motion.div animate={{ x: activePanel === "tba" ? 10 : -10 }} className="text-cyan-400">
-                  {activePanel === "tba" ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+                <motion.div animate={{ x: activePanel === "tba" ? 6 : -6 }} className="text-cyan-400">
+                  {activePanel === "tba" ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
                 </motion.div>
               </div>
 
               {/* Right Tab - Create TBA */}
               <motion.button
                 onClick={() => setActivePanel("tba")}
-                className={`flex items-center gap-3 px-4 py-2 rounded-lg font-bold text-sm transition-all duration-300 flex-1 ml-2 cursor-pointer ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md font-semibold text-xs transition-all duration-300 flex-1 ml-1.5 cursor-pointer ${
                   activePanel === "tba"
                     ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/25"
                     : "bg-slate-700/50 text-slate-400 hover:bg-slate-700 hover:text-slate-300"
                 }`}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
               >
-                <Link size={16} />
+                <Link size={14} />
                 <span>CREATE TBA</span>
                 {activePanel === "tba" && (
                   <motion.div
-                    className="w-2 h-2 bg-white rounded-full"
+                    className="w-1.5 h-1.5 bg-white rounded-full"
                     animate={{ opacity: [1, 0.5, 1] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
                   />

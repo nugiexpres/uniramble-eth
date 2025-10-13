@@ -124,70 +124,73 @@ export const EnvioBoard = () => {
       )}
 
       {/* Desktop Layout */}
-      <div className="hidden lg:flex h-full w-full pt-[40px] relative">
-        {/* Desktop Header */}
-        <div className="fixed top-0 left-0 w-full z-50 bg-gradient-to-r from-purple-600 to-blue-600">
+      <div className="hidden lg:flex h-full w-full relative">
+        {/* Desktop Header - COMMENTED OUT */}
+        {/* <div className="fixed top-0 left-0 w-full z-50 bg-gradient-to-r from-purple-600 to-blue-600">
           <HeaderBanner />
-        </div>
+        </div> */}
 
-        {/* Top Left Panel - Smart Account Dashboard */}
-        <div className="fixed top-[60px] left-[10px] w-[445px] z-40">
-          <GameDashboard tbaAddress={tbaAddress} />
-        </div>
-
-        {/* Top Right Panel - Game Combine */}
-        <div className="fixed top-[60px] right-[10px] w-[445px] z-40">
-          <GameCombine tbaAddress={tbaAddress} />
-        </div>
-
-        {/* Center - Game Board */}
-        <div className="flex-1 flex flex-col items-center justify-start pt-8">
-          {/* Game Board */}
-          <div className="fixed top-18 left-1/2 transform -translate-x-1/2 z-30">
-            {(() => {
-              try {
-                return <GameBoard gridData={gridData} playerPositionData={finalEnvioPlayerPosition} />;
-              } catch (error) {
-                console.error("GameBoard render error:", error);
-                return (
-                  <div className="relative bg-gradient-to-br from-red-300 to-red-400 rounded-xl shadow-xl border-4 border-red-500 mb-6 flex items-center justify-center w-[445px] h-[445px]">
-                    <div className="text-red-800 text-center">
-                      <div className="text-lg font-bold">Game Board Error</div>
-                      <div className="text-sm">Please refresh the page</div>
-                    </div>
-                  </div>
-                );
-              }
-            })()}
+        {/* Main Game Container - Single Parent untuk konsistensi */}
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 flex items-start gap-2 z-30">
+          {/* Left Panel - Smart Account Dashboard */}
+          <div className="w-[340px] flex-shrink-0">
+            <GameDashboard tbaAddress={tbaAddress} />
           </div>
 
-          {/* Game Controls */}
-          <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-30">
-            <GameControls
-              handleRoll={handleRoll}
-              handleBuy={handleBuy}
-              handleRail={handleRail}
-              handleCook={handleCook}
-              handleFaucetMon={handleFaucetMon}
-              isOnStove={isOnStove}
-              faucetUsed={faucetUsed}
-              canBuy={canBuy}
-              isModalOpen={isModalOpen}
-              playerPosition={finalEnvioPlayerPosition}
-              isRolling={isRolling}
-              isBuying={isBuying}
-              isRailTraveling={isRailTraveling}
-              isCooking={isCooking}
-              isUsingFaucet={isUsingFaucet}
-              buyError={buyError}
-              ingredientFee={ingredientFee}
-              effectivePosition={effectivePosition}
-              tbaAddress={tbaAddress}
-              gridData={gridData}
-              isSmartAccountDeployed={isSmartAccountDeployed}
-              smartAccountAddress={smartAccountAddress || undefined}
-              smartAccountTbaAddress={userTBA}
-            />
+          {/* Center - Game Board Container */}
+          <div className="flex flex-col items-center justify-start flex-shrink-0">
+            {/* Game Board */}
+            <div className="relative">
+              {(() => {
+                try {
+                  return <GameBoard gridData={gridData} playerPositionData={finalEnvioPlayerPosition} />;
+                } catch (error) {
+                  console.error("GameBoard render error:", error);
+                  return (
+                    <div className="relative bg-gradient-to-br from-red-300 to-red-400 rounded-xl shadow-xl border-4 border-red-500 mb-6 flex items-center justify-center w-[445px] h-[445px]">
+                      <div className="text-red-800 text-center">
+                        <div className="text-lg font-bold">Game Board Error</div>
+                        <div className="text-sm">Please refresh the page</div>
+                      </div>
+                    </div>
+                  );
+                }
+              })()}
+            </div>
+
+            {/* Game Controls */}
+            <div className="relative mt-4">
+              <GameControls
+                handleRoll={handleRoll}
+                handleBuy={handleBuy}
+                handleRail={handleRail}
+                handleCook={handleCook}
+                handleFaucetMon={handleFaucetMon}
+                isOnStove={isOnStove}
+                faucetUsed={faucetUsed}
+                canBuy={canBuy}
+                isModalOpen={isModalOpen}
+                playerPosition={finalEnvioPlayerPosition}
+                isRolling={isRolling}
+                isBuying={isBuying}
+                isRailTraveling={isRailTraveling}
+                isCooking={isCooking}
+                isUsingFaucet={isUsingFaucet}
+                buyError={buyError}
+                ingredientFee={ingredientFee}
+                effectivePosition={effectivePosition}
+                tbaAddress={tbaAddress}
+                gridData={gridData}
+                isSmartAccountDeployed={isSmartAccountDeployed}
+                smartAccountAddress={smartAccountAddress || undefined}
+                smartAccountTbaAddress={userTBA}
+              />
+            </div>
+          </div>
+
+          {/* Right Panel - Game Combine */}
+          <div className="w-[340px] flex-shrink-0">
+            <GameCombine tbaAddress={tbaAddress} />
           </div>
         </div>
       </div>

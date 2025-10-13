@@ -283,7 +283,7 @@ export const EnvioAnalytics = () => {
   return (
     <div
       ref={rootRef}
-      className="w-full max-w-md mx-auto bg-gradient-to-br from-slate-900/95 to-slate-800/95 backdrop-blur-xl rounded-2xl border border-slate-700/40 shadow-xl overflow-hidden relative flex flex-col"
+      className="w-full h-full bg-gradient-to-br from-slate-900/95 to-slate-800/95 backdrop-blur-xl rounded-2xl border border-slate-700/40 shadow-xl overflow-hidden relative flex flex-col"
     >
       {/* Compact Header */}
       <div className="px-4 py-2 border-b border-slate-700/40">
@@ -319,8 +319,8 @@ export const EnvioAnalytics = () => {
         </div>
       </div>
 
-      {/* Events stream - Fixed height untuk 16 items */}
-      <div className="p-2 flex flex-col" style={{ height: "540px" }}>
+      {/* Events stream - Flex-1 untuk full height */}
+      <div className="flex-1 flex flex-col p-2 overflow-hidden">
         <div
           ref={scrollRef}
           className="flex-1 overflow-y-auto space-y-1.5 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-800"
