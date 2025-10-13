@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 // import CreateTBA from "./CreateTBA";
 import { GameBoard } from "./GameBoard";
+import { GameCombine } from "./GameCombine";
 import { GameControls } from "./GameControls";
 import { GameDashboard } from "./GameDashboard";
 // import { GameHubPanel } from "./GameHubPanel";
@@ -152,9 +153,21 @@ export const Board = () => {
           <HeaderBanner />
         </div>
 
-        {/* Top Left Panel - Create Token Bound Account */}
-        <div className="fixed top-[55px] h-[390px] w-[445px] ml-1 pl-5w-80 p-4 flex flex-col h-full">
+        {/* Top Left Panel - Smart Account Dashboard */}
+        <div className="fixed top-[55px] left-[20px] h-[390px] w-[445px] p-4 flex flex-col">
           <GameDashboard
+            tbaAddress={tbaAddress}
+            foodTokens={foodTokens}
+            gridData={gridData}
+            playerPosition={playerPosition}
+            faucetUsed={faucetUsed}
+            canBuy={canBuy}
+          />
+        </div>
+
+        {/* Top Right Panel - Game Combine (TBA & Ingredients) */}
+        <div className="fixed top-[55px] right-[20px] h-[720px] w-[445px] p-4 flex flex-col">
+          <GameCombine
             tbaAddress={tbaAddress}
             foodTokens={foodTokens}
             gridData={gridData}

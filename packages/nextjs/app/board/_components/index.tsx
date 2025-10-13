@@ -1,6 +1,7 @@
 export * from "./Board";
 export * from "./CollectionPanel";
 export * from "./GameBoard";
+export * from "./GameCombine";
 export * from "./GameControls";
 export * from "./GameDashboard";
 export * from "./Ingredient";
