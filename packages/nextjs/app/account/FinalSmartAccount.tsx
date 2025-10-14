@@ -11,14 +11,12 @@ import { useSmartAccountContext } from "~~/contexts/SmartAccountContext";
 // import { useTokenBalances } from "~~/hooks/envio/useTokenBalances";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { useFinalSmartAccount } from "~~/hooks/smart-account/useFinalSmartAccount";
-import { useSmartAccountVerification } from "~~/hooks/smart-account/useSmartAccountVerification";
 
 export const FinalSmartAccount = () => {
   const { address, isConnected } = useAccount();
   const { targetNetwork } = useTargetNetwork();
   const { isDeployed, isLoading, error, smartAccountAddress, createAndDeploySmartAccount, reinitializeClients } =
     useFinalSmartAccount();
-  const { isVerified, verificationStatus, verifyOwnership } = useSmartAccountVerification();
 
   // Smart Account Context
   const {
@@ -211,117 +209,79 @@ export const FinalSmartAccount = () => {
       return;
     }
 
-    // Check if Smart Account exists in context but not deployed
-    if (isSmartAccountLoggedIn && smartAccountAddress && !isDeployed) {
-      console.log("Smart Account exists in context but not deployed, proceeding with deployment...");
-    }
-
-    // If we reach here, proceed with deployment
-    console.log("Proceeding with Smart Account deployment...");
-
-    // Show deploy modal for new Smart Account creation or restoration
+    // Show deploy modal for new Smart Account creation
     console.log("Showing Smart Account deploy modal...");
     setDeployStep(1);
     setDeployError(null);
     setShowDeployModal(true);
 
     try {
-      // Step 1: Deploy Smart Account (1st signature)
-      console.log("Step 1: Deploying Smart Account (1st signature)...");
+      // Step 1: Sign "Welcome to Uniramble" message (off-chain signature)
+      console.log("Step 1: Requesting Welcome to Uniramble signature...");
       setDeployStep(1);
+
+      if (!address) {
+        throw new Error("Wallet address not found");
+      }
+
+      // Import signMessage from wagmi
+      const { signMessage } = await import("wagmi/actions");
+      const { wagmiConfig } = await import("~~/services/web3/wagmiConfig");
+
+      const welcomeMessage = `Welcome to Uniramble! 🎮\n\nYou are about to create a Smart Account for gasless gameplay.\n\nAddress: ${address}\nTimestamp: ${new Date().toISOString()}`;
+
+      console.log("Requesting signature for welcome message...");
+      const signature = await signMessage(wagmiConfig, { message: welcomeMessage });
+
+      if (!signature) {
+        throw new Error("Welcome signature rejected");
+      }
+
+      console.log("✅ Welcome signature received:", signature.slice(0, 10) + "...");
+
+      // Step 2: Deploy Smart Account (2nd signature - gasless deployment)
+      console.log("Step 2: Deploying Smart Account (gasless)...");
+      setDeployStep(2);
 
       const result = await createAndDeploySmartAccount();
 
       if (result) {
-        // Step 2: Verify Smart Account ownership (2nd signature - REAL SIGNATURE)
-        console.log("Step 2: Verifying Smart Account ownership (2nd signature - requesting user signature)...");
-        setDeployStep(2);
+        console.log("✅ Smart Account deployed successfully!");
 
-        // Add delay to ensure Smart Account address is updated in all hooks
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // Call REAL verifyOwnership function that requires user signature
-        console.log("Requesting verification signature with:", {
-          smartAccountAddress,
-          eoaAddress: address,
-        });
-
-        try {
-          const verificationResult = await verifyOwnership();
-
-          if (!verificationResult) {
-            // Verification failed or rejected - but Smart Account is deployed
-            console.warn("⚠️ Verification rejected, but Smart Account is deployed");
-
-            // Mark as logged in anyway (can verify later)
-            if (isContextAvailable) {
-              setIsSmartAccountLoggedIn(true);
-            }
-
-            // Show warning but allow to continue
-            setDeployError("Verification skipped. You can verify ownership later from Account page.");
-
-            // Close modal after showing warning
-            setTimeout(() => {
-              setShowDeployModal(false);
-              setDeployStep(1);
-              setDeployError(null);
-            }, 3000);
-
-            return; // Exit without throwing error
-          }
-
-          console.log("Smart Account ownership verified successfully with signature!");
-          setDeployStep(3);
-
-          // Sync with context
-          if (isContextAvailable) {
-            setIsSmartAccountLoggedIn(true);
-          }
-
-          // Close modal after success
-          setTimeout(() => {
-            setShowDeployModal(false);
-            setDeployStep(1);
-          }, 2000);
-        } catch (verifyError: any) {
-          console.error("Verification error:", verifyError);
-
-          // If user rejected, allow to continue but show warning
-          if (verifyError.message?.includes("rejected") || verifyError.message?.includes("denied")) {
-            console.warn("⚠️ User rejected verification signature");
-
-            // Mark as logged in anyway (Smart Account is deployed)
-            if (isContextAvailable) {
-              setIsSmartAccountLoggedIn(true);
-            }
-
-            setDeployError("Verification signature rejected. Smart Account is ready but not verified.");
-
-            setTimeout(() => {
-              setShowDeployModal(false);
-              setDeployStep(1);
-              setDeployError(null);
-            }, 3000);
-
-            return; // Exit without throwing error
-          }
-
-          // For other errors, throw
-          throw verifyError;
+        // Mark as logged in
+        if (isContextAvailable) {
+          setIsSmartAccountLoggedIn(true);
         }
+
+        // Close modal after success
+        setTimeout(() => {
+          setShowDeployModal(false);
+          setDeployStep(1);
+          setDeployError(null);
+        }, 2000);
       } else {
         throw new Error("Failed to deploy Smart Account");
       }
     } catch (error: any) {
       console.error("Deployment failed:", error);
-      const errorMessage = error.message || "Failed to create Smart Account";
-      setDeployError(errorMessage);
+
+      // Handle user rejection gracefully
+      if (
+        error.message?.includes("rejected") ||
+        error.message?.includes("denied") ||
+        error.message?.includes("User rejected")
+      ) {
+        console.log("User rejected signature");
+        setDeployError("Signature rejected. Please try again.");
+      } else {
+        setDeployError(error.message || "Failed to create Smart Account");
+      }
 
       // Close modal after showing error
       setTimeout(() => {
         setShowDeployModal(false);
         setDeployStep(1);
+        setDeployError(null);
       }, 3000);
     }
   };
@@ -525,23 +485,20 @@ export const FinalSmartAccount = () => {
         totalSteps={2}
         stepTitle={
           deployStep === 1
-            ? "Deploying Smart Account"
+            ? "Sign Welcome Message"
             : deployStep === 2
-              ? "Verifying Ownership"
+              ? "Deploying Smart Account"
               : "Deployment Complete"
         }
         stepDescription={
           deployStep === 1
-            ? "Please sign the transaction in MetaMask to deploy your Smart Account contract"
+            ? "Please sign the Welcome to Uniramble message in your wallet (off-chain, no gas)"
             : deployStep === 2
-              ? "Please sign the transaction in MetaMask to verify ownership of your Smart Account"
-              : "Your Smart Account has been successfully created and verified"
+              ? "Please confirm Smart Account deployment in your wallet (gasless deployment)"
+              : "Your Smart Account has been successfully created!"
         }
         isProcessing={isLoading}
         error={deployError}
-        onVerifyOwnership={verifyOwnership}
-        verificationStatus={verificationStatus}
-        isVerified={isVerified}
       />
     </div>
   );

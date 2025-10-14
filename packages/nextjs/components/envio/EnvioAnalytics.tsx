@@ -6,6 +6,7 @@ import { Activity, Info, Network, Zap } from "lucide-react";
 import { useEnvioClient } from "~~/hooks/envio";
 import { useGameEvents } from "~~/hooks/envio/useGameEvents";
 import { usePlayerPositions } from "~~/hooks/envio/usePlayerPositions";
+import { getGridInfo } from "~~/utils/grid/gridHelper";
 
 /**
  * EnvioAnalytics — compact, modern component that surfaces real-time game events
@@ -42,8 +43,6 @@ interface GameEvent {
 
 export const EnvioAnalytics = () => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const [autoScroll, setAutoScroll] = useState(true);
-  const [optimisticEvents, setOptimisticEvents] = useState<GameEvent[]>([]); // local optimistic events
   const [showHowInfo, setShowHowInfo] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const toggleRef = useRef<HTMLButtonElement | null>(null);
@@ -54,75 +53,93 @@ export const EnvioAnalytics = () => {
 
   // --- Envio hooks (authoritative data) - filtered by current chain ---
   const { latestPositions } = usePlayerPositions();
-  const { ingredientPurchases, specialBoxMints, faucetEvents, tbaCreations, loading: eventsLoading } = useGameEvents();
+  const {
+    ingredientPurchases,
+    specialBoxMints,
+    faucetUsedEvents,
+    railTravelEvents,
+    hamburgerMintEvents,
+    tbaCreations,
+    loading: eventsLoading,
+  } = useGameEvents();
 
-  // Listen to local game events for instant UI feedback
-  useEffect(() => {
-    const handler = (e: Event) => {
-      try {
-        const detail = (e as CustomEvent).detail as Partial<GameEvent> | undefined;
-        if (!detail) return;
-        
-        const localEvent: GameEvent = {
-          id: detail.id || `local_${Date.now()}`,
-          type: (detail.type as EventType) || "movement",
-          player: detail.player || detail.tbaAddress || "",
-          tbaAddress: detail.tbaAddress || detail.player || "",
-          data: detail.data || {},
-          timestamp: detail.timestamp || Date.now(),
-          db_write_timestamp: new Date().toISOString(),
-          optimistic: true,
-          optimisticKey: (detail as any).optimisticKey,
-        };
-        
-        setOptimisticEvents(prev => {
-          // Remove old event with same key to avoid duplicates
-          if (localEvent.optimisticKey) {
-            const filtered = prev.filter(p => p.optimisticKey !== localEvent.optimisticKey);
-            return [localEvent, ...filtered].slice(0, 10); // Keep max 10 optimistic
-          }
-          return [localEvent, ...prev].slice(0, 10);
-        });
-      } catch (err) {
-        console.warn("EnvioAnalytics: failed to handle localGameAction", err);
-      }
-    };
-    
-    window.addEventListener("localGameAction", handler as EventListener);
-    return () => window.removeEventListener("localGameAction", handler as EventListener);
-  }, []);
+  // Debug: Log raw Envio data dengan detail
+  console.log("🔍 EnvioAnalytics - Raw Envio Data:", {
+    latestPositions: latestPositions.length,
+    latestPositionsData: latestPositions.slice(0, 3),
+    ingredientPurchases: ingredientPurchases.length,
+    ingredientPurchasesData: ingredientPurchases.slice(0, 3),
+    specialBoxMints: specialBoxMints.length,
+    faucetUsedEvents: faucetUsedEvents.length,
+    railTravelEvents: railTravelEvents.length,
+    hamburgerMintEvents: hamburgerMintEvents.length,
+    tbaCreations: tbaCreations.length,
+    isEnabled,
+    chainId,
+    chainName,
+    eventsLoading,
+  });
+
+  // PURELY ENVIO INDEXER - No optimistic events
+  // Envio subscriptions sudah sangat cepat (3-5 detik) via WebSocket
+  // Menghindari duplicate events dan memastikan data 100% akurat dari blockchain
 
   // Build canonical on-chain events from Envio hooks
   const onChainEvents: GameEvent[] = useMemo(() => {
     const out: GameEvent[] = [];
 
-    latestPositions.slice(0, 8).forEach((m, i) => {
+    console.log("🏗️ Building events from Envio data...");
+
+    // Movement events (roll dice) - SEMUA events, tidak filter
+    console.log("🎲 Processing Movement events, count:", latestPositions.length);
+    latestPositions.forEach((m, i) => {
+      console.log("🎲 Movement event:", {
+        id: m.id,
+        player: m.player,
+        newPosition: m.newPosition,
+        roll: m.roll,
+        timestamp: m.db_write_timestamp,
+      });
       out.push({
-        id: `movement_${m.id}`,
+        id: m.id, // Use Envio's unique ID
         type: "movement",
         player: m.player,
         tbaAddress: m.player,
-        data: { position: m.newPosition },
+        data: { position: m.newPosition, roll: m.roll || 0 }, // Default 0 for old events
         timestamp: new Date(m.db_write_timestamp).getTime() + i,
         db_write_timestamp: m.db_write_timestamp,
       });
     });
 
-    ingredientPurchases.slice(0, 6).forEach((p, i) => {
+    // Purchase events (buy ingredient) - SEMUA events, tidak filter
+    console.log("🛒 Processing Purchase events, count:", ingredientPurchases.length);
+    ingredientPurchases.forEach((p, i) => {
+      console.log("🛒 Purchase event:", {
+        id: p.id,
+        player: p.player,
+        ingredientType: p.ingredientType,
+        position: p.position,
+        timestamp: p.db_write_timestamp,
+      });
       out.push({
-        id: `purchase_${p.id}`,
+        id: p.id, // Use Envio's unique ID
         type: "purchase",
         player: p.player,
         tbaAddress: p.player,
-        data: { ingredientType: p.ingredientType, fee: p.fee },
+        data: {
+          ingredientType: p.ingredientType,
+          position: p.position !== undefined ? p.position : null, // null for old events without position
+        },
         timestamp: new Date(p.db_write_timestamp).getTime() + i,
         db_write_timestamp: p.db_write_timestamp,
       });
     });
 
-    specialBoxMints.slice(0, 3).forEach((s, i) => {
+    // Special box mint events
+    specialBoxMints.slice(0, 20).forEach((s, i) => {
+      console.log("🎁 SpecialBox Mint:", s);
       out.push({
-        id: `mint_${s.id}`,
+        id: s.id, // Use Envio's unique ID
         type: "mint",
         player: s.user,
         tbaAddress: s.user,
@@ -132,21 +149,53 @@ export const EnvioAnalytics = () => {
       });
     });
 
-    faucetEvents.slice(0, 5).forEach((f, i) => {
+    // Faucet usage events
+    faucetUsedEvents.slice(0, 20).forEach((f, i) => {
+      console.log("💰 Faucet:", f);
       out.push({
-        id: `faucet_${f.id}`,
+        id: f.id, // Use Envio's unique ID
         type: "faucet",
-        player: f.owner,
-        tbaAddress: f.owner,
+        player: f.recipient,
+        tbaAddress: f.recipient,
         data: { amount: f.amount },
         timestamp: new Date(f.db_write_timestamp).getTime() + i,
         db_write_timestamp: f.db_write_timestamp,
       });
     });
 
-    tbaCreations.slice(0, 4).forEach((t, i) => {
+    // Rail travel events
+    railTravelEvents.slice(0, 20).forEach((r, i) => {
+      console.log("🚄 Rail:", r);
       out.push({
-        id: `tba_${t.id}`,
+        id: r.id, // Use Envio's unique ID
+        type: "rail",
+        player: r.player,
+        tbaAddress: r.player,
+        data: { fromPosition: r.fromPosition, toPosition: r.toPosition },
+        timestamp: new Date(r.db_write_timestamp).getTime() + i,
+        db_write_timestamp: r.db_write_timestamp,
+      });
+    });
+
+    // Cook (hamburger mint) events
+    hamburgerMintEvents.slice(0, 20).forEach((h, i) => {
+      console.log("👨‍🍳 Cook:", h);
+      out.push({
+        id: h.id, // Use Envio's unique ID
+        type: "cook",
+        player: h.player,
+        tbaAddress: h.player,
+        data: { tokenId: h.tokenId },
+        timestamp: new Date(h.db_write_timestamp).getTime() + i,
+        db_write_timestamp: h.db_write_timestamp,
+      });
+    });
+
+    // TBA creation events
+    tbaCreations.slice(0, 20).forEach((t, i) => {
+      console.log("🧾 TBA:", t);
+      out.push({
+        id: t.id, // Use Envio's unique ID
         type: "tba",
         player: t.eoa,
         tbaAddress: t.tba,
@@ -156,44 +205,64 @@ export const EnvioAnalytics = () => {
       });
     });
 
-    return out.sort((a, b) => b.timestamp - a.timestamp).slice(0, 16);
-  }, [latestPositions, ingredientPurchases, specialBoxMints, faucetEvents, tbaCreations]);
+    console.log("✅ Total events built:", out.length);
+    console.log("📊 Events breakdown:", {
+      movement: out.filter(e => e.type === "movement").length,
+      purchase: out.filter(e => e.type === "purchase").length,
+      rail: out.filter(e => e.type === "rail").length,
+      cook: out.filter(e => e.type === "cook").length,
+      faucet: out.filter(e => e.type === "faucet").length,
+      tba: out.filter(e => e.type === "tba").length,
+    });
 
-  // Merge optimistic (instant feedback) + on-chain events with smart deduplication
+    // Sort by timestamp (newest first) - TIDAK slice, return semua untuk pool lebih besar
+    return out.sort((a, b) => b.timestamp - a.timestamp);
+  }, [
+    latestPositions,
+    ingredientPurchases,
+    specialBoxMints,
+    faucetUsedEvents,
+    railTravelEvents,
+    hamburgerMintEvents,
+    tbaCreations,
+  ]);
+
+  // PURELY ENVIO ON-CHAIN EVENTS - No optimistic, no duplicates
+  // Envio subscriptions provide instant updates (3-5s via WebSocket)
   const events = useMemo(() => {
-    const merged: GameEvent[] = [];
-    const seenKeys = new Set<string>();
+    console.log("🔄 Processing events, onChainEvents count:", onChainEvents.length);
 
-    // Add on-chain events first (authoritative)
-    for (const oc of onChainEvents) {
-      const key = `${oc.type}:${oc.player}:${oc.data?.position || oc.data?.ingredientType || ""}`;
-      seenKeys.add(key);
-      merged.push(oc);
-    }
+    // Deduplicate by Envio's unique ID (chainId_blockNumber_logIndex)
+    const uniqueEvents = new Map<string, GameEvent>();
 
-    // Add optimistic events that haven't been confirmed yet
-    // Auto-remove optimistic after 30 seconds (assumed indexed by Envio)
-    const now = Date.now();
-    for (const opt of optimisticEvents) {
-      const age = now - opt.timestamp;
-      if (age > 30000) continue; // Skip old optimistic events (>30s)
-      
-      const key = `${opt.type}:${opt.player}:${opt.data?.position || opt.data?.ingredientType || ""}`;
-      if (!seenKeys.has(key)) {
-        merged.push(opt);
+    for (const event of onChainEvents) {
+      // Only add if not already present (prevent duplicates)
+      if (!uniqueEvents.has(event.id)) {
+        uniqueEvents.set(event.id, event);
+      } else {
+        console.log("⚠️ Duplicate detected, skipped:", event.id);
       }
     }
 
-    // Sort and limit to 16 most recent
-    return merged.sort((a, b) => b.timestamp - a.timestamp).slice(0, 16);
-  }, [onChainEvents, optimisticEvents]);
+    console.log("✅ After deduplication:", uniqueEvents.size);
 
-  // Auto-scroll when new items arrive (unless user toggled it off)
+    // Sort by timestamp (newest first), limit to 13
+    const sortedEvents = Array.from(uniqueEvents.values())
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .slice(0, 13);
+
+    // Debug: Log final events
+    console.log("📊 Final Events (13 max):", sortedEvents);
+
+    return sortedEvents;
+  }, [onChainEvents]);
+
+  // Auto-scroll to bottom when new items arrive
   useEffect(() => {
-    if (autoScroll && scrollRef.current) {
+    if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [events.length, autoScroll]);
+  }, [events.length]);
 
   // Compute overlay position so it appears right below the toggle button.
   useLayoutEffect(() => {
@@ -250,22 +319,71 @@ export const EnvioAnalytics = () => {
 
   const describe = (e: GameEvent) => {
     switch (e.type) {
-      case "movement":
-        return `Moved → ${e.data.position ?? "?"}`;
-      case "purchase":
-        return `Bought ${e.data.ingredientType ?? "?"} for ${e.data.fee ?? "?"}`;
+      case "movement": {
+        // Handle undefined/null position
+        if (e.data.position === undefined || e.data.position === null) {
+          return `Rolled ${e.data.roll || "?"} (indexing...)`;
+        }
+        const position = e.data.position % 20; // Normalize to 0-19
+        const gridInfo = getGridInfo(position);
+        const roll = e.data.roll || "?"; // Fallback untuk old events
+        return `Rolled ${roll} → Grid ${position} (${gridInfo.gridType})`;
+      }
+      case "purchase": {
+        // Handle undefined/null position (old events without position field)
+        if (e.data.position === undefined || e.data.position === null) {
+          // Fallback: gunakan ingredientType
+          const ingredientName =
+            e.data.ingredientType === 0
+              ? "Bread"
+              : e.data.ingredientType === 1
+                ? "Meat"
+                : e.data.ingredientType === 2
+                  ? "Lettuce"
+                  : e.data.ingredientType === 3
+                    ? "Tomato"
+                    : "Ingredient";
+          return `Bought ${ingredientName} (old event)`;
+        }
+
+        const position = e.data.position % 20; // Normalize to 0-19
+        const gridInfo = getGridInfo(position);
+
+        // Use grid info as source of truth for ingredient name (based on position)
+        return `Bought ${gridInfo.ingredientName} at Grid ${position}`;
+      }
       case "mint":
         return `Minted special box`;
-      case "rail":
-        return `Rail used by ${formatAddress(e.player)}`;
-      case "tba":
-        return `TBA ${formatAddress(e.tbaAddress)} created`;
-      case "faucet":
-        return `Faucet: ${e.data.amount ?? "?"}`;
+      case "rail": {
+        if (e.data.fromPosition === undefined || e.data.toPosition === undefined) {
+          return `Rail travel (indexing...)`;
+        }
+        const fromPos = e.data.fromPosition % 20;
+        const toPos = e.data.toPosition % 20;
+        return `Rail: Grid ${fromPos} → Grid ${toPos}`;
+      }
+      case "tba": {
+        if (e.data.startPosition === undefined || e.data.startPosition === null) {
+          return `TBA created (indexing...)`;
+        }
+        const startPos = e.data.startPosition % 20;
+        const gridInfo = getGridInfo(startPos);
+        return `TBA created at Grid ${startPos} (${gridInfo.gridType})`;
+      }
+      case "faucet": {
+        // Convert amount dari wei (string/bigint) ke MON
+        const amountWei = e.data.amount || 0;
+        const amountMON =
+          typeof amountWei === "string"
+            ? (parseFloat(amountWei) / 1e18).toFixed(4)
+            : (Number(amountWei) / 1e18).toFixed(4);
+        return `Faucet used (${amountMON} MON)`;
+      }
       case "cook":
-        return `Cooked ${e.data.hamburgerCount ?? "?"} hamburger(s)`;
+        // Cook = 1 Bread + 1 Meat + 1 Lettuce + 1 Tomato → 1 Hamburger
+        return `Cooked hamburger (1🍞 1🥩 1🥬 1🍅 → 🍔)`;
       case "sendNative":
-        return `Sent ${e.data.amount ?? "?"} to ${formatAddress(e.data.to)}`;
+        return `Sent ${e.data.amount || "?"} to ${formatAddress(e.data.to)}`;
       case "mintNFT":
         return `Minted Chef NFT to ${formatAddress(e.data.to)}`;
       case "createSmartAccount":
@@ -303,12 +421,6 @@ export const EnvioAnalytics = () => {
               className="text-xs px-2 py-1 bg-slate-700/20 text-slate-300 hover:text-white rounded"
             >
               <Info className="w-3 h-3" />
-            </button>
-            <button
-              onClick={() => setAutoScroll(s => !s)}
-              className={`text-xs px-2 py-1 rounded ${autoScroll ? "bg-slate-700/30 text-white" : "bg-slate-700/10 text-slate-300"}`}
-            >
-              {autoScroll ? "Auto" : "Hold"}
             </button>
           </div>
         </div>
@@ -353,7 +465,15 @@ export const EnvioAnalytics = () => {
                       <div className="flex items-center justify-between gap-2">
                         <div className="text-xs font-medium text-white truncate">{describe(e)}</div>
                         <div className="text-[10px] text-slate-400 whitespace-nowrap">
-                          {new Date(e.timestamp).toLocaleTimeString()}
+                          {(() => {
+                            // Convert UTC timestamp dari Envio ke local timezone user
+                            const localDate = new Date(e.timestamp);
+                            const day = localDate.getDate().toString().padStart(2, "0");
+                            const month = (localDate.getMonth() + 1).toString().padStart(2, "0");
+                            const hours = localDate.getHours().toString().padStart(2, "0");
+                            const minutes = localDate.getMinutes().toString().padStart(2, "0");
+                            return `${day}/${month} ${hours}:${minutes}`;
+                          })()}
                         </div>
                       </div>
                       <div className="text-[10px] text-slate-400 mt-0.5 truncate">
@@ -368,7 +488,7 @@ export const EnvioAnalytics = () => {
         </div>
       </div>
 
-      {/* Footer - Powered by Envio (always visible below 16 events) */}
+      {/* Footer - Powered by Envio (always visible below 13 events) */}
       <div className="px-4 py-2 bg-slate-800/40 border-t border-slate-700/40 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2">
           <a
@@ -387,7 +507,7 @@ export const EnvioAnalytics = () => {
             </span>
           </div>
         </div>
-        <div className="text-[10px] text-slate-500">{events.length}/16</div>
+        <div className="text-[10px] text-slate-500">{events.length}/13</div>
       </div>
 
       {/* How Envio overlay (absolute) */}

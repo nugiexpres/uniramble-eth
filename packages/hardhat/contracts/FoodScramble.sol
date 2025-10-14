@@ -58,10 +58,12 @@ contract FoodScramble {
         Tomato
     }
 
-    event PlayerMoved(address indexed player, uint256 newPosition);
+    event PlayerMoved(address indexed player, uint256 newPosition, uint256 roll);
     event PlayerCreated(address indexed tba, uint256 gridIndex);
     event TokenBoundAccountCreated(address indexed eoa, address indexed tba, uint256 startPosition);
-    event IngredientPurchased(address indexed player, uint256 ingredientType);
+    event IngredientPurchased(address indexed player, uint256 ingredientType, uint256 position);
+    event RailTraveled(address indexed player, uint256 fromPosition, uint256 toPosition);
+    event HamburgerMinted(address indexed player, uint256 tokenId);
     event FaucetAmountUpdated(uint256 oldAmount, uint256 newAmount);
     event FaucetCooldownUpdated(uint256 oldCooldown, uint256 newCooldown);
 
@@ -207,7 +209,7 @@ contract FoodScramble {
             canBuy[tba] = true;
         }
 
-        emit PlayerMoved(tba, nextPos);
+        emit PlayerMoved(tba, nextPos, roll);
     }
 
     // Internal RNG function
@@ -277,7 +279,7 @@ contract FoodScramble {
         stats[tba].ingredientsCollected += 1;
         stats[tba].lastActive = block.timestamp;
 
-        emit IngredientPurchased(tba, currentSpot.ingredientType);
+        emit IngredientPurchased(tba, currentSpot.ingredientType, currentPosition);
     }
 
     function travelRail() public {
@@ -285,15 +287,22 @@ contract FoodScramble {
         Box memory currentSpot = grid[player[tba]];
         require(currentSpot.ingredientType == 98, "Go to Rail Grid");
 
+        uint256 fromPosition = player[tba];
+        uint256 toPosition;
+
         grid[player[tba]].numberOfPlayers -= 1;
 
         if (player[tba] == 5) {
             player[tba] = 15;
+            toPosition = 15;
             grid[15].numberOfPlayers += 1;
         } else {
             player[tba] = 5;
+            toPosition = 5;
             grid[5].numberOfPlayers += 1;
         }
+
+        emit RailTraveled(tba, fromPosition, toPosition);
     }
 
     // Add helper function to check if position allows buying
@@ -320,7 +329,9 @@ contract FoodScramble {
         lettuce.burn(tba, 1 * 10 ** 18);
         tomato.burn(tba, 1 * 10 ** 18);
 
-        hamburger.mintFood(tba, "hamburger");
+        uint256 tokenId = hamburger.mintFood(tba, "hamburger");
+
+        emit HamburgerMinted(tba, tokenId);
     }
 
     function useFaucetMon() public {

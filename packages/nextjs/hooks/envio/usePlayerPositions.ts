@@ -15,6 +15,7 @@ interface PlayerPosition {
   id: string;
   player: string;
   newPosition: number;
+  roll?: number; // Optional untuk backward compatibility
   db_write_timestamp: string;
 }
 
@@ -35,7 +36,7 @@ export const usePlayerPositions = (): PlayerPositionsState => {
   const [positions, setPositions] = useState<Record<string, number>>({});
 
   const { data, loading, error, refetch } = useQuery(GET_PLAYER_POSITIONS, {
-    pollInterval: 500, // Reduced from 100ms to avoid rate limiting (429 errors)
+    pollInterval: 30000, // 30 seconds (subscriptions handle real-time via WebSocket)
     notifyOnNetworkStatusChange: true,
     fetchPolicy: "cache-and-network", // Gunakan cache untuk respons instant
   });
@@ -46,7 +47,11 @@ export const usePlayerPositions = (): PlayerPositionsState => {
   // Update positions dari query data (filtered by chain)
   useEffect(() => {
     if ((data as any)?.FoodScramble_PlayerMoved) {
-      const filtered = filterByChain((data as any).FoodScramble_PlayerMoved as PlayerPosition[], chainId);
+      const raw = (data as any).FoodScramble_PlayerMoved;
+      console.log("🎲 Movement Query Data:", { raw: raw.length, chainId });
+      const filtered = filterByChain(raw as PlayerPosition[], chainId);
+      console.log("🎲 After chain filter:", { filtered: filtered.length, players: filtered.map(f => f.player) });
+
       const newPositions: Record<string, number> = {};
 
       // Ambil position terbaru untuk setiap player
@@ -54,6 +59,7 @@ export const usePlayerPositions = (): PlayerPositionsState => {
         newPositions[movement.player] = movement.newPosition;
       });
 
+      console.log("🎲 Final positions:", newPositions);
       setPositions(newPositions);
     }
   }, [data, chainId]);
@@ -93,7 +99,7 @@ export const usePlayerPosition = (playerAddress?: string) => {
   const { data, loading, error, refetch } = useQuery(GET_PLAYER_POSITION_BY_ADDRESS, {
     variables: { player: playerAddress },
     skip: !playerAddress,
-    pollInterval: 1000, // 1 second polling to avoid rate limiting
+    pollInterval: 30000, // 30 seconds (subscriptions handle real-time)
     fetchPolicy: "cache-and-network",
   });
 

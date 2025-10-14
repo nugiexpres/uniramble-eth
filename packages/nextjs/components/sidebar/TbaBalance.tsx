@@ -6,6 +6,7 @@ import { parseEther } from "viem";
 import { useAccount, useBalance, useSendTransaction } from "wagmi";
 import { WalletConnectionWarning } from "~~/components/scaffold-eth";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
+import { useFinalSmartAccount } from "~~/hooks/smart-account/useFinalSmartAccount";
 import { useTbaBalance } from "~~/hooks/tba/useTbaBalance";
 import { getBlockExplorerTxLink } from "~~/utils/scaffold-eth";
 import { notification } from "~~/utils/scaffold-eth";
@@ -16,18 +17,27 @@ export function TbaBalance() {
   const tbaBalanceHook = useTbaBalance();
   const tbaAddress = tbaBalanceHook?.tbaAddress;
 
+  // Get Smart Account info
+  const { smartAccountAddress, isDeployed: isSmartAccountDeployed } = useFinalSmartAccount();
+
   const [amount, setAmount] = useState("");
   const [mode, setMode] = useState<"send" | "withdraw">("send");
 
-  // Get balance of TBA address
+  // Determine which address to show balance for:
+  // - If Smart Account is deployed, show Smart Account balance (faucet goes here)
+  // - Otherwise, show TBA balance
+  const displayAddress = isSmartAccountDeployed && smartAccountAddress ? smartAccountAddress : tbaAddress;
+  const displayLabel = isSmartAccountDeployed && smartAccountAddress ? "Smart Account" : "TBA";
+
+  // Get balance of display address (Smart Account or TBA)
   const {
     data: balanceData,
     isLoading: loadingBalance,
     refetch: refetchBalance,
   } = useBalance({
-    address: tbaAddress as `0x${string}` | undefined,
+    address: displayAddress as `0x${string}` | undefined,
     query: {
-      enabled: !!tbaAddress,
+      enabled: !!displayAddress,
       refetchInterval: 5000, // Refetch every 5 seconds
     },
   });
@@ -36,7 +46,7 @@ export function TbaBalance() {
   const { sendTransactionAsync, isPending: isSendPending } = useSendTransaction();
 
   const handleSend = async () => {
-    if (!tbaAddress || !amount || !address) {
+    if (!displayAddress || !amount || !address) {
       notification.error("Invalid input or missing address");
       return;
     }
@@ -45,7 +55,7 @@ export function TbaBalance() {
       const amountInWei = parseEther(amount);
 
       const txHash = await sendTransactionAsync({
-        to: tbaAddress as `0x${string}`,
+        to: displayAddress as `0x${string}`,
         value: amountInWei,
       });
 
@@ -54,7 +64,7 @@ export function TbaBalance() {
       notification.success(
         <div className="flex flex-col gap-1">
           <span>
-            Sent {amount} {targetNetwork.nativeCurrency.symbol} to TBA
+            Sent {amount} {targetNetwork.nativeCurrency.symbol} to {displayLabel}
           </span>
           {txUrl && (
             <a href={txUrl} target="_blank" rel="noopener noreferrer" className="underline text-blue-500 text-xs">
@@ -90,9 +100,9 @@ export function TbaBalance() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-white/20 rounded flex items-center justify-center">
-              <span className="text-white/90 text-xs font-bold">TBA</span>
+              <span className="text-white/90 text-xs font-bold">{displayLabel === "Smart Account" ? "SA" : "TBA"}</span>
             </div>
-            <span className="text-white/90 text-xs font-medium">TBA Wallet</span>
+            <span className="text-white/90 text-xs font-medium">{displayLabel} Wallet</span>
           </div>
           <TrendingUp className="text-white/70" size={14} />
         </div>
@@ -188,13 +198,13 @@ export function TbaBalance() {
         {/* Footer Status */}
         <div className="flex items-center justify-center mt-3 pt-3 border-t border-slate-200/50">
           <div className="flex items-center gap-2 text-xs text-slate-500">
-            <div className={`w-1.5 h-1.5 rounded-full ${tbaAddress ? "bg-green-400" : "bg-slate-300"}`} />
-            {tbaAddress ? (
+            <div className={`w-1.5 h-1.5 rounded-full ${displayAddress ? "bg-green-400" : "bg-slate-300"}`} />
+            {displayAddress ? (
               <span className="font-mono">
-                {tbaAddress.slice(0, 6)}...{tbaAddress.slice(-4)}
+                {displayAddress.slice(0, 6)}...{displayAddress.slice(-4)}
               </span>
             ) : (
-              "No TBA"
+              `No ${displayLabel}`
             )}
           </div>
         </div>

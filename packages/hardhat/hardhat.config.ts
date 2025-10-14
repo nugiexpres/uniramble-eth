@@ -15,6 +15,7 @@ import generateTsAbis from "./scripts/generateTsAbis";
 // If not set, it uses ours Alchemy's default API key.
 // You can get your own at https://dashboard.alchemyapi.io
 const providerApiKey = process.env.ALCHEMY_API_KEY || "oKxs-03sij-U_N0iOlrSsZFr29-IqbuF";
+const ankrApiKey = process.env.ANKR_API_KEY || "";
 // If not set, it uses the hardhat account 0 private key.
 // You can generate a random account with `yarn generate` or `yarn account:import` to import your existing PK
 const deployerPrivateKey =
@@ -65,7 +66,7 @@ const config: HardhatUserConfig = {
       accounts: [deployerPrivateKey],
     },
     sepolia: {
-      url: `https://eth-sepolia.g.alchemy.com/v2/${providerApiKey}`,
+      url: `https://rpc.ankr.com/eth_sepolia/${ankrApiKey}`,
       chainId: 11155111,
       accounts: [deployerLocal],
     },
@@ -134,7 +135,10 @@ const config: HardhatUserConfig = {
       accounts: [deployerPrivateKey],
     },
     monadTestnet: {
-      url: `https://monad-testnet.g.alchemy.com/v2/${providerApiKey}`,
+      // Ankr RPC (no rate limits)
+      url: `https://rpc.ankr.com/monad_testnet/${ankrApiKey}`,
+      // Alchemy RPC (commented out - rate limited)
+      // url: `https://monad-testnet.g.alchemy.com/v2/${providerApiKey}`,
       chainId: 10143,
       accounts: [deployerLocal],
       // Rate limiting optimizations

@@ -20,6 +20,7 @@ import {
   FaucetMon,
   FaucetMon_BalanceFunded,
   FaucetMon_BalanceWithdrawn,
+  FaucetMon_FaucetUsed,
   FoodNFT,
   FoodNFT_Approval,
   FoodNFT_ApprovalForAll,
@@ -32,9 +33,11 @@ import {
   FoodScramble,
   FoodScramble_FaucetAmountUpdated,
   FoodScramble_FaucetCooldownUpdated,
+  FoodScramble_HamburgerMinted,
   FoodScramble_IngredientPurchased,
   FoodScramble_PlayerCreated,
   FoodScramble_PlayerMoved,
+  FoodScramble_RailTraveled,
   FoodScramble_TokenBoundAccountCreated,
   LettuceToken,
   LettuceToken_Approval,
@@ -211,6 +214,16 @@ FaucetMon.BalanceWithdrawn.handler(async ({ event, context }) => {
   context.FaucetMon_BalanceWithdrawn.set(entity);
 });
 
+FaucetMon.FaucetUsed.handler(async ({ event, context }) => {
+  const entity: FaucetMon_FaucetUsed = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    recipient: event.params.recipient,
+    amount: event.params.amount,
+  };
+
+  context.FaucetMon_FaucetUsed.set(entity);
+});
+
 FoodNFT.Approval.handler(async ({ event, context }) => {
   const entity: FoodNFT_Approval = {
     id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
@@ -320,6 +333,7 @@ FoodScramble.IngredientPurchased.handler(async ({ event, context }) => {
     id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
     player: event.params.player,
     ingredientType: event.params.ingredientType,
+    position: event.params.position,
   };
 
   context.FoodScramble_IngredientPurchased.set(entity);
@@ -340,6 +354,7 @@ FoodScramble.PlayerMoved.handler(async ({ event, context }) => {
     id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
     player: event.params.player,
     newPosition: event.params.newPosition,
+    roll: event.params.roll,
   };
 
   context.FoodScramble_PlayerMoved.set(entity);
@@ -354,6 +369,27 @@ FoodScramble.TokenBoundAccountCreated.handler(async ({ event, context }) => {
   };
 
   context.FoodScramble_TokenBoundAccountCreated.set(entity);
+});
+
+FoodScramble.RailTraveled.handler(async ({ event, context }) => {
+  const entity: FoodScramble_RailTraveled = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    player: event.params.player,
+    fromPosition: event.params.fromPosition,
+    toPosition: event.params.toPosition,
+  };
+
+  context.FoodScramble_RailTraveled.set(entity);
+});
+
+FoodScramble.HamburgerMinted.handler(async ({ event, context }) => {
+  const entity: FoodScramble_HamburgerMinted = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    player: event.params.player,
+    tokenId: event.params.tokenId,
+  };
+
+  context.FoodScramble_HamburgerMinted.set(entity);
 });
 
 LettuceToken.Approval.handler(async ({ event, context }) => {
@@ -728,4 +764,3 @@ SpecialBoxStake.UnstakeBatch.handler(async ({ event, context }) => {
 
   context.SpecialBoxStake_UnstakeBatch.set(entity);
 });
-

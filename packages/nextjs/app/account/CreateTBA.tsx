@@ -47,7 +47,6 @@ export const CreateTBA = () => {
   const {
     isMinting,
     isCreatingTBA,
-    mintTxHash,
     tbaTxHash,
     error: gaslessError,
     tbaAddress,
@@ -92,12 +91,28 @@ export const CreateTBA = () => {
   useEffect(() => {
     if (smartAccountAddress && isSmartAccountDeployed) {
       console.log("Page loaded, refreshing NFT data for stable state...");
-      // Add small delay to ensure all hooks are initialized
+      // Immediate refresh on mount
+      refetchSmartAccountNFTs();
+
+      // Also refresh after delay to catch any delayed updates
       const timer = setTimeout(() => {
+        console.log("Secondary NFT data refresh...");
         refetchSmartAccountNFTs();
-      }, 1000);
+      }, 2000);
 
       return () => clearTimeout(timer);
+    }
+  }, [smartAccountAddress, isSmartAccountDeployed, refetchSmartAccountNFTs]);
+
+  // Auto-refetch NFT data periodically for real-time updates
+  useEffect(() => {
+    if (smartAccountAddress && isSmartAccountDeployed) {
+      const interval = setInterval(() => {
+        console.log("Periodic NFT data refresh...");
+        refetchSmartAccountNFTs();
+      }, 30000); // Refresh every 30 seconds to reduce rate limiting
+
+      return () => clearInterval(interval);
     }
   }, [smartAccountAddress, isSmartAccountDeployed, refetchSmartAccountNFTs]);
 
@@ -134,8 +149,9 @@ export const CreateTBA = () => {
   // TBA status - more stable logic (only consider TBA created if explicitly marked or has transaction hash)
   const isTBACreated = tbaCreated || !!tbaTxHash;
 
-  // Mint NFT status - more stable logic (prioritize NFT ownership over transaction hash)
-  const isNFTMinted = smartAccountHasNFTs || !!mintTxHash;
+  // Mint NFT status - ONLY use NFT ownership as source of truth (ignore mintTxHash for stability)
+  // This ensures button stays locked after page refresh
+  const isNFTMinted = smartAccountHasNFTs;
 
   // Format mint price for display
   const formatMintPrice = (price: bigint | undefined) => {
@@ -401,12 +417,12 @@ export const CreateTBA = () => {
       <div className="flex items-center justify-center gap-1.5 mb-2">
         <div
           className={`flex items-center gap-1 px-1.5 py-0.5 rounded-lg text-xs transition-all ${
-            mintTxHash
+            isNFTMinted
               ? "bg-green-500/20 text-green-300 border border-green-400/30"
               : "bg-purple-500/20 text-purple-300 border border-purple-400/30"
           }`}
         >
-          {mintTxHash ? (
+          {isNFTMinted ? (
             <CheckCircle className="w-3 h-3" />
           ) : (
             <span className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-xs font-bold text-white">
@@ -416,18 +432,18 @@ export const CreateTBA = () => {
           <span className="font-medium">Mint NFT</span>
         </div>
 
-        <div className={`w-3 h-0.5 rounded-full ${mintTxHash ? "bg-green-400" : "bg-slate-600"}`}></div>
+        <div className={`w-3 h-0.5 rounded-full ${isNFTMinted ? "bg-green-400" : "bg-slate-600"}`}></div>
 
         <div
           className={`flex items-center gap-1 px-1.5 py-0.5 rounded-lg text-xs transition-all ${
-            tbaTxHash
+            isTBACreated
               ? "bg-green-500/20 text-green-300 border border-green-400/30"
-              : mintTxHash
+              : isNFTMinted
                 ? "bg-purple-500/20 text-purple-300 border border-purple-400/30"
                 : "bg-slate-500/20 text-slate-400 border border-slate-600/30"
           }`}
         >
-          {tbaTxHash ? (
+          {isTBACreated ? (
             <CheckCircle className="w-3 h-3" />
           ) : (
             <span className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-xs font-bold text-white">
@@ -477,7 +493,7 @@ export const CreateTBA = () => {
                 alt="UniRamble Chef NFT"
                 className="mx-auto rounded-lg"
               />
-              {mintTxHash && (
+              {isNFTMinted && (
                 <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
                   <CheckCircle className="w-3 h-3 text-white" />
                 </div>
@@ -540,13 +556,10 @@ export const CreateTBA = () => {
                 </div>
               </div>
             </div>
-          ) : mintTxHash ? (
-            <div className="bg-slate-900/50 rounded-lg p-3 mb-2 text-center flex-1 flex flex-col justify-center">
-              <CheckCircle className="w-8 h-8 text-cyan-400 mx-auto mb-2" />
-            </div>
           ) : (
             <div className="bg-slate-900/50 rounded-lg p-3 mb-2 text-center flex-1 flex flex-col justify-center">
               <AlertCircle className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
+              <p className="text-xs text-slate-400">Mint NFT first</p>
             </div>
           )}
 

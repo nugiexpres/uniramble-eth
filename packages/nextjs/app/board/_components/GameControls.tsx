@@ -49,15 +49,12 @@ export const GameControls = ({
   isRailTraveling = false,
   isCooking = false,
   isUsingFaucet = false,
-  buyError,
   effectivePosition,
   tbaAddress,
   currentGrid = "",
   isMobile = false,
   gridData = [],
-  isSmartAccountDeployed = false,
   smartAccountAddress,
-  smartAccountTbaAddress,
 }: GameControlsProps) => {
   const scale = isMobile ? "scale-75" : "scale-100";
 
@@ -154,11 +151,14 @@ export const GameControls = ({
     }
   };
 
-  // Check if faucet button should be active
+  // Check if faucet button should be active (only on Stove)
   const canUseFaucet = isOnStove && !faucetUsed;
 
-  // Check if rail button should be active
+  // Check if rail button should be active (only on Rail)
   const canUseRail = isActuallyOnRail;
+
+  // Check if buy button should be active (not on Rail or Stove)
+  const canBuyIngredient = canBuy && !isActuallyOnRail && !isOnStove;
 
   return (
     <div className={`flex flex-col items-center space-y-6 ${isMobile ? "p-2" : "p-6"}`}>
@@ -323,11 +323,13 @@ export const GameControls = ({
 
               {/* Buy Button (Right) */}
               <button
-                className={`absolute right-1 top-1/2 transform -translate-y-1/2 w-12 h-12 rounded-full shadow-xl transition-all duration-200 active:scale-90 flex flex-col items-center justify-center font-bold border-3 z-20 ${
-                  canBuy && !isModalOpen && !isBuying && isConnected
-                    ? "bg-gradient-to-b from-yellow-400 to-yellow-600 hover:from-yellow-300 hover:to-yellow-500 border-yellow-300 text-white shadow-yellow-400/50 cursor-pointer"
-                    : "bg-gradient-to-b from-gray-400 to-gray-600 border-gray-300 text-gray-200 cursor-not-allowed opacity-50"
-                } ${isBuying ? "animate-pulse" : ""}`}
+                className={`absolute right-1 top-1/2 transform -translate-y-1/2 w-12 h-12 rounded-full shadow-xl transition-all duration-200 active:scale-90 disabled:opacity-50 flex flex-col items-center justify-center font-bold border-3 z-20 ${
+                  isBuying
+                    ? "bg-gradient-to-b from-yellow-300 to-yellow-500 border-yellow-200 text-white shadow-yellow-400/70 animate-bounce"
+                    : canBuyIngredient && !isModalOpen && isConnected
+                      ? "bg-gradient-to-b from-yellow-400 to-yellow-600 hover:from-yellow-300 hover:to-yellow-500 border-yellow-300 text-white shadow-yellow-400/50 cursor-pointer"
+                      : "bg-gradient-to-b from-gray-400 to-gray-600 border-gray-300 text-gray-200 cursor-not-allowed"
+                }`}
                 onClick={() => {
                   try {
                     handleBuy();
@@ -335,19 +337,27 @@ export const GameControls = ({
                     dispatchLocalGameAction("purchase", { info: "buy" });
                   }
                 }}
-                disabled={isModalOpen || !canBuy || isBuying || !isConnected}
-                title="Buy Ingredient"
+                disabled={isModalOpen || !canBuyIngredient || isBuying || !isConnected}
+                title={
+                  isActuallyOnRail || isOnStove
+                    ? "Cannot buy on Rail/Stove"
+                    : !canBuy
+                      ? "Move to ingredient grid"
+                      : "Buy Ingredient"
+                }
               >
                 <span className="text-xl">🛒</span>
               </button>
 
               {/* Cook Button (Bottom) */}
               <button
-                className={`absolute bottom-1 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full shadow-xl transition-all duration-200 active:scale-90 flex flex-col items-center justify-center font-bold border-3 z-20 ${
-                  canCook && !isModalOpen && !isCooking && isConnected
-                    ? "bg-gradient-to-b from-orange-400 to-orange-600 hover:from-orange-300 hover:to-orange-500 border-orange-300 text-white shadow-orange-400/50 cursor-pointer"
-                    : "bg-gradient-to-b from-gray-400 to-gray-600 border-gray-300 text-gray-200 cursor-not-allowed opacity-50"
-                } ${isCooking ? "animate-pulse" : ""}`}
+                className={`absolute bottom-1 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full shadow-xl transition-all duration-200 active:scale-90 disabled:opacity-50 flex flex-col items-center justify-center font-bold border-3 z-20 ${
+                  isCooking
+                    ? "bg-gradient-to-b from-orange-300 to-orange-500 border-orange-200 text-white shadow-orange-400/70 animate-bounce"
+                    : canCook && !isModalOpen && isConnected
+                      ? "bg-gradient-to-b from-orange-400 to-orange-600 hover:from-orange-300 hover:to-orange-500 border-orange-300 text-white shadow-orange-400/50 cursor-pointer"
+                      : "bg-gradient-to-b from-gray-400 to-gray-600 border-gray-300 text-gray-200 cursor-not-allowed"
+                }`}
                 onClick={() => {
                   try {
                     handleCook();
@@ -363,13 +373,17 @@ export const GameControls = ({
 
               {/* Rail/Faucet Button (Left) */}
               <button
-                className={`absolute left-1 top-1/2 transform -translate-y-1/2 w-12 h-12 rounded-full shadow-xl transition-all duration-200 active:scale-90 flex flex-col items-center justify-center font-bold border-3 z-20 ${
-                  canUseFaucet && isConnected && !isUsingFaucet
-                    ? "bg-gradient-to-b from-cyan-400 to-cyan-600 hover:from-cyan-300 hover:to-cyan-500 border-cyan-300 text-white shadow-cyan-400/50 cursor-pointer"
-                    : canUseRail && isConnected && !isRailTraveling
-                      ? "bg-gradient-to-b from-blue-400 to-blue-600 hover:from-blue-300 hover:to-blue-500 border-blue-300 text-white shadow-blue-400/50 cursor-pointer"
-                      : "bg-gradient-to-b from-gray-400 to-gray-600 border-gray-300 text-gray-200 cursor-not-allowed opacity-50"
-                } ${isUsingFaucet || isRailTraveling ? "animate-pulse" : ""}`}
+                className={`absolute left-1 top-1/2 transform -translate-y-1/2 w-12 h-12 rounded-full shadow-xl transition-all duration-200 active:scale-90 disabled:opacity-50 flex flex-col items-center justify-center font-bold border-3 z-20 ${
+                  isUsingFaucet
+                    ? "bg-gradient-to-b from-cyan-300 to-cyan-500 border-cyan-200 text-white shadow-cyan-400/70 animate-bounce"
+                    : isRailTraveling
+                      ? "bg-gradient-to-b from-blue-300 to-blue-500 border-blue-200 text-white shadow-blue-400/70 animate-bounce"
+                      : canUseFaucet && isConnected
+                        ? "bg-gradient-to-b from-cyan-400 to-cyan-600 hover:from-cyan-300 hover:to-cyan-500 border-cyan-300 text-white shadow-cyan-400/50 cursor-pointer"
+                        : canUseRail && isConnected
+                          ? "bg-gradient-to-b from-blue-400 to-blue-600 hover:from-blue-300 hover:to-blue-500 border-blue-300 text-white shadow-blue-400/50 cursor-pointer"
+                          : "bg-gradient-to-b from-gray-400 to-gray-600 border-gray-300 text-gray-200 cursor-not-allowed"
+                }`}
                 onClick={() => {
                   if (canUseFaucet && isConnected && !isUsingFaucet) {
                     try {

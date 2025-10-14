@@ -51,13 +51,14 @@ export const SpecialBox = ({ className = "" }: SpecialBoxProps) => {
   const addressToUse = smartAccountTbaAddress || tbaAddress || address;
 
   // Get user's current box balance - Updated to use Smart Account address
+  // With token + subscriptions, we can reduce polling significantly
   const { data: userBoxes } = useScaffoldReadContract({
     contractName: "SpecialBox",
     functionName: "boxBalance",
     args: [addressToUse],
     query: {
       enabled: !!addressToUse,
-      refetchInterval: 30000, // Refetch every 30s instead of constant polling to avoid rate limiting
+      refetchInterval: 60000, // 60s - Token eliminates rate limiting, mint events trigger updates
     },
     watch: false, // Disable watch to prevent continuous RPC calls
   });

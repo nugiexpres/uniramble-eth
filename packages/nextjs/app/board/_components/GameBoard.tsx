@@ -16,8 +16,14 @@ export const GameBoard = ({ gridData, playerPositionData, isMobile = false }: Ga
   const boardSize = isMobile ? "425px" : "445px";
   const gridOffset = isMobile ? "translate(-16px, -16px)" : "translate(-4px, -4px)";
 
-  // Debug logging
-  console.log("GameBoard props:", { gridData, playerPositionData, isMobile });
+  // Debug logging - Track player position updates
+  console.log("🎮 GameBoard Render:", {
+    playerPositionData,
+    playerPositionType: typeof playerPositionData,
+    gridDataLength: gridData?.length,
+    isMobile,
+    timestamp: Date.now(),
+  });
 
   return (
     <div
@@ -45,15 +51,19 @@ export const GameBoard = ({ gridData, playerPositionData, isMobile = false }: Ga
                   {gridItem.typeGrid}
                 </span>
 
-                {/* Player Position */}
+                {/* Player Position - Force re-render dengan key prop */}
                 {playerPositionData?.toString() === gridItem.id.toString() && (
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30">
+                  <div
+                    key={`player-${playerPositionData}-${Date.now()}`}
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30"
+                  >
                     <Image
                       src="/assets/chog.png"
                       width={isMobile ? 50 : 45}
                       height={isMobile ? 50 : 45}
                       alt="Chog"
                       className="drop-shadow-lg"
+                      priority
                     />
                   </div>
                 )}

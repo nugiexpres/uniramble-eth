@@ -148,6 +148,7 @@ type FoodScramble_IngredientPurchased {
   id: ID!
   player: String!
   ingredientType: BigInt!
+  position: BigInt!
 }
 
 type FoodScramble_PlayerCreated {
@@ -160,6 +161,26 @@ type FoodScramble_PlayerMoved {
   id: ID!
   player: String!
   newPosition: BigInt!
+  roll: BigInt!
+}
+
+type FoodScramble_RailTraveled {
+  id: ID!
+  player: String!
+  fromPosition: BigInt!
+  toPosition: BigInt!
+}
+
+type FoodScramble_HamburgerMinted {
+  id: ID!
+  player: String!
+  tokenId: BigInt!
+}
+
+type FaucetMon_FaucetUsed {
+  id: ID!
+  recipient: String!
+  amount: BigInt!
 }
 
 type FoodScramble_TokenBoundAccountCreated {

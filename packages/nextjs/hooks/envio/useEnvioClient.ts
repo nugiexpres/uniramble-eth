@@ -22,9 +22,13 @@ export function useEnvioClient() {
       return null;
     }
 
+    // HyperSync Bearer Token (optional untuk local dev, required untuk production)
+    const bearerToken = process.env.NEXT_PUBLIC_HYPERSYNC_BEARER_TOKEN;
+
     return new GraphQLClient(config.graphqlUrl, {
       headers: {
         "Content-Type": "application/json",
+        ...(bearerToken ? { Authorization: `Bearer ${bearerToken}` } : {}),
       },
     });
   }, [targetNetwork.id, targetNetwork.name]);
@@ -50,9 +54,13 @@ export function useEnvioClientForChain(chainId: number) {
       return null;
     }
 
+    // HyperSync Bearer Token (optional untuk local dev, required untuk production)
+    const bearerToken = process.env.NEXT_PUBLIC_HYPERSYNC_BEARER_TOKEN;
+
     return new GraphQLClient(config.graphqlUrl, {
       headers: {
         "Content-Type": "application/json",
+        ...(bearerToken ? { Authorization: `Bearer ${bearerToken}` } : {}),
       },
     });
   }, [chainId]);

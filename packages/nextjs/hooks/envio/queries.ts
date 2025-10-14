@@ -7,6 +7,7 @@ export const GET_PLAYER_POSITIONS = gql`
       id
       player
       newPosition
+      roll
       db_write_timestamp
     }
   }
@@ -18,6 +19,7 @@ export const GET_PLAYER_POSITION_BY_ADDRESS = gql`
       id
       player
       newPosition
+      roll
       db_write_timestamp
     }
   }
@@ -67,7 +69,7 @@ export const GET_INGREDIENT_PURCHASES = gql`
       id
       player
       ingredientType
-      fee
+      position
       db_write_timestamp
     }
   }
@@ -79,7 +81,7 @@ export const GET_ALL_INGREDIENT_PURCHASES = gql`
       id
       player
       ingredientType
-      fee
+      position
       db_write_timestamp
     }
   }
@@ -187,7 +189,101 @@ export const INGREDIENT_PURCHASE_SUBSCRIPTION = gql`
       id
       player
       ingredientType
-      fee
+      position
+      db_write_timestamp
+    }
+  }
+`;
+
+// Real-time subscriptions for instant updates (no polling needed!)
+export const PLAYER_MOVED_SUBSCRIPTION = gql`
+  subscription PlayerMovedSubscription {
+    FoodScramble_PlayerMoved(order_by: { db_write_timestamp: desc }, limit: 50) {
+      id
+      player
+      newPosition
+      db_write_timestamp
+    }
+  }
+`;
+
+export const RAIL_TRAVELED_SUBSCRIPTION = gql`
+  subscription RailTraveledSubscription {
+    FoodScramble_RailTraveled(order_by: { db_write_timestamp: desc }, limit: 10) {
+      id
+      player
+      fromPosition
+      toPosition
+      db_write_timestamp
+    }
+  }
+`;
+
+export const HAMBURGER_MINTED_SUBSCRIPTION = gql`
+  subscription HamburgerMintedSubscription {
+    FoodScramble_HamburgerMinted(order_by: { db_write_timestamp: desc }, limit: 10) {
+      id
+      player
+      tokenId
+      db_write_timestamp
+    }
+  }
+`;
+
+export const FAUCET_USED_SUBSCRIPTION = gql`
+  subscription FaucetUsedSubscription {
+    FaucetMon_FaucetUsed(order_by: { db_write_timestamp: desc }, limit: 10) {
+      id
+      recipient
+      amount
+      db_write_timestamp
+    }
+  }
+`;
+
+export const ALL_PURCHASES_SUBSCRIPTION = gql`
+  subscription AllPurchasesSubscription {
+    FoodScramble_IngredientPurchased(order_by: { db_write_timestamp: desc }, limit: 50) {
+      id
+      player
+      ingredientType
+      db_write_timestamp
+    }
+  }
+`;
+
+// Rail Travel Events
+export const GET_ALL_RAIL_EVENTS = gql`
+  query GetAllRailEvents {
+    FoodScramble_RailTraveled {
+      id
+      player
+      fromPosition
+      toPosition
+      db_write_timestamp
+    }
+  }
+`;
+
+// Hamburger/Cook Events
+export const GET_ALL_HAMBURGER_MINTS = gql`
+  query GetAllHamburgerMints {
+    FoodScramble_HamburgerMinted {
+      id
+      player
+      tokenId
+      db_write_timestamp
+    }
+  }
+`;
+
+// Faucet Used Events (actual faucet usage, not withdrawal)
+export const GET_ALL_FAUCET_USED_EVENTS = gql`
+  query GetAllFaucetUsedEvents {
+    FaucetMon_FaucetUsed {
+      id
+      recipient
+      amount
       db_write_timestamp
     }
   }

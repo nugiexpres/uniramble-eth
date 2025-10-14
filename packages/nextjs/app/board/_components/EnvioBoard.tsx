@@ -60,8 +60,25 @@ export const EnvioBoard = () => {
     usingSmartAccountTBA,
   } = useActionBoard({ tbaAddress });
 
-  // Envio player position (lebih cepat) - prioritize Smart Account TBA
-  const finalEnvioPlayerPosition = (envio && envio.playerPosition) || gameDataEnvioPosition || playerPosition;
+  // Envio player position (lebih cepat) - prioritize from usePlayerPositions hook
+  // Priority: Envio positions > envio.playerPosition > gameDataEnvioPosition > playerPosition
+  const { positions: envioPositions } = usePlayerPositions();
+  const tbaPlayerPosition = envioPositions[smartAccountTbaAddress || tbaAddress || ""];
+  const finalEnvioPlayerPosition =
+    tbaPlayerPosition !== undefined
+      ? tbaPlayerPosition
+      : (envio && envio.playerPosition) || gameDataEnvioPosition || playerPosition;
+
+  console.log("🎯 Player Position Sources:", {
+    tbaPlayerPosition,
+    envioPlayerPosition: envio?.playerPosition,
+    gameDataEnvioPosition,
+    contractPlayerPosition: playerPosition,
+    effectivePosition,
+    finalEnvioPlayerPosition,
+    smartAccountTbaAddress,
+    tbaAddress,
+  });
 
   // Loading state
   const isLoading = !gridData || gridData.length === 0;
@@ -143,7 +160,14 @@ export const EnvioBoard = () => {
             <div className="relative">
               {(() => {
                 try {
-                  return <GameBoard gridData={gridData} playerPositionData={finalEnvioPlayerPosition} />;
+                  return (
+                    <GameBoard
+                      key={`desktop-${finalEnvioPlayerPosition}`}
+                      gridData={gridData}
+                      playerPositionData={finalEnvioPlayerPosition}
+                      isMobile={false}
+                    />
+                  );
                 } catch (error) {
                   console.error("GameBoard render error:", error);
                   return (
@@ -225,7 +249,14 @@ export const EnvioBoard = () => {
         <div className="fixed top-[120px] left-1/2 transform -translate-x-1/2 flex items-center justify-center pt-4 px-4">
           {(() => {
             try {
-              return <GameBoard gridData={gridData} playerPositionData={finalEnvioPlayerPosition} isMobile={true} />;
+              return (
+                <GameBoard
+                  key={`mobile-${finalEnvioPlayerPosition}`}
+                  gridData={gridData}
+                  playerPositionData={finalEnvioPlayerPosition}
+                  isMobile={true}
+                />
+              );
             } catch (error) {
               console.error("Mobile GameBoard render error:", error);
               return (

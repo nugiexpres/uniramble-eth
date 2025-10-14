@@ -15,7 +15,7 @@ export function useTbaBalance() {
     functionName: "tbaList",
     args: [userAddress],
     query: {
-      refetchInterval: 30000, // Refetch every 30s to avoid rate limiting
+      refetchInterval: 60000, // 60s - Token + subscriptions eliminate need for frequent polling
     },
     watch: false, // Disable continuous polling
   });
@@ -24,7 +24,7 @@ export function useTbaBalance() {
   const { data: eoaBalance, refetch: refetchEoaBalance } = useBalance({
     address: userAddress,
     query: {
-      refetchInterval: 1000,
+      refetchInterval: 60000, // 60s - Token eliminates rate limiting
     },
   });
 
@@ -32,12 +32,14 @@ export function useTbaBalance() {
   const { data: tbaBalance, refetch: refetchTbaBalance } = useBalance({
     address: tbaAddress as `0x${string}`,
     query: {
-      refetchInterval: 1000,
+      refetchInterval: 60000, // 60s - Token eliminates rate limiting
     },
   });
 
   // Contract write hooks
-  const { writeContractAsync: executeFromTba } = useScaffoldWriteContract("ERC6551Account");
+  const { writeContractAsync: executeFromTba } = useScaffoldWriteContract({
+    contractName: "ERC6551Account",
+  });
   const { sendTransactionAsync } = useSendTransaction();
 
   /**

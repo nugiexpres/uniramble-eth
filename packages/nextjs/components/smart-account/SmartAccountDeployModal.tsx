@@ -12,9 +12,6 @@ interface SmartAccountDeployModalProps {
   stepDescription: string;
   isProcessing: boolean;
   error?: string | null;
-  onVerifyOwnership?: () => Promise<unknown>;
-  verificationStatus?: string;
-  isVerified?: boolean;
 }
 
 export const SmartAccountDeployModal = ({
@@ -26,9 +23,6 @@ export const SmartAccountDeployModal = ({
   stepDescription,
   isProcessing,
   error,
-  onVerifyOwnership,
-  verificationStatus,
-  isVerified,
 }: SmartAccountDeployModalProps) => {
   if (!isOpen) return null;
 
@@ -40,15 +34,15 @@ export const SmartAccountDeployModal = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm"
-        style={{ zIndex: 99999 }}
+        className="fixed inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+        style={{ zIndex: 999999, position: "fixed" }}
       >
         <motion.div
           initial={{ scale: 0.95, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 20 }}
           className="relative w-full max-w-md mx-4 bg-gradient-to-br from-slate-800/95 to-slate-900/95 backdrop-blur-xl rounded-2xl border border-cyan-500/30 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
-          style={{ zIndex: 99999 }}
+          style={{ zIndex: 999999 }}
         >
           {/* Close Button */}
           <button
@@ -98,11 +92,11 @@ export const SmartAccountDeployModal = ({
           <div className="px-4 pb-4 flex-1 flex flex-col overflow-y-auto">
             {/* Steps Grid */}
             <div className="grid grid-cols-2 gap-3 mb-4">
-              {/* Step 1: Deploy */}
+              {/* Step 1: Welcome Signature */}
               <div
                 className={`p-3 rounded-xl border transition-all ${
                   currentStep === 1
-                    ? "bg-cyan-500/10 border-cyan-400/30 shadow-lg shadow-cyan-500/20"
+                    ? "bg-purple-500/10 border-purple-400/30 shadow-lg shadow-purple-500/20"
                     : currentStep > 1
                       ? "bg-green-500/10 border-green-400/30 shadow-lg shadow-green-500/20"
                       : "bg-slate-700/30 border-slate-600/30"
@@ -112,31 +106,31 @@ export const SmartAccountDeployModal = ({
                   {currentStep > 1 ? (
                     <CheckCircle className="w-6 h-6 text-green-400 mb-2" />
                   ) : currentStep === 1 ? (
-                    <Loader2 className="w-6 h-6 text-cyan-400 animate-spin mb-2" />
+                    <Loader2 className="w-6 h-6 text-purple-400 animate-spin mb-2" />
                   ) : (
                     <div className="w-6 h-6 border-2 border-slate-500 rounded-full mb-2 flex items-center justify-center">
                       <span className="text-xs text-slate-400 font-bold">1</span>
                     </div>
                   )}
-                  <h4 className="font-bold text-white text-sm mb-1">Deploy Contract</h4>
+                  <h4 className="font-bold text-white text-sm mb-1">Welcome Sign</h4>
                   <p className="text-xs text-slate-300">
-                    {currentStep === 1 ? "📝 Signing..." : currentStep > 1 ? "✅ Deployed" : "⏳ Waiting"}
+                    {currentStep === 1 ? "📝 Signing..." : currentStep > 1 ? "✅ Signed" : "⏳ Waiting"}
                   </p>
                 </div>
               </div>
 
-              {/* Step 2: Verify */}
+              {/* Step 2: Deploy Smart Account */}
               <div
                 className={`p-3 rounded-xl border transition-all ${
                   currentStep === 2
                     ? "bg-cyan-500/10 border-cyan-400/30 shadow-lg shadow-cyan-500/20"
-                    : isVerified
+                    : currentStep > 2
                       ? "bg-green-500/10 border-green-400/30 shadow-lg shadow-green-500/20"
                       : "bg-slate-700/30 border-slate-600/30"
                 }`}
               >
                 <div className="flex flex-col items-center text-center">
-                  {isVerified ? (
+                  {currentStep > 2 ? (
                     <CheckCircle className="w-6 h-6 text-green-400 mb-2" />
                   ) : currentStep === 2 ? (
                     <Loader2 className="w-6 h-6 text-cyan-400 animate-spin mb-2" />
@@ -145,9 +139,9 @@ export const SmartAccountDeployModal = ({
                       <span className="text-xs text-slate-400 font-bold">2</span>
                     </div>
                   )}
-                  <h4 className="font-bold text-white text-sm mb-1">Verify Ownership</h4>
+                  <h4 className="font-bold text-white text-sm mb-1">Deploy Gasless</h4>
                   <p className="text-xs text-slate-300">
-                    {isVerified ? "✅ Verified" : currentStep === 2 ? "📝 Signing..." : "⏳ Waiting"}
+                    {currentStep > 2 ? "✅ Deployed" : currentStep === 2 ? "📝 Deploying..." : "⏳ Waiting"}
                   </p>
                 </div>
               </div>
@@ -182,38 +176,6 @@ export const SmartAccountDeployModal = ({
                 </div>
               )}
 
-              {/* Verification Status */}
-              {verificationStatus && (
-                <div className="p-3 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-400/30 rounded-xl shadow-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                      <span className="text-sm">🔐</span>
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-bold text-blue-300">Ownership Verification</p>
-                      <p className="text-xs text-slate-300">{verificationStatus}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Verify Ownership Button - Only show on step 2 if not verified */}
-              {currentStep === 2 && !isVerified && onVerifyOwnership && (
-                <div className="space-y-2">
-                  <button
-                    onClick={onVerifyOwnership}
-                    className="w-full p-3 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-bold rounded-xl transition-all duration-200 shadow-lg hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
-                    disabled={isProcessing}
-                  >
-                    <div className="flex items-center justify-center gap-2">
-                      <span>🔐</span>
-                      <span>Sign Verification Message</span>
-                    </div>
-                  </button>
-                  <p className="text-xs text-center text-slate-400">Check your wallet for signature request</p>
-                </div>
-              )}
-
               {/* Gaming Instructions */}
               <div className="p-3 bg-gradient-to-r from-slate-700/30 to-slate-800/30 rounded-xl border border-slate-600/30 backdrop-blur-sm">
                 <div className="flex flex-col items-center justify-center gap-2">
@@ -222,18 +184,18 @@ export const SmartAccountDeployModal = ({
                   </div>
                   <p className="text-sm text-slate-300 text-center font-medium">
                     {currentStep === 1
-                      ? "🔐 Signature 1/2: Check MetaMask to deploy Smart Account"
+                      ? "🔐 Signature 1/2: Sign Welcome to Uniramble message"
                       : currentStep === 2
-                        ? "🔐 Signature 2/2: Check MetaMask to verify ownership"
-                        : isVerified
-                          ? "🎉 Both signatures completed! Smart Account ready!"
-                          : "🎉 Deployment complete! One more step..."}
+                        ? "🔐 Signature 2/2: Deploying Smart Account (Gasless)"
+                        : "🎉 Smart Account ready!"}
                   </p>
-                  {currentStep === 2 && !isVerified && (
-                    <p className="text-xs text-slate-400 text-center">
-                      Sign message to prove you own this Smart Account
-                    </p>
-                  )}
+                  <p className="text-xs text-slate-400 text-center">
+                    {currentStep === 1
+                      ? "Check your wallet to sign the welcome message"
+                      : currentStep === 2
+                        ? "Check your wallet to confirm deployment"
+                        : "Both signatures completed successfully"}
+                  </p>
                 </div>
               </div>
             </div>

@@ -13,13 +13,13 @@ export const monadTestnet = defineChain({
   rpcUrls: {
     default: {
       http: [
-        `https://rpc.ankr.com/monad_testnet/${ANKR_API_KEY || "142343a55cd254694b248f708eedf71b9cf8cd5525a0bc8c214bec3f2ad424c7"}`,
+        `https://rpc.ankr.com/monad_testnet/${ANKR_API_KEY}`,
         // Ankr RPC - No rate limiting (500M req/month free)
       ],
     },
     public: {
       http: [
-        `https://rpc.ankr.com/monad_testnet/${ANKR_API_KEY || "142343a55cd254694b248f708eedf71b9cf8cd5525a0bc8c214bec3f2ad424c7"}`,
+        `https://rpc.ankr.com/monad_testnet/${ANKR_API_KEY}`,
         // Ankr RPC as public fallback too
       ],
     },

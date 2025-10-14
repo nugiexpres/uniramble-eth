@@ -39,7 +39,7 @@ export const useGameData = (address: string | undefined) => {
     args: [tbaAddress || "0x0000000000000000000000000000000000000000"],
     query: {
       enabled: !!tbaAddress,
-      refetchInterval: 30000, // Refetch every 30s to avoid rate limiting
+      refetchInterval: 60000, // 60s - Token + Envio subscriptions for cook events
     },
     watch: false, // Disable continuous polling
   });

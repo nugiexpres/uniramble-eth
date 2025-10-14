@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   GAME_ACTIONS_SUBSCRIPTION,
   GET_ALL_GAME_ACTIONS,
@@ -63,7 +63,7 @@ export const useEnvioGameActions = (playerAddress?: string, tbaAddress?: string)
     refetch: refetchAllActions,
   } = useQuery(GET_ALL_GAME_ACTIONS, {
     variables: { limit: 100 },
-    pollInterval: 1000, // Poll setiap 1 detik untuk real-time updates
+    pollInterval: 30000, // 30s - Subscriptions handle real-time updates
     fetchPolicy: "cache-and-network",
     notifyOnNetworkStatusChange: true,
   });
@@ -77,7 +77,7 @@ export const useEnvioGameActions = (playerAddress?: string, tbaAddress?: string)
   } = useQuery(GET_GAME_ACTIONS_BY_PLAYER, {
     variables: { player: playerAddress, limit: 50 },
     skip: !playerAddress,
-    pollInterval: 1000,
+    pollInterval: 30000, // 30s - Subscriptions handle real-time updates
     fetchPolicy: "cache-and-network",
   });
 
@@ -90,7 +90,7 @@ export const useEnvioGameActions = (playerAddress?: string, tbaAddress?: string)
   } = useQuery(GET_GAME_ACTIONS_BY_TBA, {
     variables: { tbaAddress: tbaAddress, limit: 50 },
     skip: !tbaAddress,
-    pollInterval: 1000,
+    pollInterval: 30000, // 30s - Subscriptions handle real-time updates
     fetchPolicy: "cache-and-network",
   });
 
@@ -102,7 +102,7 @@ export const useEnvioGameActions = (playerAddress?: string, tbaAddress?: string)
     refetch: refetchRollActions,
   } = useQuery(GET_ROLL_ACTIONS, {
     variables: { limit: 20 },
-    pollInterval: 1000,
+    pollInterval: 30000, // 30s - Subscriptions handle real-time updates
     fetchPolicy: "cache-and-network",
   });
 
@@ -113,7 +113,7 @@ export const useEnvioGameActions = (playerAddress?: string, tbaAddress?: string)
     refetch: refetchBuyActions,
   } = useQuery(GET_BUY_ACTIONS, {
     variables: { limit: 20 },
-    pollInterval: 1000,
+    pollInterval: 30000, // 30s - Subscriptions handle real-time updates
     fetchPolicy: "cache-and-network",
   });
 
@@ -124,7 +124,7 @@ export const useEnvioGameActions = (playerAddress?: string, tbaAddress?: string)
     refetch: refetchCookActions,
   } = useQuery(GET_COOK_ACTIONS, {
     variables: { limit: 20 },
-    pollInterval: 1000,
+    pollInterval: 30000, // 30s - Subscriptions handle real-time updates
     fetchPolicy: "cache-and-network",
   });
 
@@ -135,7 +135,7 @@ export const useEnvioGameActions = (playerAddress?: string, tbaAddress?: string)
     refetch: refetchFaucetActions,
   } = useQuery(GET_FAUCET_ACTIONS, {
     variables: { limit: 20 },
-    pollInterval: 1000,
+    pollInterval: 30000, // 30s - Subscriptions handle real-time updates
     fetchPolicy: "cache-and-network",
   });
 
@@ -146,7 +146,7 @@ export const useEnvioGameActions = (playerAddress?: string, tbaAddress?: string)
     refetch: refetchRailActions,
   } = useQuery(GET_RAIL_ACTIONS, {
     variables: { limit: 20 },
-    pollInterval: 1000,
+    pollInterval: 30000, // 30s - Subscriptions handle real-time updates
     fetchPolicy: "cache-and-network",
   });
 
@@ -274,6 +274,7 @@ export const useEnvioPlayerStats = (playerAddress?: string, tbaAddress?: string)
     GET_PLAYER_STATS_BY_PLAYER,
     GET_PLAYER_STATS_BY_TBA,
     PLAYER_STATS_SUBSCRIPTION,
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   } = require("./envioGameActionsQueries");
 
   const [playerStats, setPlayerStats] = useState<any>(null);
@@ -287,7 +288,7 @@ export const useEnvioPlayerStats = (playerAddress?: string, tbaAddress?: string)
   } = useQuery(GET_PLAYER_STATS_BY_PLAYER, {
     variables: { player: playerAddress },
     skip: !playerAddress,
-    pollInterval: 2000, // Poll setiap 2 detik untuk stats
+    pollInterval: 30000, // 30s - Token eliminates rate limiting
     fetchPolicy: "cache-and-network",
   });
 
@@ -299,7 +300,7 @@ export const useEnvioPlayerStats = (playerAddress?: string, tbaAddress?: string)
   } = useQuery(GET_PLAYER_STATS_BY_TBA, {
     variables: { tbaAddress: tbaAddress },
     skip: !tbaAddress,
-    pollInterval: 2000,
+    pollInterval: 30000, // 30s - Token eliminates rate limiting
     fetchPolicy: "cache-and-network",
   });
 

@@ -7,6 +7,7 @@ contract FaucetMon {
 
     event BalanceFunded(address indexed funder, uint256 amount);
     event BalanceWithdrawn(address indexed owner, uint256 amount);
+    event FaucetUsed(address indexed recipient, uint256 amount);
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Not the contract owner");
@@ -25,6 +26,7 @@ contract FaucetMon {
         require(msg.sender == allowedCaller, "Caller not set");
         require(address(this).balance >= amount, "Not enough balance");
         payable(to).transfer(amount);
+        emit FaucetUsed(to, amount);
     }
 
     // Function to fund the faucet balance

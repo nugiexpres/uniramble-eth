@@ -1,25 +1,26 @@
 import { useMemo } from "react";
-import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { useSmartAccountTBA } from "~~/hooks/envio/useSmartAccountTBA";
 import { useTokenBalances } from "~~/hooks/envio/useTokenBalances";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 export const useFoodTokens = (tbaAddress: string | undefined) => {
   // Get Smart Account TBA (priority over prop)
   const { tbaAddress: smartAccountTbaAddress } = useSmartAccountTBA();
-  
+
   // Use Smart Account TBA if available, otherwise use prop TBA
   const effectiveTbaAddress = smartAccountTbaAddress || tbaAddress;
 
   // Envio-powered token balances (faster)
   const { balances: envioBalances, loading: envioLoading } = useTokenBalances(effectiveTbaAddress);
 
-  // Contract-based token balances (fallback)
+  // Contract-based token balances (fallback only, Envio is primary source)
   const { data: breadAmount } = useScaffoldReadContract({
     contractName: "BreadToken",
     functionName: "balanceOf",
     args: [effectiveTbaAddress || "0x0000000000000000000000000000000000000000"],
     query: {
       enabled: !!effectiveTbaAddress,
+      refetchInterval: 60000, // 60s - Envio handles real-time updates
     },
   });
 
@@ -29,6 +30,7 @@ export const useFoodTokens = (tbaAddress: string | undefined) => {
     args: [effectiveTbaAddress || "0x0000000000000000000000000000000000000000"],
     query: {
       enabled: !!effectiveTbaAddress,
+      refetchInterval: 60000, // 60s - Envio handles real-time updates
     },
   });
 
@@ -38,6 +40,7 @@ export const useFoodTokens = (tbaAddress: string | undefined) => {
     args: [effectiveTbaAddress || "0x0000000000000000000000000000000000000000"],
     query: {
       enabled: !!effectiveTbaAddress,
+      refetchInterval: 60000, // 60s - Envio handles real-time updates
     },
   });
 
@@ -47,6 +50,7 @@ export const useFoodTokens = (tbaAddress: string | undefined) => {
     args: [effectiveTbaAddress || "0x0000000000000000000000000000000000000000"],
     query: {
       enabled: !!effectiveTbaAddress,
+      refetchInterval: 60000, // 60s - Envio handles real-time updates
     },
   });
 

@@ -1337,7 +1337,7 @@ const deployedContracts = {
       deployedOnBlock: 41886051,
     },
     FaucetMon: {
-      address: "0x4A7C61294166f451BFbB10a1d3a8407F6A7c53eb",
+      address: "0x4c1C0AE60Cb4180EB46d67C77F0157011937fEb3",
       abi: [
         {
           inputs: [],
@@ -1380,6 +1380,25 @@ const deployedContracts = {
             },
           ],
           name: "BalanceWithdrawn",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "recipient",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "FaucetUsed",
           type: "event",
         },
         {
@@ -1465,7 +1484,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 41886187,
+      deployedOnBlock: 42943927,
     },
     FoodNFT: {
       address: "0xAf9A5760AD420D8aA658bc3EF1B40B1a7eb57060",
@@ -2370,7 +2389,7 @@ const deployedContracts = {
       deployedOnBlock: 41886033,
     },
     FoodScramble: {
-      address: "0x7C58343504245014f66Bee4Cd9610508E77e801a",
+      address: "0xa2738c895bB55C3657002fB6C8867b7A304c65d1",
       abi: [
         {
           inputs: [
@@ -2473,7 +2492,32 @@ const deployedContracts = {
             {
               indexed: false,
               internalType: "uint256",
+              name: "tokenId",
+              type: "uint256",
+            },
+          ],
+          name: "HamburgerMinted",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "player",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
               name: "ingredientType",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "position",
               type: "uint256",
             },
           ],
@@ -2514,8 +2558,39 @@ const deployedContracts = {
               name: "newPosition",
               type: "uint256",
             },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "roll",
+              type: "uint256",
+            },
           ],
           name: "PlayerMoved",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "player",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "fromPosition",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "toPosition",
+              type: "uint256",
+            },
+          ],
+          name: "RailTraveled",
           type: "event",
         },
         {
@@ -3360,7 +3435,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 41886215,
+      deployedOnBlock: 42960250,
     },
     LettuceToken: {
       address: "0xCecAC2c4aB0145E9119E9764Ed1D7adf75DBEF14",
@@ -7075,7 +7150,7 @@ const deployedContracts = {
       deployedOnBlock: 9350935,
     },
     FaucetMon: {
-      address: "0x4db4aF4d8Bdbe6B72D4Bf913f9D516c43646cb8a",
+      address: "0xa121aD4caDB0b47d39Ce77782F5fF9d24bc46bAA",
       abi: [
         {
           inputs: [],
@@ -7118,6 +7193,25 @@ const deployedContracts = {
             },
           ],
           name: "BalanceWithdrawn",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "recipient",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "FaucetUsed",
           type: "event",
         },
         {
@@ -7203,7 +7297,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 9278656,
+      deployedOnBlock: 9403824,
     },
     FoodNFT: {
       address: "0x2FF46E513a2991d1338014c911B1eA8E7710f48E",
@@ -8108,7 +8202,7 @@ const deployedContracts = {
       deployedOnBlock: 9334318,
     },
     FoodScramble: {
-      address: "0x30aC836e65034893F55074bC1498505813ebBDe3",
+      address: "0x715b964179470F6C1eEDff045212d877217f5099",
       abi: [
         {
           inputs: [
@@ -8211,7 +8305,32 @@ const deployedContracts = {
             {
               indexed: false,
               internalType: "uint256",
+              name: "tokenId",
+              type: "uint256",
+            },
+          ],
+          name: "HamburgerMinted",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "player",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
               name: "ingredientType",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "position",
               type: "uint256",
             },
           ],
@@ -8252,8 +8371,39 @@ const deployedContracts = {
               name: "newPosition",
               type: "uint256",
             },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "roll",
+              type: "uint256",
+            },
           ],
           name: "PlayerMoved",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "player",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "fromPosition",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "toPosition",
+              type: "uint256",
+            },
+          ],
+          name: "RailTraveled",
           type: "event",
         },
         {
@@ -9098,7 +9248,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 9350940,
+      deployedOnBlock: 9404395,
     },
     LettuceToken: {
       address: "0xE1448b0804F722150Ea7aa437426bba1094847e5",

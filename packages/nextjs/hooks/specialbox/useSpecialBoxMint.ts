@@ -31,7 +31,7 @@ export const useSpecialBoxMint = ({ contractName = "SpecialBox" }: UseSpecialBox
     functionName: "getMyFoods",
     args: [tbaAddressToUse],
     query: {
-      refetchInterval: 30000, // Refetch every 30s
+      refetchInterval: 60000, // 60s - Token eliminates rate limiting
     },
     watch: false,
   });
@@ -57,7 +57,7 @@ export const useSpecialBoxMint = ({ contractName = "SpecialBox" }: UseSpecialBox
     functionName: "canMint",
     args: [tbaAddressToUse], // Changed to use TBA address instead of user address
     query: {
-      refetchInterval: 30000, // Refetch every 30s
+      refetchInterval: 60000, // 60s - Token eliminates rate limiting
     },
     watch: false,
   });
@@ -91,7 +91,7 @@ export const useSpecialBoxMint = ({ contractName = "SpecialBox" }: UseSpecialBox
     functionName: "boxBalance",
     args: [tbaAddressToUse],
     query: {
-      refetchInterval: 30000, // Refetch every 30s
+      refetchInterval: 60000, // 60s - Token eliminates rate limiting
     },
     watch: false,
   });

@@ -12,9 +12,18 @@ import { createClient } from "graphql-ws";
 const GRAPHQL_HTTP_ENDPOINT = process.env.NEXT_PUBLIC_ENVIO_GRAPHQL_URL || "http://localhost:8080/v1/graphql";
 const GRAPHQL_WS_ENDPOINT = process.env.NEXT_PUBLIC_ENVIO_WS_URL || "ws://localhost:8080/v1/graphql";
 
+// HyperSync Bearer Token (optional untuk local dev, required untuk production)
+// Get token at: https://envio.dev/app/api-tokens
+const HYPERSYNC_BEARER_TOKEN = process.env.NEXT_PUBLIC_HYPERSYNC_BEARER_TOKEN;
+
 // HTTP link for queries and mutations
 const httpLink = new HttpLink({
   uri: GRAPHQL_HTTP_ENDPOINT,
+  headers: HYPERSYNC_BEARER_TOKEN
+    ? {
+        Authorization: `Bearer ${HYPERSYNC_BEARER_TOKEN}`,
+      }
+    : {},
 });
 
 // WebSocket link for subscriptions
@@ -23,9 +32,13 @@ const wsLink =
     ? new GraphQLWsLink(
         createClient({
           url: GRAPHQL_WS_ENDPOINT,
-          connectionParams: {
-            // Add any connection parameters if needed
-          },
+          connectionParams: HYPERSYNC_BEARER_TOKEN
+            ? {
+                headers: {
+                  Authorization: `Bearer ${HYPERSYNC_BEARER_TOKEN}`,
+                },
+              }
+            : {},
         }),
       )
     : null;

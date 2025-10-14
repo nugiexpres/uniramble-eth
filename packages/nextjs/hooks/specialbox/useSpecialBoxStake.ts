@@ -32,7 +32,7 @@ export const useSpecialBoxStake = ({
     args: [tbaAddress],
     query: {
       enabled: enabled && !!tbaAddress,
-      refetchInterval: 30000, // Refetch every 30s
+      refetchInterval: 60000, // 60s - Token eliminates rate limiting
     },
   });
 
@@ -43,7 +43,7 @@ export const useSpecialBoxStake = ({
     args: [tbaAddress],
     query: {
       enabled: enabled && !!tbaAddress,
-      refetchInterval: 30000, // Refetch every 30s
+      refetchInterval: 60000, // 60s - Token eliminates rate limiting
     },
   });
 

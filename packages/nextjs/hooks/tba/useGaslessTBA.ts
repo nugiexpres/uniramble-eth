@@ -92,7 +92,7 @@ export const useGaslessTBA = () => {
     smartAccountAddress,
   });
 
-  // Restore TBA state from session storage
+  // Restore TBA and NFT state from localStorage (permanent)
   const restoreTBAState = useCallback(() => {
     if (typeof window === "undefined" || !smartAccountAddress) {
       console.log("Cannot restore TBA state: window undefined or no smart account address");
@@ -101,7 +101,7 @@ export const useGaslessTBA = () => {
 
     try {
       const storageKey = `tba_state_${smartAccountAddress}`;
-      const storedData = sessionStorage.getItem(storageKey);
+      const storedData = localStorage.getItem(storageKey); // Use localStorage for permanent storage
       console.log("TBA storage key:", storageKey);
       console.log("TBA stored data:", storedData);
 
@@ -114,20 +114,28 @@ export const useGaslessTBA = () => {
           tbaAddress: stateData.tbaAddress,
           tbaTxHash: stateData.tbaTxHash,
           tbaCreated: stateData.tbaCreated,
+          mintTxHash: stateData.mintTxHash, // Restore mint status too
+          tokenId: stateData.tokenId ? BigInt(stateData.tokenId) : null,
         }));
 
-        console.log("TBA state restored successfully");
+        console.log("TBA state restored successfully from localStorage");
       } else {
-        console.log("No TBA state found in storage");
+        console.log("No TBA state found in localStorage");
       }
     } catch (error) {
       console.error("Failed to restore TBA state:", error);
     }
   }, [smartAccountAddress]);
 
-  // Save TBA state to session storage
+  // Save TBA state to localStorage (permanent)
   const saveTBAState = useCallback(
-    (tbaData: { tbaAddress: string; tbaTxHash: string; tbaCreated: boolean }) => {
+    (tbaData: {
+      tbaAddress: string;
+      tbaTxHash: string;
+      tbaCreated: boolean;
+      mintTxHash?: string;
+      tokenId?: string;
+    }) => {
       if (typeof window === "undefined" || !smartAccountAddress) {
         console.log("Cannot save TBA state: window undefined or no smart account address");
         return;
@@ -135,8 +143,8 @@ export const useGaslessTBA = () => {
 
       try {
         const storageKey = `tba_state_${smartAccountAddress}`;
-        sessionStorage.setItem(storageKey, JSON.stringify(tbaData));
-        console.log("TBA state saved:", tbaData);
+        localStorage.setItem(storageKey, JSON.stringify(tbaData)); // Use localStorage for permanent storage
+        console.log("TBA state saved to localStorage:", tbaData);
         console.log("TBA storage key:", storageKey);
       } catch (error) {
         console.error("Failed to save TBA state:", error);
@@ -385,6 +393,15 @@ export const useGaslessTBA = () => {
         error: null,
       }));
 
+      // Save mint status to localStorage for permanent persistence
+      saveTBAState({
+        tbaAddress: state.tbaAddress || "0x",
+        tbaTxHash: state.tbaTxHash || "",
+        tbaCreated: state.tbaCreated,
+        mintTxHash: userOperationHash,
+        tokenId: latestTokenId.toString(),
+      });
+
       // Refetch smart account NFTs after successful mint
       setTimeout(() => {
         refetchSmartAccountNFTs();
@@ -625,11 +642,13 @@ export const useGaslessTBA = () => {
           error: null,
         }));
 
-        // Save TBA state to session storage
+        // Save TBA state to localStorage
         saveTBAState({
           tbaAddress: "0x", // Will be updated when we refetch from contract
           tbaTxHash: userOperationHash,
           tbaCreated: true,
+          mintTxHash: state.mintTxHash || undefined,
+          tokenId: tokenId.toString(),
         });
 
         // Emit event for EnvioAnalytics (optimistic UI update)
@@ -660,11 +679,13 @@ export const useGaslessTBA = () => {
             error: null,
           }));
 
-          // Save TBA state to session storage
+          // Save TBA state to localStorage
           saveTBAState({
             tbaAddress: userTBA || "0x",
             tbaTxHash: "0x",
             tbaCreated: true,
+            mintTxHash: state.mintTxHash || undefined,
+            tokenId: state.tokenId?.toString(),
           });
 
           notification.success("TBA already exists and is now active!");
@@ -765,10 +786,10 @@ export const useGaslessTBA = () => {
       smartAccountBalance: null,
     });
 
-    // Clear session storage
+    // Clear localStorage
     if (typeof window !== "undefined" && smartAccountAddress) {
       const storageKey = `tba_state_${smartAccountAddress}`;
-      sessionStorage.removeItem(storageKey);
+      localStorage.removeItem(storageKey);
     }
   }, [smartAccountAddress]);
 

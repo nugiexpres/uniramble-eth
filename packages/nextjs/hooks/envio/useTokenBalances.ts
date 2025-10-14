@@ -58,7 +58,7 @@ export const useTokenBalances = (tbaAddress?: string): TokenBalancesState => {
   } = useQuery(GET_BREAD_TRANSFERS, {
     variables: { to: tbaAddress },
     skip: !tbaAddress,
-    pollInterval: 1000, // Poll lebih cepat untuk token balances
+    pollInterval: 10000, // 10 seconds polling untuk token balances
     fetchPolicy: "cache-and-network",
   });
 
@@ -70,7 +70,7 @@ export const useTokenBalances = (tbaAddress?: string): TokenBalancesState => {
   } = useQuery(GET_MEAT_TRANSFERS, {
     variables: { to: tbaAddress },
     skip: !tbaAddress,
-    pollInterval: 1000,
+    pollInterval: 10000, // 10 seconds
     fetchPolicy: "cache-and-network",
   });
 
@@ -82,7 +82,7 @@ export const useTokenBalances = (tbaAddress?: string): TokenBalancesState => {
   } = useQuery(GET_LETTUCE_TRANSFERS, {
     variables: { to: tbaAddress },
     skip: !tbaAddress,
-    pollInterval: 1000,
+    pollInterval: 10000, // 10 seconds
     fetchPolicy: "cache-and-network",
   });
 
@@ -94,7 +94,7 @@ export const useTokenBalances = (tbaAddress?: string): TokenBalancesState => {
   } = useQuery(GET_TOMATO_TRANSFERS, {
     variables: { to: tbaAddress },
     skip: !tbaAddress,
-    pollInterval: 1000,
+    pollInterval: 10000, // 10 seconds
     fetchPolicy: "cache-and-network",
   });
 
