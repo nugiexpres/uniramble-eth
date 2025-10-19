@@ -3,7 +3,7 @@ import { Implementation, toMetaMaskSmartAccount } from "@metamask/delegation-too
 import { createPublicClient, http, parseEther } from "viem";
 import { createWebAuthnCredential } from "viem/account-abstraction";
 import { createBundlerClient, createPaymasterClient } from "viem/account-abstraction";
-import { useAccount, useConnect, useDisconnect, useWalletClient } from "wagmi";
+import { useAccount, useConnect, useDisconnect, usePublicClient, useWalletClient } from "wagmi";
 import { getBundlerConfig } from "~~/config/bundler";
 import { getSmartAccountNonce } from "~~/config/client";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
@@ -28,6 +28,7 @@ export const useEIP7702Delegation = () => {
   const { connect } = useConnect();
   const { disconnect } = useDisconnect();
   const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
   const { targetNetwork } = useTargetNetwork();
 
   const [state, setState] = useState<EIP7702State>({

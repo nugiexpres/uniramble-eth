@@ -21,16 +21,13 @@ interface GameControlsProps {
   isRailTraveling?: boolean;
   isCooking?: boolean;
   isUsingFaucet?: boolean;
-  buyError: string | null;
   ingredientFee: string;
   effectivePosition: number | null;
   tbaAddress: string | undefined;
   currentGrid?: string;
   isMobile?: boolean;
   gridData?: any[]; // gridData to read current grid state
-  isSmartAccountDeployed?: boolean;
   smartAccountAddress?: string;
-  smartAccountTbaAddress?: string;
 }
 
 export const GameControls = ({
@@ -49,15 +46,12 @@ export const GameControls = ({
   isRailTraveling = false,
   isCooking = false,
   isUsingFaucet = false,
-  buyError,
   effectivePosition,
   tbaAddress,
   currentGrid = "",
   isMobile = false,
   gridData = [],
-  isSmartAccountDeployed = false,
   smartAccountAddress,
-  smartAccountTbaAddress,
 }: GameControlsProps) => {
   const scale = isMobile ? "scale-75" : "scale-100";
 

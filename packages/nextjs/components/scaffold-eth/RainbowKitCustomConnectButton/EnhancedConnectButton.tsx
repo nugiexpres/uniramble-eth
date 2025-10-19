@@ -20,15 +20,6 @@ import { getBlockExplorerAddressLink } from "~~/utils/scaffold-eth";
  * Enhanced Connect Button
  * Supports both RainbowKit wallets and Web3Auth social logins
  */
-
-/**
- * Enhanced Connect Button
- * Supports both RainbowKit wallets and Web3Auth social logins
- */
-
-/**
- * Enhanced connect button with Web3Auth integration
- */
 export const EnhancedConnectButton = () => {
   const networkColor = useNetworkColor();
   const { targetNetwork } = useTargetNetwork();
@@ -37,7 +28,7 @@ export const EnhancedConnectButton = () => {
     isConnected: web3AuthConnected,
     connect: connectWeb3Auth,
   } = useWeb3AuthWallet();
-  const [showWeb3AuthOption, setShowWeb3AuthOption] = useState(false);
+  const [showWeb3AuthOption] = useState(false);
 
   return (
     <ConnectButton.Custom>

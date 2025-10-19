@@ -62,7 +62,7 @@ export const EnvioAnalytics = () => {
       try {
         const detail = (e as CustomEvent).detail as Partial<GameEvent> | undefined;
         if (!detail) return;
-        
+
         const localEvent: GameEvent = {
           id: detail.id || `local_${Date.now()}`,
           type: (detail.type as EventType) || "movement",
@@ -74,7 +74,7 @@ export const EnvioAnalytics = () => {
           optimistic: true,
           optimisticKey: (detail as any).optimisticKey,
         };
-        
+
         setOptimisticEvents(prev => {
           // Remove old event with same key to avoid duplicates
           if (localEvent.optimisticKey) {
@@ -87,7 +87,7 @@ export const EnvioAnalytics = () => {
         console.warn("EnvioAnalytics: failed to handle localGameAction", err);
       }
     };
-    
+
     window.addEventListener("localGameAction", handler as EventListener);
     return () => window.removeEventListener("localGameAction", handler as EventListener);
   }, []);
@@ -177,7 +177,7 @@ export const EnvioAnalytics = () => {
     for (const opt of optimisticEvents) {
       const age = now - opt.timestamp;
       if (age > 30000) continue; // Skip old optimistic events (>30s)
-      
+
       const key = `${opt.type}:${opt.player}:${opt.data?.position || opt.data?.ingredientType || ""}`;
       if (!seenKeys.has(key)) {
         merged.push(opt);

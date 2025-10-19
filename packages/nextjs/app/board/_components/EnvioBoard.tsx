@@ -43,7 +43,6 @@ export const EnvioBoard = () => {
     isRailTraveling,
     isCooking,
     isUsingFaucet,
-    buyError,
     ingredientFee,
     handleRoll,
     handleBuy,
@@ -52,9 +51,7 @@ export const EnvioBoard = () => {
     handleFaucetMon,
     playerPosition,
     effectivePosition,
-    isSmartAccountDeployed,
     smartAccountAddress,
-    userTBA,
     // Envio data from useActionBoard (we only use envio.playerPosition)
     envio,
     usingSmartAccountTBA,
@@ -85,7 +82,6 @@ export const EnvioBoard = () => {
     gameDataEnvioPosition,
     gridData: gridData?.length,
     isModalOpen,
-    buyError,
     isLoading,
     envioLoading,
     envioBalances,
@@ -93,10 +89,6 @@ export const EnvioBoard = () => {
     specialBoxMints: specialBoxMints.length,
   });
 
-  // Simple error logging without blocking UI
-  if (buyError) {
-    console.warn("Game action error (non-blocking):", buyError);
-  }
 
   // Show loading state only if essential data is not ready
   if (isLoading) {
@@ -176,14 +168,11 @@ export const EnvioBoard = () => {
                 isRailTraveling={isRailTraveling}
                 isCooking={isCooking}
                 isUsingFaucet={isUsingFaucet}
-                buyError={buyError}
                 ingredientFee={ingredientFee}
                 effectivePosition={effectivePosition}
                 tbaAddress={tbaAddress}
                 gridData={gridData}
-                isSmartAccountDeployed={isSmartAccountDeployed}
                 smartAccountAddress={smartAccountAddress || undefined}
-                smartAccountTbaAddress={userTBA}
               />
             </div>
           </div>
@@ -257,13 +246,11 @@ export const EnvioBoard = () => {
               isRailTraveling={isRailTraveling}
               isCooking={isCooking}
               isUsingFaucet={isUsingFaucet}
-              buyError={buyError}
               ingredientFee={ingredientFee}
               effectivePosition={effectivePosition}
               tbaAddress={tbaAddress}
               gridData={gridData}
               isMobile={true}
-              isSmartAccountDeployed={isSmartAccountDeployed}
               smartAccountAddress={smartAccountAddress || undefined}
             />
           </div>

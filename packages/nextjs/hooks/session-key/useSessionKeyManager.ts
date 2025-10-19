@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { createPublicClient, http } from "viem";
 import { createBundlerClient, createPaymasterClient } from "viem/account-abstraction";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { useAccount } from "wagmi";
+import { useAccount, usePublicClient } from "wagmi";
 import { getBundlerConfig } from "~~/config/bundler";
 import { getSmartAccountNonce } from "~~/config/client";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
@@ -21,6 +21,7 @@ interface SessionKeyState {
 export const useSessionKeyManager = (smartAccountAddress: string | null) => {
   const { address, isConnected } = useAccount();
   const { targetNetwork } = useTargetNetwork();
+  const publicClient = usePublicClient();
 
   const [state, setState] = useState<SessionKeyState>({
     sessionKeyAddress: null,
