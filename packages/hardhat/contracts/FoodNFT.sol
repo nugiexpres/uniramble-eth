@@ -7,42 +7,15 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract FoodNFT is ERC721URIStorage, Ownable {
     uint256 private _tokenIds;
 
-    mapping(address => uint256[]) public mynfts;
     mapping(address => uint256[]) public myFoods;
-    mapping(address => bool) public minted;
 
-    address public paymentGateway;
     address public gameContract;
-    uint256 public mintPrice = 1 ether;
 
-    event MintPriceUpdated(uint256 oldPrice, uint256 newPrice);
     event FoodBurned(uint256 indexed tokenId, address indexed owner, address indexed burner, uint256 timestamp);
+    event FoodMinted(address indexed to, uint256 indexed tokenId, string tokenURI);
 
-    constructor(address _paymentGateway) ERC721("Food Scramble NFT", "FSN") Ownable(msg.sender) {
-        paymentGateway = _paymentGateway;
-    }
-
-    function mintChef(address _to, string memory _tokenURI_) public payable returns (uint256) {
-        require(msg.value == mintPrice, "Mint price not met");
-
-        // process the payment
-        (bool success, ) = address(paymentGateway).call{ value: msg.value }(
-            abi.encodeWithSignature("processPayment()")
-        );
-        require(success, "Payment to PaymentGateway failed");
-
-        uint256 newItemId = _tokenIds;
-        _mint(_to, newItemId);
-        _setTokenURI(newItemId, _tokenURI_);
-
-        _tokenIds++;
-        mynfts[_to].push(newItemId);
-        minted[_to] = true;
-        return newItemId;
-    }
-
-    function chefMinted(address user) external view returns (bool) {
-        return minted[user];
+    constructor() ERC721("Hamburger", "HAM") Ownable(msg.sender) {
+    
     }
 
     function mintFood(address _to, string memory _tokenURI_) public returns (uint256) {
@@ -54,6 +27,8 @@ contract FoodNFT is ERC721URIStorage, Ownable {
 
         _tokenIds++;
         myFoods[_to].push(newItemId);
+        
+        emit FoodMinted(_to, newItemId, _tokenURI_);
         return newItemId;
     }
 
@@ -111,18 +86,8 @@ contract FoodNFT is ERC721URIStorage, Ownable {
         }
     }
 
-    function getMyNFTs(address _owner) public view returns (uint256[] memory) {
-        return mynfts[_owner];
-    }
-
     function getMyFoods(address _owner) public view returns (uint256[] memory) {
         return myFoods[_owner];
-    }
-
-    function setMintPrice(uint256 _newPrice) external onlyOwner {
-        uint256 oldPrice = mintPrice;
-        mintPrice = _newPrice;
-        emit MintPriceUpdated(oldPrice, _newPrice);
     }
 
     function setGameContract(address _gameContract) external onlyOwner {

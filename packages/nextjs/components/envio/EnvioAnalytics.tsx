@@ -229,11 +229,28 @@ export const EnvioAnalytics = () => {
 
   // PURELY ENVIO ON-CHAIN EVENTS - No optimistic, no duplicates
   // Envio subscriptions provide instant updates (3-5s via WebSocket)
+  const [optimisticEvents, setOptimisticEvents] = useState<GameEvent[]>([]);
+  const [persistedEvents, setPersistedEvents] = useState<GameEvent[]>([]);
+
   const events = useMemo(() => {
     console.log("🔄 Processing events, onChainEvents count:", onChainEvents.length);
 
     // Deduplicate by Envio's unique ID (chainId_blockNumber_logIndex)
     const uniqueEvents = new Map<string, GameEvent>();
+
+    // Merge persisted first so confirmed on-chain will overwrite if same id
+    for (const event of persistedEvents) {
+      if (!uniqueEvents.has(event.id)) {
+        uniqueEvents.set(event.id, event);
+      }
+    }
+
+    // Merge optimistic next
+    for (const event of optimisticEvents) {
+      if (!uniqueEvents.has(event.id)) {
+        uniqueEvents.set(event.id, event);
+      }
+    }
 
     for (const event of onChainEvents) {
       // Only add if not already present (prevent duplicates)
@@ -246,16 +263,78 @@ export const EnvioAnalytics = () => {
 
     console.log("✅ After deduplication:", uniqueEvents.size);
 
-    // Sort by timestamp (newest first), limit to 13
+    // Sort by timestamp (newest first), limit to 12
     const sortedEvents = Array.from(uniqueEvents.values())
       .sort((a, b) => b.timestamp - a.timestamp)
-      .slice(0, 13);
+      .slice(0, 12);
 
     // Debug: Log final events
     console.log("📊 Final Events (13 max):", sortedEvents);
 
     return sortedEvents;
-  }, [onChainEvents]);
+  }, [onChainEvents, optimisticEvents, persistedEvents]);
+
+  // Subscribe to optimistic local events emitted via window CustomEvent("localGameAction")
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // Load persisted events on mount (per-chain)
+    try {
+      const key = `envio_events_${chainId}`;
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        const parsed = JSON.parse(raw) as GameEvent[];
+        setPersistedEvents(parsed);
+      }
+    } catch (e) {
+      console.warn("Failed to load persisted Envio events", e);
+    }
+
+    const handler = (e: Event) => {
+      const custom = e as CustomEvent<any>;
+      const detail = custom.detail;
+      if (!detail || !detail.type) return;
+
+      // Push the event to the scroll list by temporarily merging it
+      // Add to optimistic events; Envio events will replace soon after indexing
+      const optimisticEvent: GameEvent = {
+        id: detail.id,
+        type: detail.type,
+        player: detail.player,
+        tbaAddress: detail.tbaAddress,
+        data: detail.data,
+        timestamp: detail.timestamp,
+        db_write_timestamp: detail.db_write_timestamp,
+        optimistic: true,
+        optimisticKey: detail.optimisticKey,
+      };
+
+      setOptimisticEvents(prev => [optimisticEvent, ...prev].slice(0, 50));
+
+      // Persist to localStorage to survive refresh (append and trim)
+      try {
+        setPersistedEvents(prev => {
+          const next = [optimisticEvent, ...prev].slice(0, 200);
+          const key = `envio_events_${chainId}`;
+          localStorage.setItem(key, JSON.stringify(next));
+          return next;
+        });
+      } catch (err) {
+        console.warn("Failed to persist Envio event", err);
+      }
+      if (scrollRef.current) {
+        // Slight delay to allow render
+        setTimeout(() => {
+          if (scrollRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+          }
+        }, 0);
+      }
+    };
+
+    window.addEventListener("localGameAction", handler as EventListener);
+    return () => window.removeEventListener("localGameAction", handler as EventListener);
+  }, [chainId]);
 
   // Auto-scroll to bottom when new items arrive
   useEffect(() => {
@@ -363,12 +442,21 @@ export const EnvioAnalytics = () => {
         return `Rail: Grid ${fromPos} → Grid ${toPos}`;
       }
       case "tba": {
-        if (e.data.startPosition === undefined || e.data.startPosition === null) {
-          return `TBA created (indexing...)`;
+        // Always show TBA address if available
+        if (e.tbaAddress && e.tbaAddress !== "0x0000000000000000000000000000000000000000") {
+          const tbaShort = `${e.tbaAddress.slice(0, 6)}...${e.tbaAddress.slice(-4)}`;
+
+          if (e.data.startPosition === undefined || e.data.startPosition === null) {
+            return `TBA ${tbaShort} created (indexing position...)`;
+          }
+
+          const startPos = e.data.startPosition % 20;
+          const gridInfo = getGridInfo(startPos);
+          return `TBA ${tbaShort} at Grid ${startPos} (${gridInfo.gridType})`;
         }
-        const startPos = e.data.startPosition % 20;
-        const gridInfo = getGridInfo(startPos);
-        return `TBA created at Grid ${startPos} (${gridInfo.gridType})`;
+
+        // Fallback if no TBA address
+        return `TBA created (indexing...)`;
       }
       case "faucet": {
         // Convert amount dari wei (string/bigint) ke MON
@@ -507,7 +595,7 @@ export const EnvioAnalytics = () => {
             </span>
           </div>
         </div>
-        <div className="text-[10px] text-slate-500">{events.length}/13</div>
+        <div className="text-[10px] text-slate-500">{events.length}/12</div>
       </div>
 
       {/* How Envio overlay (absolute) */}

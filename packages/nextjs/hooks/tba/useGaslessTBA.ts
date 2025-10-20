@@ -1,11 +1,12 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Implementation, toMetaMaskSmartAccount } from "@metamask/delegation-toolkit";
 import { encodeFunctionData, http, parseEther } from "viem";
 import { createBundlerClient, createPaymasterClient } from "viem/account-abstraction";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { getBundlerConfig } from "~~/config/bundler";
-import deployedContracts from "~~/contracts/deployedContracts";
 import { useFoodScrambleData } from "~~/hooks/board/useFoodScrambleData";
+// import { useSmartAccountNFTs } from "~~/hooks/envio/useSmartAccountNFTs"; // TODO next update
+import { useDeployedContractInfo } from "~~/hooks/scaffold-eth/useDeployedContractInfo";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth/useScaffoldReadContract";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { useFinalSmartAccount } from "~~/hooks/smart-account/useFinalSmartAccount";
@@ -24,11 +25,7 @@ interface GaslessTBAState {
   smartAccountBalance: bigint | null;
 }
 
-// Get contract ABI from deployedContracts using Scaffold-ETH v2 pattern
-const getContractABI = (chainId: number, contractName: string) => {
-  const contracts = deployedContracts as Record<number, any>;
-  return contracts[chainId]?.[contractName]?.abi || [];
-};
+// ABIs are sourced from the dynamic contracts registry. TODO: next update menggunakan deployedContracts.ts
 
 export const useGaslessTBA = () => {
   const { address, isConnected } = useAccount();
@@ -45,16 +42,43 @@ export const useGaslessTBA = () => {
     enableWatch: true,
   });
 
-  // Get contract addresses from deployedContracts
-  const contracts = deployedContracts as Record<number, any>;
-  const foodNFTAddress = contracts[targetNetwork.id]?.FoodNFT?.address;
-  const foodScrambleAddress = contracts[targetNetwork.id]?.FoodScramble?.address;
-  const erc6551RegistryAddress = contracts[targetNetwork.id]?.ERC6551Registry?.address;
-  const erc6551AccountAddress = contracts[targetNetwork.id]?.ERC6551Account?.address;
+  // Get ChefNFTs directly from ChefNFT contract for Smart Account
+  const { data: smartAccountNFTsRaw, refetch: refetchSmartAccountNFTs } = useScaffoldReadContract({
+    contractName: "ChefNFT",
+    functionName: "getMyChefNFTs",
+    args: smartAccountAddress ? [smartAccountAddress as `0x${string}`] : undefined,
+    query: {
+      enabled: !!smartAccountAddress && !!isSmartAccountDeployed,
+      refetchInterval: 5000, // Auto-refresh every 5 seconds
+    },
+  });
 
-  // Get contract ABIs
-  const foodNFTAbi = getContractABI(targetNetwork.id, "FoodNFT");
-  const foodScrambleAbi = getContractABI(targetNetwork.id, "FoodScramble");
+  // Convert NFT data to consistent format
+  const smartAccountNFTs = useMemo(() => {
+    if (!smartAccountNFTsRaw || !Array.isArray(smartAccountNFTsRaw)) return [];
+    return smartAccountNFTsRaw as bigint[];
+  }, [smartAccountNFTsRaw]);
+
+  const nftCount = smartAccountNFTs.length;
+  const latestNFT = smartAccountNFTs.length > 0 ? smartAccountNFTs[smartAccountNFTs.length - 1] : undefined;
+  const nftsLoading = false; // Direct contract reads are synchronous
+
+  // Resolve contract addresses/abis via Scaffold-ETH deployedContracts mapping
+  const { data: chefNFTInfo } = useDeployedContractInfo({ contractName: "ChefNFT" });
+  const { data: foodNFTInfo } = useDeployedContractInfo({ contractName: "FoodNFT" });
+  const { data: foodScrambleInfo } = useDeployedContractInfo({ contractName: "FoodScramble" });
+  const { data: erc6551RegistryInfo } = useDeployedContractInfo({ contractName: "ERC6551Registry" });
+  const { data: erc6551AccountInfo } = useDeployedContractInfo({ contractName: "ERC6551Account" });
+
+  const chefNFTAddress = chefNFTInfo?.address;
+  const foodNFTAddress = foodNFTInfo?.address;
+  const foodScrambleAddress = foodScrambleInfo?.address;
+  const erc6551RegistryAddress = erc6551RegistryInfo?.address;
+  const erc6551AccountAddress = erc6551AccountInfo?.address;
+
+  const chefNFTAbi = useMemo(() => chefNFTInfo?.abi || [], [chefNFTInfo?.abi]);
+  // const foodNFTAbi = useMemo(() => foodNFTInfo?.abi || [], [foodNFTInfo?.abi]);
+  const foodScrambleAbi = useMemo(() => foodScrambleInfo?.abi || [], [foodScrambleInfo?.abi]);
 
   const [state, setState] = useState<GaslessTBAState>({
     isMinting: false,
@@ -76,11 +100,9 @@ export const useGaslessTBA = () => {
   // Debug logging
   console.log("Contract addresses debug:", {
     chainId: targetNetwork.id,
-    availableChains: Object.keys(contracts),
     foodNFTAddress,
     erc6551RegistryAddress,
     erc6551AccountAddress,
-    contractsForChain: contracts[targetNetwork.id],
   });
 
   // Debug TBA data
@@ -186,7 +208,7 @@ export const useGaslessTBA = () => {
       });
 
       const paymasterClient = createPaymasterClient({
-        transport: http(bundlerConfig.bundlerUrl),
+        transport: http(bundlerConfig.paymasterUrl),
       });
 
       return { publicClient, bundlerClient, paymasterClient };
@@ -222,31 +244,26 @@ export const useGaslessTBA = () => {
     }
   }, [smartAccountAddress, isSmartAccountDeployed, setupClients, targetNetwork?.nativeCurrency?.symbol]);
 
-  // Read current mint price from contract
-  const { data: currentMintPrice } = useScaffoldReadContract({
-    contractName: "FoodNFT",
+  // Read current mint price from ChefNFT contract
+  const { data: currentMintPrice, refetch: refetchMintPrice } = useScaffoldReadContract({
+    contractName: "ChefNFT",
     functionName: "mintPrice",
   });
 
-  // Read NFTs owned by smart account
-  const { data: smartAccountNFTs, refetch: refetchSmartAccountNFTs } = useScaffoldReadContract({
-    contractName: "FoodNFT",
-    functionName: "getMyNFTs",
-    args: [smartAccountAddress as `0x${string}`],
-  });
+  // Check if Smart Account has NFTs by checking array length
+  const hasNFTs = smartAccountNFTs && smartAccountNFTs.length > 0;
 
-  // Debug: Log NFT data when it changes
+  // Debug: Log NFT data from direct contract reads
   React.useEffect(() => {
-    console.log("📊 useGaslessTBA - Smart Account NFTs data:", {
+    console.log("📊 useGaslessTBA - Smart Account NFTs from Contract:", {
       smartAccountAddress,
-      smartAccountNFTs,
-      type: typeof smartAccountNFTs,
-      isArray: Array.isArray(smartAccountNFTs),
-      length: smartAccountNFTs?.length,
-      firstNFT: smartAccountNFTs?.[0],
-      typeOfFirst: typeof smartAccountNFTs?.[0],
+      nftCount,
+      smartAccountNFTs: smartAccountNFTs.map(id => id.toString()),
+      latestNFT: latestNFT?.toString(),
+      nftsLoading,
+      rawData: smartAccountNFTsRaw,
     });
-  }, [smartAccountNFTs, smartAccountAddress]);
+  }, [smartAccountNFTs, smartAccountAddress, nftCount, latestNFT, nftsLoading, smartAccountNFTsRaw]);
 
   // Gasless mint NFT to smart account using MetaMask Smart Account
   const mintNFTGasless = useCallback(async () => {
@@ -255,8 +272,8 @@ export const useGaslessTBA = () => {
       return false;
     }
 
-    if (!foodNFTAddress) {
-      setState(prev => ({ ...prev, error: "FoodNFT contract address not found" }));
+    if (!chefNFTAddress) {
+      setState(prev => ({ ...prev, error: "ChefNFT contract address not found" }));
       return false;
     }
 
@@ -275,7 +292,7 @@ export const useGaslessTBA = () => {
     const { publicClient } = clients;
 
     // Get current mint price from contract
-    const mintPrice = currentMintPrice || parseEther("0.01"); // Fallback to 0.01 native token if not available
+    const mintPrice = currentMintPrice ?? parseEther("0.01"); // Use 0n (contract) if provided; only fallback when undefined
 
     try {
       setState(prev => ({ ...prev, isMinting: true, error: null }));
@@ -338,10 +355,10 @@ export const useGaslessTBA = () => {
         return false;
       }
 
-      // Encode mint function call based on FoodNFT.sol
+      // Encode mint function call based on ChefNFT.sol
       // mintChef(address _to, string memory _tokenURI_) external payable returns (uint256)
       const mintData = encodeFunctionData({
-        abi: foodNFTAbi,
+        abi: chefNFTAbi,
         functionName: "mintChef",
         args: [smartAccountAddress as `0x${string}`, "chef-nft"], // Mint to smart account with tokenURI
       });
@@ -351,7 +368,7 @@ export const useGaslessTBA = () => {
         account: smartAccountInstance,
         calls: [
           {
-            to: foodNFTAddress as `0x${string}`,
+            to: chefNFTAddress as `0x${string}`,
             value: mintPrice, // Use dynamic mint price from contract
             data: mintData,
           },
@@ -376,37 +393,81 @@ export const useGaslessTBA = () => {
 
       console.log("NFT minted gasless! UserOperation Hash:", userOperationHash);
 
-      // Get the latest tokenId from smart account NFTs
-      let latestTokenId = BigInt(0);
-      if (smartAccountNFTs && Array.isArray(smartAccountNFTs) && smartAccountNFTs.length > 0) {
-        const lastNFT = smartAccountNFTs[smartAccountNFTs.length - 1] as any;
-        if (lastNFT && lastNFT.tokenId) {
-          latestTokenId = BigInt(Number(lastNFT.tokenId));
-        }
-      }
-
+      // Initially set state without tokenId (will be updated after refresh)
       setState(prev => ({
         ...prev,
         isMinting: false,
         mintTxHash: userOperationHash,
-        tokenId: latestTokenId,
         error: null,
       }));
 
-      // Save mint status to localStorage for permanent persistence
-      saveTBAState({
-        tbaAddress: state.tbaAddress || "0x",
-        tbaTxHash: state.tbaTxHash || "",
-        tbaCreated: state.tbaCreated,
-        mintTxHash: userOperationHash,
-        tokenId: latestTokenId.toString(),
-      });
+      // Wait for transaction to be mined before refreshing
+      console.log("⏳ Waiting for transaction to be mined...");
+      try {
+        const receipt = await bundlerClient.waitForUserOperationReceipt({
+          hash: userOperationHash,
+        });
+        console.log("✅ Transaction mined! Receipt:", receipt);
 
-      // Refetch smart account NFTs after successful mint
-      setTimeout(() => {
-        refetchSmartAccountNFTs();
-        console.log("Refreshing smart account NFTs after mint...");
-      }, 2000);
+        // Refetch smart account NFTs after transaction is confirmed
+        console.log("🔄 Refreshing smart account NFTs after mint confirmation...");
+        await refetchSmartAccountNFTs();
+        console.log("📊 Current NFTs:", {
+          nftCount,
+          smartAccountNFTs: smartAccountNFTs.map(id => id.toString()),
+        });
+
+        // Extract and save tokenId after successful refresh
+        if (smartAccountNFTs && smartAccountNFTs.length > 0) {
+          const lastNFT = smartAccountNFTs[smartAccountNFTs.length - 1];
+          let extractedTokenId = BigInt(0);
+
+          if (typeof lastNFT === "bigint") {
+            extractedTokenId = lastNFT;
+          } else if (typeof lastNFT === "number") {
+            extractedTokenId = BigInt(lastNFT);
+          } else if (typeof lastNFT === "string") {
+            extractedTokenId = BigInt(lastNFT);
+          }
+
+          console.log("📊 Extracted tokenId after mint:", extractedTokenId.toString());
+
+          // Update state with tokenId
+          setState(prev => ({
+            ...prev,
+            tokenId: extractedTokenId,
+          }));
+
+          // Save to localStorage with tokenId
+          saveTBAState({
+            tbaAddress: state.tbaAddress || "0x",
+            tbaTxHash: state.tbaTxHash || "",
+            tbaCreated: state.tbaCreated,
+            mintTxHash: userOperationHash,
+            tokenId: extractedTokenId.toString(),
+          });
+        }
+
+        // Additional refresh after delay to ensure indexer is updated
+        setTimeout(async () => {
+          console.log("🔄 Secondary NFT refresh...");
+          await refetchSmartAccountNFTs();
+          console.log("📊 Second refetch - current NFT count:", nftCount);
+        }, 3000);
+
+        // Third refresh for extra reliability
+        setTimeout(async () => {
+          console.log("🔄 Third NFT refresh...");
+          await refetchSmartAccountNFTs();
+        }, 6000);
+      } catch (receiptError) {
+        console.error("Failed to get transaction receipt:", receiptError);
+        // Still try to refresh even if receipt fails
+        setTimeout(() => {
+          refetchSmartAccountNFTs();
+          console.log("Refreshing smart account NFTs after mint (fallback)...");
+        }, 2000);
+      }
 
       // Emit event for EnvioAnalytics (optimistic UI update)
       emitMintNFTEvent(address, smartAccountAddress);
@@ -453,15 +514,20 @@ export const useGaslessTBA = () => {
     isConnected,
     address,
     smartAccountAddress,
-    smartAccountNFTs,
     isSmartAccountDeployed,
     setupClients,
     targetNetwork,
     walletClient,
-    foodNFTAddress,
-    foodNFTAbi,
+    chefNFTAddress,
+    chefNFTAbi,
     currentMintPrice,
     refetchSmartAccountNFTs,
+    saveTBAState,
+    state.tbaAddress,
+    state.tbaCreated,
+    state.tbaTxHash,
+    nftCount,
+    smartAccountNFTs,
   ]);
 
   // Gasless create Token Bound Account using MetaMask Smart Account
@@ -491,12 +557,12 @@ export const useGaslessTBA = () => {
         return { userOperationHash: state.tbaTxHash || "0x", tbaAddress: actualTbaAddress };
       }
 
-      if (!foodScrambleAddress || !erc6551AccountAddress || !foodNFTAddress) {
+      if (!foodScrambleAddress || !erc6551AccountAddress || !chefNFTAddress) {
         const error = `Contract addresses not found for chain ${targetNetwork.id} (${targetNetwork.name})`;
         console.error("❌ createTBAGasless failed:", error, {
           foodScrambleAddress,
           erc6551AccountAddress,
-          foodNFTAddress,
+          chefNFTAddress,
         });
         setState(prev => ({ ...prev, error }));
         notification.error(`Contracts not deployed on ${targetNetwork.name}`);
@@ -510,12 +576,12 @@ export const useGaslessTBA = () => {
         return false;
       }
 
-      // Check if Smart Account has NFTs
+      // Check if Smart Account has ChefNFTs
       if (!smartAccountNFTs || smartAccountNFTs.length === 0) {
-        const errorMsg = "No Chef NFTs found in Smart Account. Please mint a Chef NFT first.";
+        const errorMsg = "❌ No Chef NFT found. Please mint a Chef NFT first to create TBA.";
         console.error("❌ createTBAGasless failed:", errorMsg);
         setState(prev => ({ ...prev, error: errorMsg }));
-        // Don't show notification here - let component handle popup
+        notification.error("Chef NFT Required - Please mint a Chef NFT first");
         return false;
       }
 
@@ -575,7 +641,7 @@ export const useGaslessTBA = () => {
         console.log("TBA creation parameters:", {
           erc6551AccountAddress,
           chainId: targetNetwork.id,
-          foodNFTAddress,
+          chefNFTAddress,
           tokenId: tokenId.toString(),
           salt: salt.toString(),
           smartAccountAddress,
@@ -589,7 +655,7 @@ export const useGaslessTBA = () => {
           args: [
             erc6551AccountAddress as `0x${string}`, // implementation
             BigInt(targetNetwork.id), // chainId
-            foodNFTAddress as `0x${string}`, // tokenContract (FoodNFT)
+            chefNFTAddress as `0x${string}`, // tokenContract (ChefNFT)
             tokenId, // tokenId
             salt, // salt - use timestamp to avoid "combination already used"
             "0x" as `0x${string}`, // initData (empty - registry handles initialization)
@@ -692,12 +758,20 @@ export const useGaslessTBA = () => {
           return { userOperationHash: "0x", tbaAddress: userTBA || "0x" };
         }
 
-        // Handle Paymaster-specific errors
+        // Handle specific contract and Paymaster errors
         let userFriendlyMessage = errorMessage;
         let isPaymasterError = false;
 
-        // Check for Paymaster errors
-        if (errorMessage.includes("UserOperation reverted during simulation")) {
+        // Check for ChefNFT-specific errors
+        if (errorMessage.includes("Must use ChefNFT contract")) {
+          userFriendlyMessage = "❌ Invalid NFT contract - Must use Chef NFT";
+        } else if (errorMessage.includes("ChefNFT does not exist")) {
+          userFriendlyMessage = "❌ Chef NFT not found - Please mint a Chef NFT first";
+        } else if (errorMessage.includes("Invalid ChefNFT owner")) {
+          userFriendlyMessage = "❌ Invalid Chef NFT owner - NFT may not exist";
+        } else if (errorMessage.includes("TBA already exists for this user")) {
+          userFriendlyMessage = "✅ TBA already created - Account is ready to use";
+        } else if (errorMessage.includes("UserOperation reverted during simulation")) {
           // Decode error reason 0x741752c2
           if (errorMessage.includes("0x741752c2")) {
             userFriendlyMessage =
@@ -720,7 +794,7 @@ export const useGaslessTBA = () => {
             "❌ Paymaster out of budget - Gas sponsorship unavailable. Please try again later or contact support.";
           isPaymasterError = true;
         } else if (errorMessage.includes("No NFTs found") || errorMessage.includes("no NFTs")) {
-          userFriendlyMessage = "No Chef NFTs found in Smart Account. Please mint a Chef NFT first.";
+          userFriendlyMessage = "❌ No Chef NFTs found - Please mint a Chef NFT first";
         } else if (errorMessage.includes("Combination already used")) {
           userFriendlyMessage = "❌ TBA combination already exists - Try again with different salt";
         } else if (errorMessage.includes("Account already exists")) {
@@ -760,10 +834,12 @@ export const useGaslessTBA = () => {
       walletClient,
       foodScrambleAddress,
       erc6551AccountAddress,
-      foodNFTAddress,
+      chefNFTAddress,
       foodScrambleAbi,
-      state.tbaTxHash,
       saveTBAState,
+      state.mintTxHash,
+      state.tbaTxHash,
+      state.tokenId,
       refetchUserTBA,
       userTBA,
       actualTbaAddress,
@@ -801,18 +877,25 @@ export const useGaslessTBA = () => {
     isSmartAccountDeployed,
     smartAccountAddress,
     smartAccountNFTs: smartAccountNFTs || [],
+    nftCount,
+    latestNFT,
+    nftsLoading,
     refetchSmartAccountNFTs,
     // TBA data from contract
     tbaAddress: actualTbaAddress,
     tbaCreated: actualTbaCreated,
     // Contract addresses
+    chefNFTAddress,
     foodNFTAddress,
     foodScrambleAddress,
     erc6551RegistryAddress,
     erc6551AccountAddress,
-    // Dynamic mint price
-    currentMintPrice: currentMintPrice || parseEther("0.01"),
+    // Dynamic mint price (keep 0n from contract; fallback only if undefined)
+    currentMintPrice: currentMintPrice ?? parseEther("0.01"),
+    refetchMintPrice,
     // Smart Account balance
     smartAccountBalance: state.smartAccountBalance,
+    // Smart Account NFT status
+    hasNFTs: hasNFTs || false,
   };
 };

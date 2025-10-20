@@ -52,12 +52,12 @@ export const emitGameEvent = (eventData: GameEventData) => {
 /**
  * Shorthand emitters for common actions
  */
-export const emitRollEvent = (player: string, newPosition: number) => {
+export const emitRollEvent = (player: string, newPosition: number, roll?: number) => {
   emitGameEvent({
     type: "movement",
     player,
     tbaAddress: player,
-    data: { position: newPosition, action: "roll" },
+    data: { position: newPosition, roll: roll || 0, action: "roll" },
     optimisticKey: `roll:${player}:${Date.now()}`,
   });
 };

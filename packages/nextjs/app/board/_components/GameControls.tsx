@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useAccount } from "wagmi";
 import { useFoodTokens } from "~~/hooks/board/useFoodTokens";
 import { useSmartAccountTBA } from "~~/hooks/envio/useSmartAccountTBA";
@@ -68,7 +69,10 @@ export const GameControls = ({
     useFinalSmartAccount();
 
   // Get Smart Account TBA (reactive to wallet changes - like SpecialBox)
-  const { tbaAddress: hookSmartAccountTba } = useSmartAccountTBA();
+  const { tbaAddress: hookSmartAccountTba, refetchContractTBA } = useSmartAccountTBA();
+
+  // Refresh state for animation
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Use ONLY hook data from connected wallet, ignore stale props
   const effectiveSmartAccount = connectedSmartAccount || null;
@@ -159,6 +163,40 @@ export const GameControls = ({
 
   // Check if buy button should be active (not on Rail or Stove)
   const canBuyIngredient = canBuy && !isActuallyOnRail && !isOnStove;
+
+  // Handle refresh wallet data
+  const handleRefresh = async () => {
+    if (isRefreshing) return;
+
+    setIsRefreshing(true);
+    try {
+      // Refetch TBA data from contract
+      await refetchContractTBA();
+
+      // Optional: Trigger a re-render by dispatching an event
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("walletDataRefreshed", {
+            detail: {
+              timestamp: Date.now(),
+              smartAccount: effectiveSmartAccount,
+              tba: effectiveTbaAddress,
+            },
+          }),
+        );
+      }
+
+      console.log("✅ Wallet data refreshed:", {
+        smartAccount: effectiveSmartAccount,
+        tba: effectiveTbaAddress,
+      });
+    } catch (error) {
+      console.error("❌ Failed to refresh wallet data:", error);
+    } finally {
+      // Keep animation for at least 1 second for visual feedback
+      setTimeout(() => setIsRefreshing(false), 1000);
+    }
+  };
 
   return (
     <div className={`flex flex-col items-center space-y-6 ${isMobile ? "p-2" : "p-6"}`}>
@@ -469,8 +507,29 @@ export const GameControls = ({
             }`}
           ></div>
 
-          {/* Smart Account & TBA Account Info */}
+          {/* Smart Account & TBA Account Info with Refresh Button */}
           <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex flex-col items-center space-y-1">
+            {/* Refresh Button */}
+            {isConnected && (
+              <button
+                onClick={handleRefresh}
+                disabled={isRefreshing}
+                className={`mb-1 bg-gradient-to-r from-green-500/40 to-emerald-700/40 backdrop-blur-sm border border-green-400/60 rounded-md px-2 py-1 shadow-lg hover:from-green-500/60 hover:to-emerald-700/60 transition-all duration-200 ${
+                  isRefreshing ? "cursor-wait" : "cursor-pointer"
+                }`}
+                title="Refresh Smart Account & TBA data"
+              >
+                <div className="flex items-center space-x-1">
+                  <span className={`text-[10px] text-green-100 font-bold ${isRefreshing ? "animate-spin" : ""}`}>
+                    🔄
+                  </span>
+                  <span className="text-[10px] text-green-100 font-bold">
+                    {isRefreshing ? "REFRESHING..." : "REFRESH WALLET"}
+                  </span>
+                </div>
+              </button>
+            )}
+
             {/* Smart Account */}
             {isConnected && effectiveIsSmartAccountDeployed && effectiveSmartAccount && (
               <div className="bg-gradient-to-r from-purple-500/40 to-purple-700/40 backdrop-blur-sm border border-purple-400/60 rounded-md px-2 py-1 shadow-lg">

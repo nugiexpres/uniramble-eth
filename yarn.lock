@@ -5,6 +5,45 @@ __metadata:
   version: 6
   cacheKey: 8
 
+"@account-abstraction/contracts@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "@account-abstraction/contracts@npm:0.6.0"
+  checksum: 745e838e2cb04c89a9c0df11d022c1d604b1e440c9cd65c2014edd9b1056809fec2e363b42ec09883d49dbe09f9597d8339c90d57763a1621fb515edf5fef35d
+  languageName: node
+  linkType: hard
+
+"@account-abstraction/sdk@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "@account-abstraction/sdk@npm:0.6.0"
+  dependencies:
+    "@account-abstraction/contracts": ^0.6.0
+    "@account-abstraction/utils": ^0.6.0
+    "@ethersproject/abstract-provider": ^5.7.0
+    "@ethersproject/abstract-signer": ^5.7.0
+    "@ethersproject/networks": ^5.7.0
+    "@ethersproject/properties": ^5.7.0
+    "@ethersproject/providers": ^5.7.0
+    "@types/debug": ^4.1.7
+    debug: ^4.3.4
+    ethers: ^5.7.0
+  checksum: db3b7a66334ae3ab0c8aa1c68a5b18c62b77b3c36a1558d492b08dc29aa82e2c81a9d919c3313e9967307ea03bf2081bb864a5a8d4fd523dafb59c4bd04eb3d2
+  languageName: node
+  linkType: hard
+
+"@account-abstraction/utils@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "@account-abstraction/utils@npm:0.6.0"
+  dependencies:
+    "@account-abstraction/contracts": ^0.6.0
+    "@ethersproject/abi": ^5.7.0
+    "@ethersproject/providers": ^5.7.0
+    "@openzeppelin/contracts": ^4.7.3
+    debug: ^4.3.4
+    ethers: ^5.7.0
+  checksum: bea3e5b1bf54727b527bcb985e1ca9ba0cf50670c364c1102996b17be4d7a9041572570ddebc45c5752caca1889964ec4b2692ea016c3633d067fad7cbc4bb33
+  languageName: node
+  linkType: hard
+
 "@adraffy/ens-normalize@npm:1.10.0":
   version: 1.10.0
   resolution: "@adraffy/ens-normalize@npm:1.10.0"
@@ -1083,7 +1122,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/providers@npm:5.8.0, @ethersproject/providers@npm:^5.7.2":
+"@ethersproject/providers@npm:5.8.0, @ethersproject/providers@npm:^5.7.0, @ethersproject/providers@npm:^5.7.2":
   version: 5.8.0
   resolution: "@ethersproject/providers@npm:5.8.0"
   dependencies:
@@ -3543,6 +3582,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@openzeppelin/contracts@npm:^4.7.3":
+  version: 4.9.6
+  resolution: "@openzeppelin/contracts@npm:4.9.6"
+  checksum: 274b6e968268294f12d5ca4f0278f6e6357792c8bb4d76664f83dbdc325f780541538a127e6a6e97e4f018088b42f65952014dec9c745c0fa25081f43ef9c4bf
+  languageName: node
+  linkType: hard
+
 "@openzeppelin/contracts@npm:~5.0.2":
   version: 5.0.2
   resolution: "@openzeppelin/contracts@npm:5.0.2"
@@ -4002,6 +4048,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@se-2/nextjs@workspace:packages/nextjs"
   dependencies:
+    "@account-abstraction/sdk": ^0.6.0
     "@apollo/client": ^4.0.7
     "@heroicons/react": ~2.1.5
     "@metamask/delegation-toolkit": ^0.13.0

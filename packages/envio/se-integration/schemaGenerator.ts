@@ -1,6 +1,29 @@
 import { ContractInfo, EventInfo } from './parseFiles';
 
 /**
+ * List of imports to exclude from generated files
+ * Add any types that should not be auto-imported here
+ */
+const EXCLUDED_IMPORTS = [
+  'ERC6551AccountProxy', // Not exported from generated types
+];
+
+/**
+ * List of reserved field names in Envio that need to be renamed
+ * Maps: original field name -> replacement field name
+ */
+const RESERVED_FIELD_NAMES: Record<string, string> = {
+  'action': 'gameAction', // Conflicts with Envio's entity history tracking
+};
+
+/**
+ * Check if a field name is reserved and needs renaming
+ */
+function getRenamedFieldName(fieldName: string): string {
+  return RESERVED_FIELD_NAMES[fieldName] || fieldName;
+}
+
+/**
  * Map Solidity types to GraphQL types
  */
 function mapSolidityToGraphQLType(solidityType: string): string {
@@ -65,7 +88,8 @@ function generateEventSchema(contractName: string, event: EventInfo): string {
   
   // Add event input parameters as entity fields
   event.inputs.forEach(input => {
-    const fieldName = input.name || 'param';
+    const originalFieldName = input.name || 'param';
+    const fieldName = getRenamedFieldName(originalFieldName);
     const graphqlType = mapSolidityToGraphQLType(input.type);
     schema += `  ${fieldName}: ${graphqlType}\n`;
   });
@@ -112,8 +136,10 @@ function generateEventHandler(contractName: string, event: EventInfo): string {
   
   // Add event parameters
   event.inputs.forEach(input => {
-    const fieldName = input.name || 'param';
-    handler += `    ${fieldName}: event.params.${fieldName},\n`;
+    const originalFieldName = input.name || 'param';
+    const renamedFieldName = getRenamedFieldName(originalFieldName);
+    // Use renamed field name in entity, but original field name from event.params
+    handler += `    ${renamedFieldName}: event.params.${originalFieldName},\n`;
   });
   
   handler += `  };\n\n`;
@@ -152,7 +178,12 @@ export function generateEventHandlers(contracts: ContractInfo[]): string {
     });
   });
   
-  handlers += Array.from(imports).map(imp => `  ${imp}`).join(',\n');
+  // Filter out excluded imports
+  const filteredImports = Array.from(imports).filter(
+    imp => !EXCLUDED_IMPORTS.includes(imp)
+  );
+  
+  handlers += filteredImports.map(imp => `  ${imp}`).join(',\n');
   handlers += `,\n} from "generated";\n\n`;
   
   // Generate handlers for unique contract types only

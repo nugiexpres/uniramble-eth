@@ -5,18 +5,18 @@ import { AlertCircle, ArrowUpDown, CheckCircle, Copy, Loader2, Rocket } from "lu
 import { useAccount, useBalance } from "wagmi";
 import { WalletConnectionWarning } from "~~/components/scaffold-eth";
 import { FundSmartAccount } from "~~/components/smart-account/FundSmartAccount";
-import SmartAccountDeployModal from "~~/components/smart-account/SmartAccountDeployModal";
+import { useGlobalModal } from "~~/contexts/GlobalModalContext";
 import { useSmartAccountContext } from "~~/contexts/SmartAccountContext";
 // import { useSmartAccountTBA } from "~~/hooks/envio/useGameEvents"; // TODO: Next Update
 // import { useTokenBalances } from "~~/hooks/envio/useTokenBalances";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { useFinalSmartAccount } from "~~/hooks/smart-account/useFinalSmartAccount";
+import { emitCreateSmartAccountEvent } from "~~/utils/envio/emitGameEvent";
 
 export const FinalSmartAccount = () => {
   const { address, isConnected } = useAccount();
   const { targetNetwork } = useTargetNetwork();
-  const { isDeployed, isLoading, error, smartAccountAddress, createAndDeploySmartAccount, reinitializeClients } =
-    useFinalSmartAccount();
+  const { isDeployed, isLoading, error, smartAccountAddress, createAndDeploySmartAccount } = useFinalSmartAccount();
 
   // Smart Account Context
   const {
@@ -42,10 +42,8 @@ export const FinalSmartAccount = () => {
 
   const [activeTab, setActiveTab] = useState<"account" | "fund">("account");
 
-  // Modal state for Smart Account deployment
-  const [showDeployModal, setShowDeployModal] = useState(false);
-  const [deployStep, setDeployStep] = useState(1);
-  const [deployError, setDeployError] = useState<string | null>(null);
+  // Global modal context
+  const { setShowSmartAccountDeployModal, setDeployStep, setDeployError, setIsDeployProcessing } = useGlobalModal();
 
   // Copy address functionality
   const copyToClipboard = async (text: string, type: string) => {
@@ -213,12 +211,13 @@ export const FinalSmartAccount = () => {
     console.log("Showing Smart Account deploy modal...");
     setDeployStep(1);
     setDeployError(null);
-    setShowDeployModal(true);
+    setShowSmartAccountDeployModal(true);
 
     try {
       // Step 1: Sign "Welcome to Uniramble" message (off-chain signature)
       console.log("Step 1: Requesting Welcome to Uniramble signature...");
       setDeployStep(1);
+      setIsDeployProcessing(true);
 
       if (!address) {
         throw new Error("Wallet address not found");
@@ -253,11 +252,21 @@ export const FinalSmartAccount = () => {
           setIsSmartAccountLoggedIn(true);
         }
 
+        // Emit local analytics event so EnvioAnalytics picks it up immediately
+        try {
+          if (address && smartAccountAddress) {
+            emitCreateSmartAccountEvent(address, smartAccountAddress);
+          }
+        } catch (e) {
+          console.warn("Failed to emit createSmartAccount analytics event", e);
+        }
+
         // Close modal after success
         setTimeout(() => {
-          setShowDeployModal(false);
+          setShowSmartAccountDeployModal(false);
           setDeployStep(1);
           setDeployError(null);
+          setIsDeployProcessing(false);
         }, 2000);
       } else {
         throw new Error("Failed to deploy Smart Account");
@@ -279,9 +288,10 @@ export const FinalSmartAccount = () => {
 
       // Close modal after showing error
       setTimeout(() => {
-        setShowDeployModal(false);
+        setShowSmartAccountDeployModal(false);
         setDeployStep(1);
         setDeployError(null);
+        setIsDeployProcessing(false);
       }, 3000);
     }
   };
@@ -460,11 +470,15 @@ export const FinalSmartAccount = () => {
                     <div className="text-red-300 text-xs">{error}</div>
                     {(error.includes("clients not initialized") || error.includes("Initializing clients")) && (
                       <button
-                        onClick={reinitializeClients}
+                        onClick={() => {
+                          if (!isLoading) {
+                            void createAndDeploySmartAccount();
+                          }
+                        }}
                         disabled={isLoading}
                         className="mt-0.5 text-xs text-red-300 hover:text-red-200 underline cursor-pointer disabled:cursor-not-allowed"
                       >
-                        {isLoading ? "Reinitializing..." : "Reinitialize"}
+                        {isLoading ? "Reinitializing..." : "Retry"}
                       </button>
                     )}
                   </div>
@@ -476,30 +490,6 @@ export const FinalSmartAccount = () => {
           <FundSmartAccount />
         )}
       </div>
-
-      {/* Smart Account Deploy Modal */}
-      <SmartAccountDeployModal
-        isOpen={showDeployModal}
-        onClose={() => setShowDeployModal(false)}
-        currentStep={deployStep}
-        totalSteps={2}
-        stepTitle={
-          deployStep === 1
-            ? "Sign Welcome Message"
-            : deployStep === 2
-              ? "Deploying Smart Account"
-              : "Deployment Complete"
-        }
-        stepDescription={
-          deployStep === 1
-            ? "Please sign the Welcome to Uniramble message in your wallet (off-chain, no gas)"
-            : deployStep === 2
-              ? "Please confirm Smart Account deployment in your wallet (gasless deployment)"
-              : "Your Smart Account has been successfully created!"
-        }
-        isProcessing={isLoading}
-        error={deployError}
-      />
     </div>
   );
 };

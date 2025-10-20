@@ -5,6 +5,7 @@ import "./BreadToken.sol";
 import "./MeatToken.sol";
 import "./LettuceToken.sol";
 import "./TomatoToken.sol";
+import "./ChefNFT.sol";
 import "./FoodNFT.sol";
 import "./FaucetMon.sol";
 import "./interfaces/IPaymentGateway.sol";
@@ -15,6 +16,7 @@ contract FoodScramble {
     MeatToken public meat;
     LettuceToken public lettuce;
     TomatoToken public tomato;
+    ChefNFT public chefNFT;
     FoodNFT public hamburger;
     FaucetMon public faucetMon;
     IPaymentGateway public paymentGateway;
@@ -82,6 +84,7 @@ contract FoodScramble {
         address _meatAddress,
         address _lettuceAddress,
         address _tomatoAddress,
+        address _chefNFTAddress,
         address _hamburgerAddress,
         address payable _faucetMonAddress,
         address payable _paymentGatewayAddress
@@ -92,6 +95,7 @@ contract FoodScramble {
         meat = MeatToken(_meatAddress);
         lettuce = LettuceToken(_lettuceAddress);
         tomato = TomatoToken(_tomatoAddress);
+        chefNFT = ChefNFT(_chefNFTAddress);
         hamburger = FoodNFT(_hamburgerAddress);
         faucetMon = FaucetMon(payable(_faucetMonAddress));
         paymentGateway = IPaymentGateway(payable(_paymentGatewayAddress));
@@ -145,6 +149,7 @@ contract FoodScramble {
         return hamburger.getMyFoods(tba);
     }
 
+
     function createPlayer(address tba) internal {
         require(!isPlayerCreated[tba], "Already registered");
 
@@ -170,11 +175,22 @@ contract FoodScramble {
         uint256 _salt,
         bytes calldata _initData
     ) external {
-        // Check if user has ChefNFT (only 1 ChefNFT per user allowed)
-        uint256[] memory userNFTs = hamburger.getMyNFTs(msg.sender);
-        require(userNFTs.length > 0, "Must mint ChefNFT first");
-        // Verify the tokenId is the user's ChefNFT (1 ChefNFT per user)
-        require(userNFTs[0] == _tokenId, "Token must be your ChefNFT");
+        // Validate token contract is ChefNFT
+        require(_tokenContract == address(chefNFT), "Must use ChefNFT contract");
+        
+        // Check if ChefNFT exists and get owner
+        address tokenOwner;
+        try chefNFT.ownerOf(_tokenId) returns (address nftOwner) {
+            tokenOwner = nftOwner;
+        } catch {
+            revert("ChefNFT does not exist");
+        }
+        
+        // Validate token owner is not zero address
+        require(tokenOwner != address(0), "Invalid ChefNFT owner");
+        
+        // Check if user already has a TBA
+        require(tbaList[msg.sender] == address(0), "TBA already exists for this user");
 
         address newTBA = registry.createAccount(_implementation, _chainId, _tokenContract, _tokenId, _salt, _initData);
         tbaList[msg.sender] = newTBA;

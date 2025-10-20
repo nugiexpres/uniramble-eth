@@ -4,13 +4,12 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { CreateTBAErrorHandler, useCreateTBAErrorHandler } from "./_components/CreateTBAErrorHandler";
 import { motion } from "framer-motion";
-import { AlertCircle, CheckCircle, Copy, Loader2, X } from "lucide-react";
+import { AlertCircle, CheckCircle, Copy, Loader2, RefreshCw, X } from "lucide-react";
 import { parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { WalletConnectionWarning } from "~~/components/scaffold-eth";
 import { useSmartAccountContext } from "~~/contexts/SmartAccountContext";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
-// import deployedContracts from "~~/contracts/deployedContracts";
 import { useGaslessTBA } from "~~/hooks/tba/useGaslessTBA";
 import { notification } from "~~/utils/scaffold-eth";
 
@@ -26,22 +25,13 @@ export const CreateTBA = () => {
     isContextAvailable,
   } = useSmartAccountContext();
 
-  // Local state for TBA creation success
+  // Local state
   const [showSuccess, setShowSuccess] = useState(false);
   const [showMintPopup, setShowMintPopup] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Error handling
   const { handleMintError, handleCreateTBAError } = useCreateTBAErrorHandler();
-
-  // Copy address functionality
-  const copyToClipboard = async (text: string, type: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      console.log(`${type} address copied to clipboard`);
-    } catch (err) {
-      console.error("Failed to copy address:", err);
-    }
-  };
 
   // Use gasless TBA hook
   const {
@@ -57,12 +47,54 @@ export const CreateTBA = () => {
     smartAccountAddress,
     smartAccountNFTs,
     refetchSmartAccountNFTs,
-    foodNFTAddress,
+    chefNFTAddress,
     currentMintPrice,
+    refetchMintPrice,
     smartAccountBalance,
+    hasNFTs,
   } = useGaslessTBA();
 
-  // Handle auto-show when Smart Account is deployed (only when context is available)
+  // 🎯 LISTEN TO LOCAL GAME EVENTS FOR REAL-TIME UPDATES
+  useEffect(() => {
+    const handleLocalGameAction = (event: CustomEvent) => {
+      const action = event.detail;
+      console.log("🎮 CreateTBA received local game action:", action);
+
+      // Refresh NFT data when mint event is received
+      if (action.type === "mintNFT" && action.player === smartAccountAddress) {
+        console.log("🔄 Mint event detected, refreshing NFT data...");
+        setIsRefreshing(true);
+
+        // Multiple refresh attempts for reliability
+        setTimeout(() => {
+          refetchSmartAccountNFTs();
+        }, 1000);
+
+        setTimeout(() => {
+          refetchSmartAccountNFTs();
+          setIsRefreshing(false);
+        }, 3000);
+
+        setTimeout(() => {
+          refetchSmartAccountNFTs();
+        }, 5000);
+      }
+
+      // Handle TBA creation event
+      if (action.type === "tba" && action.player === smartAccountAddress) {
+        console.log("✅ TBA creation event detected");
+        setShowSuccess(true);
+        setTimeout(() => setShowSuccess(false), 3000);
+      }
+    };
+
+    window.addEventListener("localGameAction", handleLocalGameAction as EventListener);
+    return () => {
+      window.removeEventListener("localGameAction", handleLocalGameAction as EventListener);
+    };
+  }, [smartAccountAddress, refetchSmartAccountNFTs]);
+
+  // Auto-show when Smart Account is deployed
   useEffect(() => {
     if (isContextAvailable && shouldShowCreateTBA && contextSmartAccountDeployed) {
       console.log("Auto-showing CreateTBA after Smart Account deployment");
@@ -84,47 +116,45 @@ export const CreateTBA = () => {
     if (isContextAvailable) {
       console.log("Smart Account context changed, refreshing CreateTBA data...");
       refetchSmartAccountNFTs();
+      refetchMintPrice();
     }
-  }, [isContextAvailable, isSmartAccountDeployed, smartAccountAddress, refetchSmartAccountNFTs]);
+  }, [isContextAvailable, isSmartAccountDeployed, smartAccountAddress, refetchSmartAccountNFTs, refetchMintPrice]);
 
   // Force refresh on page load to ensure stable state
   useEffect(() => {
     if (smartAccountAddress && isSmartAccountDeployed) {
-      console.log("Page loaded, refreshing NFT data for stable state...");
+      console.log("Page loaded, refreshing NFT and price data for stable state...");
       // Immediate refresh on mount
       refetchSmartAccountNFTs();
+      refetchMintPrice();
 
       // Also refresh after delay to catch any delayed updates
       const timer = setTimeout(() => {
-        console.log("Secondary NFT data refresh...");
+        console.log("Secondary NFT and price data refresh...");
         refetchSmartAccountNFTs();
+        refetchMintPrice();
       }, 2000);
 
       return () => clearTimeout(timer);
     }
-  }, [smartAccountAddress, isSmartAccountDeployed, refetchSmartAccountNFTs]);
+  }, [smartAccountAddress, isSmartAccountDeployed, refetchSmartAccountNFTs, refetchMintPrice]);
 
-  // Auto-refetch NFT data periodically for real-time updates
+  // Auto-refetch NFT and price data periodically for real-time updates
   useEffect(() => {
     if (smartAccountAddress && isSmartAccountDeployed) {
       const interval = setInterval(() => {
-        console.log("Periodic NFT data refresh...");
+        console.log("Periodic NFT and price data refresh...");
         refetchSmartAccountNFTs();
+        refetchMintPrice();
       }, 30000); // Refresh every 30 seconds to reduce rate limiting
 
       return () => clearInterval(interval);
     }
-  }, [smartAccountAddress, isSmartAccountDeployed, refetchSmartAccountNFTs]);
+  }, [smartAccountAddress, isSmartAccountDeployed, refetchSmartAccountNFTs, refetchMintPrice]);
 
-  // Envio-powered TBA tracking (for future use)
-  // const {
-  //   tbaData: envioTbaData,
-  //   latestTBA: envioLatestTBA,
-  //   loading: envioLoading,
-  // } = useSmartAccountTBA(smartAccountAddress || undefined);
-
-  // Check if smart account has NFTs (not EOA wallet)
-  const smartAccountHasNFTs = smartAccountNFTs && Array.isArray(smartAccountNFTs) && smartAccountNFTs.length > 0;
+  // Check if smart account has NFTs using contract function (more reliable)
+  const smartAccountHasNFTs =
+    hasNFTs || (smartAccountNFTs && Array.isArray(smartAccountNFTs) && smartAccountNFTs.length > 0);
 
   // Debug NFT detection
   React.useEffect(() => {
@@ -137,21 +167,28 @@ export const CreateTBA = () => {
       firstNFT: smartAccountNFTs?.[0],
       firstNFTType: typeof smartAccountNFTs?.[0],
       firstNFTStringified: smartAccountNFTs?.[0] ? JSON.stringify(smartAccountNFTs[0]) : "null",
-      allNFTs: smartAccountNFTs?.map((nft, i) => ({
+      firstNFTAsBigInt: smartAccountNFTs?.[0] ? smartAccountNFTs[0].toString() : "null",
+      allNFTs: smartAccountNFTs?.map((nft: any, i: number) => ({
         index: i,
         value: nft,
         type: typeof nft,
         asString: nft?.toString(),
+        asBigInt: typeof nft === "bigint" ? nft.toString() : "not bigint",
       })),
     });
+
+    // Additional check: if we have NFTs but smartAccountHasNFTs is false, log warning
+    if (smartAccountNFTs && Array.isArray(smartAccountNFTs) && smartAccountNFTs.length > 0 && !smartAccountHasNFTs) {
+      console.warn("⚠️ NFT detection mismatch: have NFTs but smartAccountHasNFTs is false");
+    }
   }, [smartAccountNFTs, smartAccountHasNFTs, smartAccountAddress]);
 
-  // TBA status - more stable logic (only consider TBA created if explicitly marked or has transaction hash)
-  const isTBACreated = tbaCreated || !!tbaTxHash;
+  // TBA status - check both contract state and local state
+  const isTBACreated = tbaCreated || !!tbaTxHash || !!tbaAddress;
 
-  // Mint NFT status - ONLY use NFT ownership as source of truth (ignore mintTxHash for stability)
-  // This ensures button stays locked after page refresh
-  const isNFTMinted = smartAccountHasNFTs;
+  // Mint NFT status - ONLY use NFT ownership as source of truth
+  // This ensures button stays locked after mint until NFT is detected in smart account
+  const isNFTMinted = smartAccountHasNFTs; // Only rely on actual NFT ownership
 
   // Format mint price for display
   const formatMintPrice = (price: bigint | undefined) => {
@@ -164,26 +201,49 @@ export const CreateTBA = () => {
 
   // Handle gasless NFT minting
   const handleMintGasless = async () => {
-    if (!foodNFTAddress) {
-      console.error("FoodNFT contract address not found");
+    if (!chefNFTAddress) {
+      console.error("ChefNFT contract address not found");
       return;
     }
 
-    // Check if Smart Account has balance (use current balance from state)
-    const currentBalance = smartAccountBalance || 0n;
+    // Get current mint price (default to 0.01 if not set)
     const mintPrice = currentMintPrice || parseEther("0.01");
 
-    if (currentBalance < mintPrice) {
-      setShowMintPopup(true);
-      return;
+    // Only check balance if mint price is NOT 0
+    if (mintPrice > 0n) {
+      const currentBalance = smartAccountBalance || 0n;
+
+      if (currentBalance < mintPrice) {
+        setShowMintPopup(true);
+        return;
+      }
     }
+    // If mint price is 0, no balance check needed (free mint)
 
     try {
-      console.log("Minting NFT gasless to smart account...");
+      console.log("Minting NFT gasless to smart account...", {
+        mintPrice: mintPrice.toString(),
+        isFree: mintPrice === 0n,
+        smartAccountAddress,
+      });
       const txHash = await mintNFTGasless();
       if (txHash) {
+        console.log("✅ Mint successful, refreshing NFT data...");
         setShowSuccess(true);
+        notification.success("NFT Minted Successfully! Waiting for confirmation...");
         setTimeout(() => setShowSuccess(false), 3000);
+
+        // Immediately start refreshing NFT data for faster detection
+        const refreshInterval = setInterval(() => {
+          console.log("🔄 Refreshing NFT data after mint...");
+          refetchSmartAccountNFTs();
+        }, 1000); // Refresh every second
+
+        // Stop refreshing after 10 seconds
+        setTimeout(() => {
+          clearInterval(refreshInterval);
+          console.log("✅ Stopped NFT refresh interval");
+        }, 10000);
       }
     } catch (error: any) {
       console.error("Failed to mint NFT gasless:", error);
@@ -201,87 +261,117 @@ export const CreateTBA = () => {
       chainName: targetNetwork.name,
     });
 
-    // Check if user has NFT and TBA is not created yet
-    if (!smartAccountHasNFTs || isTBACreated) {
-      console.warn("⚠️ Cannot create TBA:", {
-        hasNFTs: smartAccountHasNFTs,
-        tbaCreated: isTBACreated,
-      });
+    // Check if user has ChefNFT and TBA is not created yet
+    if (!smartAccountHasNFTs) {
+      console.warn("⚠️ Cannot create TBA - No Chef NFT found");
+      notification.error("Chef NFT Required - Please mint a Chef NFT first to create TBA");
       return;
     }
 
-    // Refresh NFT data before extracting tokenId
-    try {
-      console.log("🔄 Refreshing NFT data before TBA creation...");
-      await refetchSmartAccountNFTs();
-    } catch (error) {
-      console.error("Failed to refresh NFT data:", error);
+    if (isTBACreated) {
+      console.warn("⚠️ TBA already created");
+      notification.info("TBA already created - Account is ready to use");
+      return;
     }
 
-    // Get tokenId from smartAccountNFTs (first NFT)
-    console.log("🔍 Extracting tokenId from smartAccountNFTs:", {
-      smartAccountNFTs,
-      isArray: Array.isArray(smartAccountNFTs),
-      length: smartAccountNFTs?.length,
-      firstElement: smartAccountNFTs?.[0],
-      typeOfFirst: typeof smartAccountNFTs?.[0],
-      stringified: JSON.stringify(smartAccountNFTs?.[0]),
+    // Refresh NFT data before extracting tokenId to ensure we have latest data
+    console.log("🔄 Refreshing NFT data before TBA creation...");
+    let refreshedNFTs: bigint[] | undefined = smartAccountNFTs;
+    try {
+      const result = await refetchSmartAccountNFTs();
+      if (result?.data && Array.isArray(result.data)) {
+        refreshedNFTs = result.data as bigint[];
+        console.log("✅ NFT data refreshed:", refreshedNFTs);
+      }
+    } catch (error) {
+      console.error("Failed to refresh NFT data:", error);
+      // Continue with existing data
+    }
+
+    // Extract tokenId with robust handling
+    const nftsToUse = refreshedNFTs || smartAccountNFTs;
+    console.log("🔍 Extracting tokenId from NFT data:", {
+      nftsToUse,
+      isArray: Array.isArray(nftsToUse),
+      length: nftsToUse?.length,
+      firstElement: nftsToUse?.[0],
+      typeOfFirst: typeof nftsToUse?.[0],
     });
 
     let tokenId: bigint | null = null;
 
-    // Try to extract tokenId - handle different data formats
-    if (smartAccountNFTs && Array.isArray(smartAccountNFTs) && smartAccountNFTs.length > 0) {
-      const firstNFT = smartAccountNFTs[0];
-
+    // Helper function to safely convert to bigint
+    const safeToBigInt = (value: any): bigint | null => {
       try {
-        // Case 1: Direct bigint value (expected format from uint256[])
-        if (typeof firstNFT === "bigint") {
-          tokenId = firstNFT;
-          console.log("✅ Extracted tokenId as bigint:", tokenId.toString());
+        if (value === null || value === undefined) return null;
+        if (typeof value === "bigint") return value;
+        if (typeof value === "number") return BigInt(value);
+        if (typeof value === "string") return BigInt(value);
+        if (typeof value === "object" && "tokenId" in value) {
+          return safeToBigInt(value.tokenId);
         }
-        // Case 2: Number that needs conversion
-        else if (typeof firstNFT === "number") {
-          tokenId = BigInt(firstNFT);
-          console.log("✅ Converted tokenId from number:", tokenId.toString());
+        // Try toString() as last resort
+        const str = value.toString();
+        if (str && str !== "[object Object]") {
+          return BigInt(str);
         }
-        // Case 3: String that needs conversion
-        else if (typeof firstNFT === "string") {
-          tokenId = BigInt(firstNFT);
-          console.log("✅ Converted tokenId from string:", tokenId.toString());
-        }
-        // Case 4: Object with tokenId property
-        else if (firstNFT && typeof firstNFT === "object" && "tokenId" in firstNFT) {
-          tokenId = BigInt(Number((firstNFT as any).tokenId));
-          console.log("✅ Extracted tokenId from object:", tokenId.toString());
-        }
-        // Case 5: Readonly bigint (from wagmi)
-        else if (firstNFT !== null && firstNFT !== undefined) {
-          // Try to convert whatever we have to bigint
-          tokenId = BigInt(firstNFT.toString());
-          console.log("✅ Forced conversion to bigint:", tokenId.toString());
-        }
-      } catch (conversionError) {
-        console.error("❌ Failed to convert firstNFT to bigint:", conversionError, {
-          firstNFT,
-          type: typeof firstNFT,
-        });
+        return null;
+      } catch (error) {
+        console.error("Failed to convert to bigint:", error, value);
+        return null;
+      }
+    };
+
+    // Try to extract tokenId from NFT array
+    if (nftsToUse && Array.isArray(nftsToUse) && nftsToUse.length > 0) {
+      tokenId = safeToBigInt(nftsToUse[0]);
+      if (tokenId !== null) {
+        console.log("✅ Extracted tokenId:", tokenId.toString());
       }
     }
 
+    // Fallback to persisted tokenId from localStorage
     if (!tokenId || tokenId === BigInt(0)) {
-      console.error("❌ No valid tokenId found in smartAccountNFTs", {
+      console.log("⚠️ TokenId not found in NFT data, checking localStorage...");
+      try {
+        const key = `tba_state_${smartAccountAddress}`;
+        const raw = localStorage.getItem(key);
+        if (raw) {
+          const data = JSON.parse(raw);
+          if (data?.tokenId) {
+            tokenId = BigInt(data.tokenId);
+            console.log("✅ Restored tokenId from localStorage:", tokenId.toString());
+          }
+        }
+      } catch (error) {
+        console.error("Failed to read from localStorage:", error);
+      }
+    }
+
+    // Final validation
+    if (!tokenId || tokenId === BigInt(0)) {
+      console.error("❌ No valid tokenId found", {
+        nftsToUse,
         smartAccountNFTs,
+        refreshedNFTs,
         attemptedExtraction: tokenId,
-        firstNFT: smartAccountNFTs?.[0],
-        type: typeof smartAccountNFTs?.[0],
       });
-      notification.error("Cannot find NFT tokenId. Trying to refresh data... Please wait a moment and try again.");
-      // Force refresh and notify user
+
+      notification.error("Cannot find NFT tokenId. Refreshing data...");
+
+      // Trigger background refresh
+      setIsRefreshing(true);
       setTimeout(async () => {
-        await refetchSmartAccountNFTs();
-        notification.info("NFT data refreshed. Please try creating TBA again.");
-      }, 1000);
+        try {
+          await refetchSmartAccountNFTs();
+          setIsRefreshing(false);
+          notification.info("Data refreshed. Please try again.");
+        } catch (refreshError) {
+          console.error("Refresh error:", refreshError);
+          setIsRefreshing(false);
+          notification.error("Failed to refresh data. Please try again later.");
+        }
+      }, 1500);
       return;
     }
 
@@ -298,6 +388,16 @@ export const CreateTBA = () => {
     } catch (error: any) {
       console.error("❌ Failed to create TBA gasless:", error);
       handleCreateTBAError(error);
+    }
+  };
+
+  // Copy address functionality
+  const copyToClipboard = async (text: string, type: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      console.log(`${type} address copied to clipboard`);
+    } catch (err) {
+      console.error("Failed to copy address:", err);
     }
   };
 
@@ -403,12 +503,13 @@ export const CreateTBA = () => {
             onClick={() => {
               console.log("🔄 Manual refresh triggered");
               refetchSmartAccountNFTs();
-              notification.info("Refreshing NFT data...");
+              refetchMintPrice();
+              notification.info("Refreshing NFT and price data...");
             }}
             className="px-1.5 py-0.5 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 rounded transition-colors cursor-pointer text-xs"
-            title="Refresh NFT data"
+            title="Refresh NFT and price data"
           >
-            ↻
+            <RefreshCw className={`w-3 h-3 ${isRefreshing ? "animate-spin" : ""}`} />
           </button>
         </div>
       </div>
@@ -525,7 +626,7 @@ export const CreateTBA = () => {
             ) : isNFTMinted ? (
               <>
                 <CheckCircle className="w-3 h-3" />
-                Owned
+                Minted
               </>
             ) : (
               <>Mint NFT</>
@@ -581,17 +682,31 @@ export const CreateTBA = () => {
                 ? "bg-green-500/20 text-green-300 cursor-not-allowed border border-green-400/30"
                 : !smartAccountHasNFTs
                   ? "bg-slate-500/20 text-slate-400 cursor-not-allowed border border-slate-600/30"
-                  : isCreatingTBA
+                  : isCreatingTBA || isRefreshing
                     ? "bg-emerald-500/20 cursor-not-allowed text-emerald-300 border border-emerald-400/30"
-                    : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg hover:shadow-emerald-500/25 cursor-pointer"
+                    : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg hover:shadow-emerald-500/25 cursor-pointer animate-pulse"
             }`}
             onClick={handleCreateTBAGasless}
-            disabled={!!(isTBACreated || !smartAccountHasNFTs || isCreatingTBA)}
+            disabled={!!(isTBACreated || !smartAccountHasNFTs || isCreatingTBA || isRefreshing)}
+            title={
+              !smartAccountHasNFTs
+                ? "Mint Chef NFT first to create TBA"
+                : isTBACreated
+                  ? "TBA already created - Account ready"
+                  : isRefreshing
+                    ? "Refreshing Chef NFT data..."
+                    : "Create Token Bound Account with Chef NFT"
+            }
           >
             {isCreatingTBA ? (
               <>
                 <Loader2 className="w-3 h-3 animate-spin" />
                 Creating...
+              </>
+            ) : isRefreshing ? (
+              <>
+                <RefreshCw className="w-3 h-3 animate-spin" />
+                Refreshing...
               </>
             ) : isTBACreated ? (
               <>
@@ -599,7 +714,7 @@ export const CreateTBA = () => {
                 Active
               </>
             ) : (
-              <>{!smartAccountHasNFTs ? "Need NFT First" : "Create TBA"}</>
+              <>{!smartAccountHasNFTs ? "Need Chef NFT" : "Create TBA"}</>
             )}
           </button>
         </div>

@@ -4,14 +4,25 @@
  */
 import {
   BasicCaveatEnforcer,
+  BasicCaveatEnforcer_FunctionAllowed,
+  BasicCaveatEnforcer_GameActionLimitSet,
   BasicCaveatEnforcer_OwnershipTransferred,
+  BasicCaveatEnforcer_RateLimitSet,
   BasicCaveatEnforcer_SpendingLimitSet,
+  BasicCaveatEnforcer_TargetAddressesSet,
   BasicCaveatEnforcer_TargetAllowed,
   BasicCaveatEnforcer_TimeLimitSet,
   BreadToken,
   BreadToken_Approval,
   BreadToken_OwnershipTransferred,
   BreadToken_Transfer,
+  CaveatEnforcerHub,
+  CaveatEnforcerHub_DefaultEnforcerSet,
+  CaveatEnforcerHub_EnforcerAdded,
+  CaveatEnforcerHub_EnforcerAfterHookFailed,
+  CaveatEnforcerHub_EnforcerEnabled,
+  CaveatEnforcerHub_EnforcerRemoved,
+  CaveatEnforcerHub_OwnershipTransferred,
   ERC6551Account,
   ERC6551Account_NFTReceived,
   ERC6551Account_Withdraw,
@@ -21,6 +32,13 @@ import {
   FaucetMon_BalanceFunded,
   FaucetMon_BalanceWithdrawn,
   FaucetMon_FaucetUsed,
+  FinancialCaveatEnforcer,
+  FinancialCaveatEnforcer_OwnershipTransferred,
+  FinancialCaveatEnforcer_SpendingLimitSet,
+  FinancialCaveatEnforcer_TimeLimitSet,
+  FinancialCaveatEnforcer_TokenSpent,
+  FinancialCaveatEnforcer_TokenWhitelistSet,
+  FinancialCaveatEnforcer_TransferLimitSet,
   FoodNFT,
   FoodNFT_Approval,
   FoodNFT_ApprovalForAll,
@@ -39,6 +57,14 @@ import {
   FoodScramble_PlayerMoved,
   FoodScramble_RailTraveled,
   FoodScramble_TokenBoundAccountCreated,
+  GameCaveatEnforcer,
+  GameCaveatEnforcer_FunctionAllowed,
+  GameCaveatEnforcer_GameActionAllowed,
+  GameCaveatEnforcer_GameActionLimitSet,
+  GameCaveatEnforcer_GameStateSet,
+  GameCaveatEnforcer_OwnershipTransferred,
+  GameCaveatEnforcer_RateLimitSet,
+  GameCaveatEnforcer_TargetAddressesSet,
   LettuceToken,
   LettuceToken_Approval,
   LettuceToken_OwnershipTransferred,
@@ -65,24 +91,33 @@ import {
   TomatoToken_Approval,
   TomatoToken_OwnershipTransferred,
   TomatoToken_Transfer,
-  SpecialBox,
-  SpecialBox_Approval,
-  SpecialBox_ApprovalForAll,
-  SpecialBox_BoxPriceUpdated,
-  SpecialBox_Burn,
-  SpecialBox_MintBox,
-  SpecialBox_OwnershipTransferred,
-  SpecialBox_PaymentGatewayUpdated,
-  SpecialBox_Transfer,
-  SpecialBoxStake,
-  SpecialBoxStake_OwnershipTransferred,
-  SpecialBoxStake_SpecialBoxMinted,
-  SpecialBoxStake_Stake,
-  SpecialBoxStake_StakeAll,
-  SpecialBoxStake_StakeBatch,
-  SpecialBoxStake_Unstake,
-  SpecialBoxStake_UnstakeBatch,
 } from "generated";
+
+BasicCaveatEnforcer.FunctionAllowed.handler(async ({ event, context }) => {
+  const entity: BasicCaveatEnforcer_FunctionAllowed = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    delegationHash: event.params.delegationHash,
+    functionSelector: event.params.functionSelector,
+    allowed: event.params.allowed,
+  };
+
+  context.BasicCaveatEnforcer_FunctionAllowed.set(entity);
+});
+
+BasicCaveatEnforcer.GameActionLimitSet.handler(async ({ event, context }) => {
+  const entity: BasicCaveatEnforcer_GameActionLimitSet = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    delegationHash: event.params.delegationHash,
+    maxRolls: event.params.maxRolls,
+    maxBuys: event.params.maxBuys,
+    maxRails: event.params.maxRails,
+    maxFaucets: event.params.maxFaucets,
+    maxCooks: event.params.maxCooks,
+    validUntil: event.params.validUntil,
+  };
+
+  context.BasicCaveatEnforcer_GameActionLimitSet.set(entity);
+});
 
 BasicCaveatEnforcer.OwnershipTransferred.handler(async ({ event, context }) => {
   const entity: BasicCaveatEnforcer_OwnershipTransferred = {
@@ -92,6 +127,16 @@ BasicCaveatEnforcer.OwnershipTransferred.handler(async ({ event, context }) => {
   };
 
   context.BasicCaveatEnforcer_OwnershipTransferred.set(entity);
+});
+
+BasicCaveatEnforcer.RateLimitSet.handler(async ({ event, context }) => {
+  const entity: BasicCaveatEnforcer_RateLimitSet = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    delegationHash: event.params.delegationHash,
+    maxCallsPerHour: event.params.maxCallsPerHour,
+  };
+
+  context.BasicCaveatEnforcer_RateLimitSet.set(entity);
 });
 
 BasicCaveatEnforcer.SpendingLimitSet.handler(async ({ event, context }) => {
@@ -104,6 +149,16 @@ BasicCaveatEnforcer.SpendingLimitSet.handler(async ({ event, context }) => {
   };
 
   context.BasicCaveatEnforcer_SpendingLimitSet.set(entity);
+});
+
+BasicCaveatEnforcer.TargetAddressesSet.handler(async ({ event, context }) => {
+  const entity: BasicCaveatEnforcer_TargetAddressesSet = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    delegationHash: event.params.delegationHash,
+    targets: event.params.targets,
+  };
+
+  context.BasicCaveatEnforcer_TargetAddressesSet.set(entity);
 });
 
 BasicCaveatEnforcer.TargetAllowed.handler(async ({ event, context }) => {
@@ -156,6 +211,67 @@ BreadToken.Transfer.handler(async ({ event, context }) => {
   };
 
   context.BreadToken_Transfer.set(entity);
+});
+
+CaveatEnforcerHub.DefaultEnforcerSet.handler(async ({ event, context }) => {
+  const entity: CaveatEnforcerHub_DefaultEnforcerSet = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    enforcerType: event.params.enforcerType,
+    enforcer: event.params.enforcer,
+  };
+
+  context.CaveatEnforcerHub_DefaultEnforcerSet.set(entity);
+});
+
+CaveatEnforcerHub.EnforcerAdded.handler(async ({ event, context }) => {
+  const entity: CaveatEnforcerHub_EnforcerAdded = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    delegationHash: event.params.delegationHash,
+    enforcer: event.params.enforcer,
+  };
+
+  context.CaveatEnforcerHub_EnforcerAdded.set(entity);
+});
+
+CaveatEnforcerHub.EnforcerAfterHookFailed.handler(async ({ event, context }) => {
+  const entity: CaveatEnforcerHub_EnforcerAfterHookFailed = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    enforcer: event.params.enforcer,
+    delegationHash: event.params.delegationHash,
+    reason: event.params.reason,
+  };
+
+  context.CaveatEnforcerHub_EnforcerAfterHookFailed.set(entity);
+});
+
+CaveatEnforcerHub.EnforcerEnabled.handler(async ({ event, context }) => {
+  const entity: CaveatEnforcerHub_EnforcerEnabled = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    enforcer: event.params.enforcer,
+    enabled: event.params.enabled,
+  };
+
+  context.CaveatEnforcerHub_EnforcerEnabled.set(entity);
+});
+
+CaveatEnforcerHub.EnforcerRemoved.handler(async ({ event, context }) => {
+  const entity: CaveatEnforcerHub_EnforcerRemoved = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    delegationHash: event.params.delegationHash,
+    enforcer: event.params.enforcer,
+  };
+
+  context.CaveatEnforcerHub_EnforcerRemoved.set(entity);
+});
+
+CaveatEnforcerHub.OwnershipTransferred.handler(async ({ event, context }) => {
+  const entity: CaveatEnforcerHub_OwnershipTransferred = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    previousOwner: event.params.previousOwner,
+    newOwner: event.params.newOwner,
+  };
+
+  context.CaveatEnforcerHub_OwnershipTransferred.set(entity);
 });
 
 ERC6551Account.NFTReceived.handler(async ({ event, context }) => {
@@ -222,6 +338,72 @@ FaucetMon.FaucetUsed.handler(async ({ event, context }) => {
   };
 
   context.FaucetMon_FaucetUsed.set(entity);
+});
+
+FinancialCaveatEnforcer.OwnershipTransferred.handler(async ({ event, context }) => {
+  const entity: FinancialCaveatEnforcer_OwnershipTransferred = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    previousOwner: event.params.previousOwner,
+    newOwner: event.params.newOwner,
+  };
+
+  context.FinancialCaveatEnforcer_OwnershipTransferred.set(entity);
+});
+
+FinancialCaveatEnforcer.SpendingLimitSet.handler(async ({ event, context }) => {
+  const entity: FinancialCaveatEnforcer_SpendingLimitSet = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    delegationHash: event.params.delegationHash,
+    token: event.params.token,
+    maxAmount: event.params.maxAmount,
+    validUntil: event.params.validUntil,
+    periodLength: event.params.periodLength,
+  };
+
+  context.FinancialCaveatEnforcer_SpendingLimitSet.set(entity);
+});
+
+FinancialCaveatEnforcer.TimeLimitSet.handler(async ({ event, context }) => {
+  const entity: FinancialCaveatEnforcer_TimeLimitSet = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    delegationHash: event.params.delegationHash,
+    validUntil: event.params.validUntil,
+  };
+
+  context.FinancialCaveatEnforcer_TimeLimitSet.set(entity);
+});
+
+FinancialCaveatEnforcer.TokenSpent.handler(async ({ event, context }) => {
+  const entity: FinancialCaveatEnforcer_TokenSpent = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    delegationHash: event.params.delegationHash,
+    token: event.params.token,
+    amount: event.params.amount,
+  };
+
+  context.FinancialCaveatEnforcer_TokenSpent.set(entity);
+});
+
+FinancialCaveatEnforcer.TokenWhitelistSet.handler(async ({ event, context }) => {
+  const entity: FinancialCaveatEnforcer_TokenWhitelistSet = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    delegationHash: event.params.delegationHash,
+    tokens: event.params.tokens,
+  };
+
+  context.FinancialCaveatEnforcer_TokenWhitelistSet.set(entity);
+});
+
+FinancialCaveatEnforcer.TransferLimitSet.handler(async ({ event, context }) => {
+  const entity: FinancialCaveatEnforcer_TransferLimitSet = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    delegationHash: event.params.delegationHash,
+    token: event.params.token,
+    maxTransferAmount: event.params.maxTransferAmount,
+    dailyLimit: event.params.dailyLimit,
+  };
+
+  context.FinancialCaveatEnforcer_TransferLimitSet.set(entity);
 });
 
 FoodNFT.Approval.handler(async ({ event, context }) => {
@@ -328,6 +510,16 @@ FoodScramble.FaucetCooldownUpdated.handler(async ({ event, context }) => {
   context.FoodScramble_FaucetCooldownUpdated.set(entity);
 });
 
+FoodScramble.HamburgerMinted.handler(async ({ event, context }) => {
+  const entity: FoodScramble_HamburgerMinted = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    player: event.params.player,
+    tokenId: event.params.tokenId,
+  };
+
+  context.FoodScramble_HamburgerMinted.set(entity);
+});
+
 FoodScramble.IngredientPurchased.handler(async ({ event, context }) => {
   const entity: FoodScramble_IngredientPurchased = {
     id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
@@ -360,17 +552,6 @@ FoodScramble.PlayerMoved.handler(async ({ event, context }) => {
   context.FoodScramble_PlayerMoved.set(entity);
 });
 
-FoodScramble.TokenBoundAccountCreated.handler(async ({ event, context }) => {
-  const entity: FoodScramble_TokenBoundAccountCreated = {
-    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
-    eoa: event.params.eoa,
-    tba: event.params.tba,
-    startPosition: event.params.startPosition,
-  };
-
-  context.FoodScramble_TokenBoundAccountCreated.set(entity);
-});
-
 FoodScramble.RailTraveled.handler(async ({ event, context }) => {
   const entity: FoodScramble_RailTraveled = {
     id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
@@ -382,14 +563,93 @@ FoodScramble.RailTraveled.handler(async ({ event, context }) => {
   context.FoodScramble_RailTraveled.set(entity);
 });
 
-FoodScramble.HamburgerMinted.handler(async ({ event, context }) => {
-  const entity: FoodScramble_HamburgerMinted = {
+FoodScramble.TokenBoundAccountCreated.handler(async ({ event, context }) => {
+  const entity: FoodScramble_TokenBoundAccountCreated = {
     id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
-    player: event.params.player,
-    tokenId: event.params.tokenId,
+    eoa: event.params.eoa,
+    tba: event.params.tba,
+    startPosition: event.params.startPosition,
   };
 
-  context.FoodScramble_HamburgerMinted.set(entity);
+  context.FoodScramble_TokenBoundAccountCreated.set(entity);
+});
+
+GameCaveatEnforcer.FunctionAllowed.handler(async ({ event, context }) => {
+  const entity: GameCaveatEnforcer_FunctionAllowed = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    delegationHash: event.params.delegationHash,
+    functionSelector: event.params.functionSelector,
+    allowed: event.params.allowed,
+  };
+
+  context.GameCaveatEnforcer_FunctionAllowed.set(entity);
+});
+
+GameCaveatEnforcer.GameActionAllowed.handler(async ({ event, context }) => {
+  const entity: GameCaveatEnforcer_GameActionAllowed = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    delegationHash: event.params.delegationHash,
+    gameAction: event.params.action,
+    allowed: event.params.allowed,
+  };
+
+  context.GameCaveatEnforcer_GameActionAllowed.set(entity);
+});
+
+GameCaveatEnforcer.GameActionLimitSet.handler(async ({ event, context }) => {
+  const entity: GameCaveatEnforcer_GameActionLimitSet = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    delegationHash: event.params.delegationHash,
+    maxRolls: event.params.maxRolls,
+    maxBuys: event.params.maxBuys,
+    maxRails: event.params.maxRails,
+    maxFaucets: event.params.maxFaucets,
+    maxCooks: event.params.maxCooks,
+    validUntil: event.params.validUntil,
+  };
+
+  context.GameCaveatEnforcer_GameActionLimitSet.set(entity);
+});
+
+GameCaveatEnforcer.GameStateSet.handler(async ({ event, context }) => {
+  const entity: GameCaveatEnforcer_GameStateSet = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    delegationHash: event.params.delegationHash,
+    isActive: event.params.isActive,
+    maxConsecutiveActions: event.params.maxConsecutiveActions,
+  };
+
+  context.GameCaveatEnforcer_GameStateSet.set(entity);
+});
+
+GameCaveatEnforcer.OwnershipTransferred.handler(async ({ event, context }) => {
+  const entity: GameCaveatEnforcer_OwnershipTransferred = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    previousOwner: event.params.previousOwner,
+    newOwner: event.params.newOwner,
+  };
+
+  context.GameCaveatEnforcer_OwnershipTransferred.set(entity);
+});
+
+GameCaveatEnforcer.RateLimitSet.handler(async ({ event, context }) => {
+  const entity: GameCaveatEnforcer_RateLimitSet = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    delegationHash: event.params.delegationHash,
+    maxCallsPerHour: event.params.maxCallsPerHour,
+  };
+
+  context.GameCaveatEnforcer_RateLimitSet.set(entity);
+});
+
+GameCaveatEnforcer.TargetAddressesSet.handler(async ({ event, context }) => {
+  const entity: GameCaveatEnforcer_TargetAddressesSet = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    delegationHash: event.params.delegationHash,
+    targets: event.params.targets,
+  };
+
+  context.GameCaveatEnforcer_TargetAddressesSet.set(entity);
 });
 
 LettuceToken.Approval.handler(async ({ event, context }) => {
@@ -605,162 +865,3 @@ TomatoToken.Transfer.handler(async ({ event, context }) => {
   context.TomatoToken_Transfer.set(entity);
 });
 
-SpecialBox.Approval.handler(async ({ event, context }) => {
-  const entity: SpecialBox_Approval = {
-    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
-    owner: event.params.owner,
-    approved: event.params.approved,
-    tokenId: event.params.tokenId,
-  };
-
-  context.SpecialBox_Approval.set(entity);
-});
-
-SpecialBox.ApprovalForAll.handler(async ({ event, context }) => {
-  const entity: SpecialBox_ApprovalForAll = {
-    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
-    owner: event.params.owner,
-    operator: event.params.operator,
-    approved: event.params.approved,
-  };
-
-  context.SpecialBox_ApprovalForAll.set(entity);
-});
-
-SpecialBox.BoxPriceUpdated.handler(async ({ event, context }) => {
-  const entity: SpecialBox_BoxPriceUpdated = {
-    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
-    newPrice: event.params.newPrice,
-  };
-
-  context.SpecialBox_BoxPriceUpdated.set(entity);
-});
-
-SpecialBox.Burn.handler(async ({ event, context }) => {
-  const entity: SpecialBox_Burn = {
-    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
-    user: event.params.user,
-    tba: event.params.tba,
-    tokenId: event.params.tokenId,
-  };
-
-  context.SpecialBox_Burn.set(entity);
-});
-
-SpecialBox.MintBox.handler(async ({ event, context }) => {
-  const entity: SpecialBox_MintBox = {
-    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
-    user: event.params.user,
-    tba: event.params.tba,
-    tokenId: event.params.tokenId,
-  };
-
-  context.SpecialBox_MintBox.set(entity);
-});
-
-SpecialBox.OwnershipTransferred.handler(async ({ event, context }) => {
-  const entity: SpecialBox_OwnershipTransferred = {
-    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
-    previousOwner: event.params.previousOwner,
-    newOwner: event.params.newOwner,
-  };
-
-  context.SpecialBox_OwnershipTransferred.set(entity);
-});
-
-SpecialBox.PaymentGatewayUpdated.handler(async ({ event, context }) => {
-  const entity: SpecialBox_PaymentGatewayUpdated = {
-    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
-    newGateway: event.params.newGateway,
-  };
-
-  context.SpecialBox_PaymentGatewayUpdated.set(entity);
-});
-
-SpecialBox.Transfer.handler(async ({ event, context }) => {
-  const entity: SpecialBox_Transfer = {
-    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
-    from: event.params.from,
-    to: event.params.to,
-    tokenId: event.params.tokenId,
-  };
-
-  context.SpecialBox_Transfer.set(entity);
-});
-
-SpecialBoxStake.OwnershipTransferred.handler(async ({ event, context }) => {
-  const entity: SpecialBoxStake_OwnershipTransferred = {
-    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
-    previousOwner: event.params.previousOwner,
-    newOwner: event.params.newOwner,
-  };
-
-  context.SpecialBoxStake_OwnershipTransferred.set(entity);
-});
-
-SpecialBoxStake.SpecialBoxMinted.handler(async ({ event, context }) => {
-  const entity: SpecialBoxStake_SpecialBoxMinted = {
-    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
-    user: event.params.user,
-    tba: event.params.tba,
-    amount: event.params.amount,
-  };
-
-  context.SpecialBoxStake_SpecialBoxMinted.set(entity);
-});
-
-SpecialBoxStake.Stake.handler(async ({ event, context }) => {
-  const entity: SpecialBoxStake_Stake = {
-    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
-    user: event.params.user,
-    tba: event.params.tba,
-    tokenId: event.params.tokenId,
-  };
-
-  context.SpecialBoxStake_Stake.set(entity);
-});
-
-SpecialBoxStake.StakeAll.handler(async ({ event, context }) => {
-  const entity: SpecialBoxStake_StakeAll = {
-    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
-    user: event.params.user,
-    tba: event.params.tba,
-    tokenIds: event.params.tokenIds,
-    totalStaked: event.params.totalStaked,
-  };
-
-  context.SpecialBoxStake_StakeAll.set(entity);
-});
-
-SpecialBoxStake.StakeBatch.handler(async ({ event, context }) => {
-  const entity: SpecialBoxStake_StakeBatch = {
-    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
-    user: event.params.user,
-    tba: event.params.tba,
-    tokenIds: event.params.tokenIds,
-  };
-
-  context.SpecialBoxStake_StakeBatch.set(entity);
-});
-
-SpecialBoxStake.Unstake.handler(async ({ event, context }) => {
-  const entity: SpecialBoxStake_Unstake = {
-    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
-    user: event.params.user,
-    tba: event.params.tba,
-    tokenId: event.params.tokenId,
-  };
-
-  context.SpecialBoxStake_Unstake.set(entity);
-});
-
-SpecialBoxStake.UnstakeBatch.handler(async ({ event, context }) => {
-  const entity: SpecialBoxStake_UnstakeBatch = {
-    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
-    user: event.params.user,
-    tba: event.params.tba,
-    tokenIds: event.params.tokenIds,
-  };
-
-  context.SpecialBoxStake_UnstakeBatch.set(entity);
-});

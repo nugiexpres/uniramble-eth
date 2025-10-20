@@ -40,13 +40,24 @@ const deployUniHardhat: DeployFunction = async function (hre: HardhatRuntimeEnvi
   const PaymentGatewayContract = await hre.deployments.get("PaymentGateway");
   await delay(deployDelay);
 
-  // 2. Food NFT (Base NFT for characters)
-  console.log("📦 Deploying FoodNFT...");
-  await deploy("FoodNFT", {
+  // 2. Chef NFT (Chef characters for TBA)
+  console.log("📦 Deploying ChefNFT...");
+  await deploy("ChefNFT", {
     from: deployer,
     args: [
       PaymentGatewayContract.address, // _paymentGateway
     ],
+    log: true,
+    autoMine: true,
+  });
+  const chefNFTContract = await hre.deployments.get("ChefNFT");
+  await delay(deployDelay);
+
+  // 3. Food NFT (Hamburger NFTs for game rewards)
+  console.log("📦 Deploying FoodNFT...");
+  await deploy("FoodNFT", {
+    from: deployer,
+    args: [], // No payment gateway needed for food NFTs
     log: true,
     autoMine: true,
   });
@@ -189,7 +200,8 @@ const deployUniHardhat: DeployFunction = async function (hre: HardhatRuntimeEnvi
       MeatContract.address,
       LettuceContract.address,
       TomatoContract.address,
-      foodNFTContract.address,
+      chefNFTContract.address, // ChefNFT for TBA
+      foodNFTContract.address, // FoodNFT for hamburgers
       FaucetMonContract.address,
       PaymentGatewayContract.address,
     ],
@@ -277,6 +289,7 @@ const deployUniHardhat: DeployFunction = async function (hre: HardhatRuntimeEnvi
   // Core Infrastructure
   console.log("\n🏗️ CORE INFRASTRUCTURE:");
   console.log(`PaymentGateway:     ${PaymentGatewayContract.address}`);
+  console.log(`ChefNFT:           ${chefNFTContract.address}`);
   console.log(`FoodNFT:           ${foodNFTContract.address}`);
   console.log(`ERC6551Registry:   ${registryContract.address}`);
   console.log(`ERC6551Account:    ${erc6551AccountDeployment.address}`);
@@ -386,6 +399,7 @@ export default deployUniHardhat;
 deployUniHardhat.tags = [
   "UniHardhat",
   "PaymentGateway",
+  "ChefNFT",
   "FoodNFT",
   "ERC6551Registry",
   "ERC6551Account",

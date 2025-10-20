@@ -4,7 +4,9 @@ import { ChevronLeft, ChevronRight, Link, User } from "lucide-react";
 import { useAccount } from "wagmi";
 import CreateTBA from "~~/app/account/CreateTBA";
 import { FinalSmartAccount } from "~~/app/account/FinalSmartAccount";
+import { SimpleDelegationManager } from "~~/components/smart-account/SimpleDelegationManager";
 import { useSmartAccountTBA } from "~~/hooks/envio/useSmartAccountTBA";
+import { useFinalSmartAccount } from "~~/hooks/smart-account/useFinalSmartAccount";
 
 interface GameDashboardProps {
   tbaAddress?: string;
@@ -20,6 +22,9 @@ interface GameDashboardProps {
 export const GameDashboard = ({ className = "" }: GameDashboardProps) => {
   const [activePanel, setActivePanel] = useState<"account" | "tba">("account");
   const { address } = useAccount(); // Track wallet changes
+
+  // Get Smart Account address for DelegationCaveatEnforcer
+  const { smartAccountAddress } = useFinalSmartAccount();
 
   // Get Smart Account TBA (reactive to wallet changes - like SpecialBox)
   const { tbaAddress: smartAccountTbaAddress } = useSmartAccountTBA();
@@ -152,6 +157,7 @@ export const GameDashboard = ({ className = "" }: GameDashboardProps) => {
                 ) : (
                   <div className="space-y-4 h-full overflow-y-auto pr-2">
                     <CreateTBA />
+                    <SimpleDelegationManager smartAccountAddress={smartAccountAddress || undefined} />
                   </div>
                 )}
               </motion.div>

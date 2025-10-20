@@ -1,6 +1,8 @@
 import "@rainbow-me/rainbowkit/styles.css";
+import { MobileWarning } from "~~/components/MobileWarning";
 import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithProviders";
 import { ThemeProvider } from "~~/components/ThemeProvider";
+import { GlobalModalProvider } from "~~/contexts/GlobalModalContext";
 import { MetaMaskProvider } from "~~/providers/MetaMaskProvider";
 import "~~/styles/globals.css";
 import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
@@ -18,7 +20,10 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
       <body>
         <ThemeProvider enableSystem>
           <MetaMaskProvider>
-            <ScaffoldEthAppWithProviders>{children}</ScaffoldEthAppWithProviders>
+            <GlobalModalProvider>
+              <ScaffoldEthAppWithProviders>{children}</ScaffoldEthAppWithProviders>
+              <MobileWarning />
+            </GlobalModalProvider>
           </MetaMaskProvider>
         </ThemeProvider>
       </body>

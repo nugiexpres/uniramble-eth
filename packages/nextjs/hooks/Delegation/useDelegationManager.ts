@@ -5,6 +5,7 @@ import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { useAccount, useWalletClient } from "wagmi";
 import { getBundlerConfig } from "~~/config/bundler";
 import { getSmartAccountNonce } from "~~/config/client";
+import { useHybridDelegation } from "~~/hooks/delegation/hybrid/useHybridDelegation";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { notification } from "~~/utils/scaffold-eth";
 
@@ -21,6 +22,7 @@ export const useDelegationManager = () => {
   const { address, isConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
   const { targetNetwork } = useTargetNetwork();
+  const { createHybridDelegation, getDefaultGameConfig, getDefaultFinancialConfig } = useHybridDelegation();
 
   const [state, setState] = useState<DelegationState>({
     isDelegationActive: false,
@@ -97,9 +99,9 @@ export const useDelegationManager = () => {
     }
   }, []);
 
-  // Create delegation using alternative approach
+  // Create hybrid delegation with game and financial caveats
   const createDelegation = useCallback(
-    async (sessionKeyAddress: string, smartAccountAddress: string) => {
+    async (sessionKeyAddress: string) => {
       if (!isConnected || !address) {
         setState(prev => ({ ...prev, error: "Wallet not connected" }));
         return false;
@@ -108,9 +110,21 @@ export const useDelegationManager = () => {
       try {
         setState(prev => ({ ...prev, isLoading: true, error: null }));
 
-        // Create a mock delegation for now
-        // TODO: Implement proper delegation when MetaMask toolkit is stable
-        const delegationHash = "0x" + Math.random().toString(16).substr(2, 64);
+        // Get default configurations
+        const gameConfig = getDefaultGameConfig();
+        const financialConfig = getDefaultFinancialConfig();
+
+        // Create hybrid delegation
+        const delegationHash = await createHybridDelegation(
+          sessionKeyAddress,
+          gameConfig,
+          financialConfig,
+          "gameActions",
+        );
+
+        if (!delegationHash) {
+          throw new Error("Failed to create hybrid delegation");
+        }
 
         setState(prev => ({
           ...prev,
@@ -119,10 +133,10 @@ export const useDelegationManager = () => {
           error: null,
         }));
 
-        notification.success("Delegation created successfully!");
+        notification.success("Hybrid delegation created successfully!");
         return delegationHash;
       } catch (error: any) {
-        console.warn("Delegation creation failed:", error);
+        console.warn("Hybrid delegation creation failed:", error);
 
         // Fallback: Create a mock delegation for testing
         const mockDelegationHash = "0x" + Math.random().toString(16).substr(2, 64);
@@ -138,7 +152,7 @@ export const useDelegationManager = () => {
         return mockDelegationHash;
       }
     },
-    [isConnected, address, walletClient],
+    [isConnected, address, createHybridDelegation, getDefaultGameConfig, getDefaultFinancialConfig],
   );
 
   // Execute transaction with session key (one-click)

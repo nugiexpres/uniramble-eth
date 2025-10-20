@@ -4,7 +4,9 @@ import { useState } from "react";
 import { AlertCircle, CheckCircle, Clock, Coins, Gamepad2, Loader2, Lock, Target } from "lucide-react";
 import { useAccount } from "wagmi";
 import { WalletConnectionWarning } from "~~/components/scaffold-eth";
+import deployedContracts from "~~/contracts/deployedContracts";
 import { useCaveatEnforcer } from "~~/hooks/Delegation/useCaveatEnforcer";
+import { useHybridDelegation } from "~~/hooks/delegation/hybrid/useHybridDelegation";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { notification } from "~~/utils/scaffold-eth";
 
@@ -25,27 +27,50 @@ export const GameActions = ({
 }: GameActionsProps) => {
   const { address, isConnected } = useAccount();
   const { targetNetwork } = useTargetNetwork();
-  const { contractAddress } = useCaveatEnforcer();
+  const { enforcerAddress } = useCaveatEnforcer();
+  const { createHybridDelegation, getDefaultGameConfig, getDefaultFinancialConfig } = useHybridDelegation();
+
+  // Get contract addresses from deployedContracts based on current network
+  const hubAddress = deployedContracts[targetNetwork.id as keyof typeof deployedContracts]?.CaveatEnforcerHub?.address;
+  const gameEnforcerAddress =
+    deployedContracts[targetNetwork.id as keyof typeof deployedContracts]?.GameCaveatEnforcer?.address;
+  const financialEnforcerAddress =
+    deployedContracts[targetNetwork.id as keyof typeof deployedContracts]?.FinancialCaveatEnforcer?.address;
 
   const [delegationCreated, setDelegationCreated] = useState(false);
   const [isCreatingDelegation, setIsCreatingDelegation] = useState(false);
 
   const handleCreateDelegation = async () => {
-    if (!address || !contractAddress) {
-      notification.error("Address or CaveatEnforcer contract not available");
+    if (!address || !enforcerAddress) {
+      notification.error("Address or Enforcer contract not available");
       return;
     }
 
     try {
       setIsCreatingDelegation(true);
 
-      // Create delegation for game actions
-      // Note: createDelegation requires session key address and smart account address
-      notification.info("Delegation creation feature is under development");
+      // Get default configurations
+      const gameConfig = getDefaultGameConfig();
+      const financialConfig = getDefaultFinancialConfig();
 
-      setDelegationCreated(false);
+      // Create hybrid delegation
+      const delegationHash = await createHybridDelegation(
+        address, // delegatee (session key will be generated)
+        gameConfig,
+        financialConfig,
+        "gameActions",
+      );
+
+      if (delegationHash) {
+        setDelegationCreated(true);
+        notification.success("Hybrid delegation created successfully!");
+      } else {
+        setDelegationCreated(false);
+        notification.error("Failed to create delegation");
+      }
     } catch (error: any) {
       notification.error(`Failed to create delegation: ${error.message}`);
+      setDelegationCreated(false);
     } finally {
       setIsCreatingDelegation(false);
     }
@@ -116,15 +141,32 @@ export const GameActions = ({
           <div className="flex items-center gap-2 text-sm">
             <Lock className="w-4 h-4 text-purple-500" />
             <span>
-              Caveat Enforcer:{" "}
-              {contractAddress ? `${contractAddress.slice(0, 6)}...${contractAddress.slice(-4)}` : "Not deployed"}
+              Hub Enforcer: {hubAddress ? `${hubAddress.slice(0, 6)}...${hubAddress.slice(-4)}` : "Not deployed"}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            <Lock className="w-4 h-4 text-green-500" />
+            <span>
+              Game Enforcer:{" "}
+              {gameEnforcerAddress
+                ? `${gameEnforcerAddress.slice(0, 6)}...${gameEnforcerAddress.slice(-4)}`
+                : "Not deployed"}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            <Lock className="w-4 h-4 text-blue-500" />
+            <span>
+              Financial Enforcer:{" "}
+              {financialEnforcerAddress
+                ? `${financialEnforcerAddress.slice(0, 6)}...${financialEnforcerAddress.slice(-4)}`
+                : "Not deployed"}
             </span>
           </div>
         </div>
 
         <button
           onClick={handleCreateDelegation}
-          disabled={isCreatingDelegation || delegationCreated || !contractAddress}
+          disabled={isCreatingDelegation || delegationCreated || !hubAddress}
           className="btn btn-primary w-full"
         >
           {isCreatingDelegation ? (

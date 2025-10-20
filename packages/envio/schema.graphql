@@ -1,7 +1,31 @@
+type BasicCaveatEnforcer_FunctionAllowed {
+  id: ID!
+  delegationHash: String!
+  functionSelector: String!
+  allowed: Boolean!
+}
+
+type BasicCaveatEnforcer_GameActionLimitSet {
+  id: ID!
+  delegationHash: String!
+  maxRolls: BigInt!
+  maxBuys: BigInt!
+  maxRails: BigInt!
+  maxFaucets: BigInt!
+  maxCooks: BigInt!
+  validUntil: BigInt!
+}
+
 type BasicCaveatEnforcer_OwnershipTransferred {
   id: ID!
   previousOwner: String!
   newOwner: String!
+}
+
+type BasicCaveatEnforcer_RateLimitSet {
+  id: ID!
+  delegationHash: String!
+  maxCallsPerHour: BigInt!
 }
 
 type BasicCaveatEnforcer_SpendingLimitSet {
@@ -10,6 +34,12 @@ type BasicCaveatEnforcer_SpendingLimitSet {
   token: String!
   maxAmount: BigInt!
   validUntil: BigInt!
+}
+
+type BasicCaveatEnforcer_TargetAddressesSet {
+  id: ID!
+  delegationHash: String!
+  targets: [String!]!
 }
 
 type BasicCaveatEnforcer_TargetAllowed {
@@ -42,6 +72,43 @@ type BreadToken_Transfer {
   from: String!
   to: String!
   value: BigInt!
+}
+
+type CaveatEnforcerHub_DefaultEnforcerSet {
+  id: ID!
+  enforcerType: String!
+  enforcer: String!
+}
+
+type CaveatEnforcerHub_EnforcerAdded {
+  id: ID!
+  delegationHash: String!
+  enforcer: String!
+}
+
+type CaveatEnforcerHub_EnforcerAfterHookFailed {
+  id: ID!
+  enforcer: String!
+  delegationHash: String!
+  reason: String!
+}
+
+type CaveatEnforcerHub_EnforcerEnabled {
+  id: ID!
+  enforcer: String!
+  enabled: Boolean!
+}
+
+type CaveatEnforcerHub_EnforcerRemoved {
+  id: ID!
+  delegationHash: String!
+  enforcer: String!
+}
+
+type CaveatEnforcerHub_OwnershipTransferred {
+  id: ID!
+  previousOwner: String!
+  newOwner: String!
 }
 
 type ERC6551Account_NFTReceived {
@@ -78,6 +145,54 @@ type FaucetMon_BalanceWithdrawn {
   id: ID!
   owner: String!
   amount: BigInt!
+}
+
+type FaucetMon_FaucetUsed {
+  id: ID!
+  recipient: String!
+  amount: BigInt!
+}
+
+type FinancialCaveatEnforcer_OwnershipTransferred {
+  id: ID!
+  previousOwner: String!
+  newOwner: String!
+}
+
+type FinancialCaveatEnforcer_SpendingLimitSet {
+  id: ID!
+  delegationHash: String!
+  token: String!
+  maxAmount: BigInt!
+  validUntil: BigInt!
+  periodLength: BigInt!
+}
+
+type FinancialCaveatEnforcer_TimeLimitSet {
+  id: ID!
+  delegationHash: String!
+  validUntil: BigInt!
+}
+
+type FinancialCaveatEnforcer_TokenSpent {
+  id: ID!
+  delegationHash: String!
+  token: String!
+  amount: BigInt!
+}
+
+type FinancialCaveatEnforcer_TokenWhitelistSet {
+  id: ID!
+  delegationHash: String!
+  tokens: [String!]!
+}
+
+type FinancialCaveatEnforcer_TransferLimitSet {
+  id: ID!
+  delegationHash: String!
+  token: String!
+  maxTransferAmount: BigInt!
+  dailyLimit: BigInt!
 }
 
 type FoodNFT_Approval {
@@ -144,6 +259,12 @@ type FoodScramble_FaucetCooldownUpdated {
   newCooldown: BigInt!
 }
 
+type FoodScramble_HamburgerMinted {
+  id: ID!
+  player: String!
+  tokenId: BigInt!
+}
+
 type FoodScramble_IngredientPurchased {
   id: ID!
   player: String!
@@ -171,23 +292,61 @@ type FoodScramble_RailTraveled {
   toPosition: BigInt!
 }
 
-type FoodScramble_HamburgerMinted {
-  id: ID!
-  player: String!
-  tokenId: BigInt!
-}
-
-type FaucetMon_FaucetUsed {
-  id: ID!
-  recipient: String!
-  amount: BigInt!
-}
-
 type FoodScramble_TokenBoundAccountCreated {
   id: ID!
   eoa: String!
   tba: String!
   startPosition: BigInt!
+}
+
+type GameCaveatEnforcer_FunctionAllowed {
+  id: ID!
+  delegationHash: String!
+  functionSelector: String!
+  allowed: Boolean!
+}
+
+type GameCaveatEnforcer_GameActionAllowed {
+  id: ID!
+  delegationHash: String!
+  gameAction: String!
+  allowed: Boolean!
+}
+
+type GameCaveatEnforcer_GameActionLimitSet {
+  id: ID!
+  delegationHash: String!
+  maxRolls: BigInt!
+  maxBuys: BigInt!
+  maxRails: BigInt!
+  maxFaucets: BigInt!
+  maxCooks: BigInt!
+  validUntil: BigInt!
+}
+
+type GameCaveatEnforcer_GameStateSet {
+  id: ID!
+  delegationHash: String!
+  isActive: Boolean!
+  maxConsecutiveActions: BigInt!
+}
+
+type GameCaveatEnforcer_OwnershipTransferred {
+  id: ID!
+  previousOwner: String!
+  newOwner: String!
+}
+
+type GameCaveatEnforcer_RateLimitSet {
+  id: ID!
+  delegationHash: String!
+  maxCallsPerHour: BigInt!
+}
+
+type GameCaveatEnforcer_TargetAddressesSet {
+  id: ID!
+  delegationHash: String!
+  targets: [String!]!
 }
 
 type LettuceToken_Approval {
@@ -321,105 +480,5 @@ type TomatoToken_Transfer {
   from: String!
   to: String!
   value: BigInt!
-}
-
-type SpecialBox_Approval {
-  id: ID!
-  owner: String!
-  approved: String!
-  tokenId: BigInt!
-}
-
-type SpecialBox_ApprovalForAll {
-  id: ID!
-  owner: String!
-  operator: String!
-  approved: Boolean!
-}
-
-type SpecialBox_BoxPriceUpdated {
-  id: ID!
-  newPrice: BigInt!
-}
-
-type SpecialBox_Burn {
-  id: ID!
-  user: String!
-  tba: String!
-  tokenId: BigInt!
-}
-
-type SpecialBox_MintBox {
-  id: ID!
-  user: String!
-  tba: String!
-  tokenId: BigInt!
-}
-
-type SpecialBox_OwnershipTransferred {
-  id: ID!
-  previousOwner: String!
-  newOwner: String!
-}
-
-type SpecialBox_PaymentGatewayUpdated {
-  id: ID!
-  newGateway: String!
-}
-
-type SpecialBox_Transfer {
-  id: ID!
-  from: String!
-  to: String!
-  tokenId: BigInt!
-}
-
-type SpecialBoxStake_OwnershipTransferred {
-  id: ID!
-  previousOwner: String!
-  newOwner: String!
-}
-
-type SpecialBoxStake_SpecialBoxMinted {
-  id: ID!
-  user: String!
-  tba: String!
-  amount: BigInt!
-}
-
-type SpecialBoxStake_Stake {
-  id: ID!
-  user: String!
-  tba: String!
-  tokenId: BigInt!
-}
-
-type SpecialBoxStake_StakeAll {
-  id: ID!
-  user: String!
-  tba: String!
-  tokenIds: [BigInt!]!
-  totalStaked: BigInt!
-}
-
-type SpecialBoxStake_StakeBatch {
-  id: ID!
-  user: String!
-  tba: String!
-  tokenIds: [BigInt!]!
-}
-
-type SpecialBoxStake_Unstake {
-  id: ID!
-  user: String!
-  tba: String!
-  tokenId: BigInt!
-}
-
-type SpecialBoxStake_UnstakeBatch {
-  id: ID!
-  user: String!
-  tba: String!
-  tokenIds: [BigInt!]!
 }
 

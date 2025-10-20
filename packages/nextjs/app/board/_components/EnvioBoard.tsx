@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import { GameBoard } from "./GameBoard";
 import { GameCombine } from "./GameCombine";
-import { GameControls } from "./GameControls";
 import { GameDashboard } from "./GameDashboard";
 import { MobilePanels } from "./MobilePanels";
 import { useAccount } from "wagmi";
 import HeaderBanner from "~~/components/header/HeaderBanner";
+import { GameControlsWithDelegation } from "~~/components/smart-account";
 import { useActionBoard } from "~~/hooks/board/useActionBoard";
 import { useGameData } from "~~/hooks/board/useGameData";
 import { useGameEvents } from "~~/hooks/envio/useGameEvents";
@@ -182,9 +182,9 @@ export const EnvioBoard = () => {
               })()}
             </div>
 
-            {/* Game Controls */}
+            {/* Game Controls with Delegation */}
             <div className="relative mt-4">
-              <GameControls
+              <GameControlsWithDelegation
                 handleRoll={handleRoll}
                 handleBuy={handleBuy}
                 handleRail={handleRail}
@@ -270,9 +270,9 @@ export const EnvioBoard = () => {
             }
           })()}
 
-          {/* Mobile Game Controls */}
+          {/* Mobile Game Controls with Delegation */}
           <div className="md:hidden fixed top-[400px] left-1/2 transform -translate-x-1/2 z-10 flex items-center justify-center">
-            <GameControls
+            <GameControlsWithDelegation
               handleRoll={handleRoll}
               handleBuy={handleBuy}
               handleRail={handleRail}

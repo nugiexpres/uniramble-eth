@@ -178,6 +178,7 @@ export const PLAYER_MOVEMENT_SUBSCRIPTION = gql`
       id
       player
       newPosition
+      roll
       db_write_timestamp
     }
   }
@@ -202,6 +203,7 @@ export const PLAYER_MOVED_SUBSCRIPTION = gql`
       id
       player
       newPosition
+      roll
       db_write_timestamp
     }
   }
@@ -247,6 +249,7 @@ export const ALL_PURCHASES_SUBSCRIPTION = gql`
       id
       player
       ingredientType
+      position
       db_write_timestamp
     }
   }
@@ -284,6 +287,64 @@ export const GET_ALL_FAUCET_USED_EVENTS = gql`
       id
       recipient
       amount
+      db_write_timestamp
+    }
+  }
+`;
+
+// FoodNFT Transfer Events - untuk tracking NFT ownership
+// Query ini mengambil SEMUA transfer untuk tokenId yang pernah dimiliki owner
+// Kemudian di client-side kita filter untuk cek ownership terakhir
+export const GET_NFTS_BY_OWNER = gql`
+  query GetNFTsByOwner($owner: String!) {
+    FoodNFT_Transfer(
+      where: { _or: [{ to: { _eq: $owner } }, { from: { _eq: $owner } }] }
+      order_by: { db_write_timestamp: asc }
+    ) {
+      id
+      from
+      to
+      tokenId
+      db_write_timestamp
+    }
+  }
+`;
+
+// Alternative query: Get ALL transfers globally, then filter client-side
+// This is more comprehensive but returns more data
+export const GET_ALL_TRANSFERS_FOR_TOKENS = gql`
+  query GetAllTransfersForTokens($tokenIds: [String!]!) {
+    FoodNFT_Transfer(where: { tokenId: { _in: $tokenIds } }, order_by: { db_write_timestamp: asc }) {
+      id
+      from
+      to
+      tokenId
+      db_write_timestamp
+    }
+  }
+`;
+
+// Get all NFT transfers untuk tracking global
+export const GET_ALL_NFT_TRANSFERS = gql`
+  query GetAllNFTTransfers {
+    FoodNFT_Transfer(order_by: { db_write_timestamp: desc }, limit: 100) {
+      id
+      from
+      to
+      tokenId
+      db_write_timestamp
+    }
+  }
+`;
+
+// Real-time subscription untuk NFT transfers
+export const NFT_TRANSFER_SUBSCRIPTION = gql`
+  subscription NFTTransferSubscription {
+    FoodNFT_Transfer(order_by: { db_write_timestamp: desc }, limit: 20) {
+      id
+      from
+      to
+      tokenId
       db_write_timestamp
     }
   }

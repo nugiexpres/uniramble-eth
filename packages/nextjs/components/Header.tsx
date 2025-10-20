@@ -40,6 +40,11 @@ export const menuLinks: HeaderMenuLink[] = [
     href: "/envio",
     icon: <MapIcon className="h-4 w-4" />,
   },
+  {
+    label: "Caveat Enforcer",
+    href: "/delegation",
+    icon: <MapIcon className="h-4 w-4" />,
+  },
 ];
 
 export const HeaderMenuLinks = () => {

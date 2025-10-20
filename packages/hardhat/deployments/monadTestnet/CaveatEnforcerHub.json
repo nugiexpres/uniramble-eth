@@ -1,0 +1,674 @@
+{
+  "address": "0x5B9247aAdF8A3bc7Dc6784BEf7ac261bbE6Eeae9",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "initialOwner",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "string",
+          "name": "enforcerType",
+          "type": "string"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "enforcer",
+          "type": "address"
+        }
+      ],
+      "name": "DefaultEnforcerSet",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "delegationHash",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "enforcer",
+          "type": "address"
+        }
+      ],
+      "name": "EnforcerAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "enforcer",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "delegationHash",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        }
+      ],
+      "name": "EnforcerAfterHookFailed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "enforcer",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "enabled",
+          "type": "bool"
+        }
+      ],
+      "name": "EnforcerEnabled",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "delegationHash",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "enforcer",
+          "type": "address"
+        }
+      ],
+      "name": "EnforcerRemoved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "delegationHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "string[]",
+          "name": "enforcerTypes",
+          "type": "string[]"
+        }
+      ],
+      "name": "addDefaultEnforcersToDelegation",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "delegationHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "enforcer",
+          "type": "address"
+        }
+      ],
+      "name": "addEnforcerToDelegation",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "terms",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "args",
+          "type": "bytes"
+        },
+        {
+          "internalType": "uint256",
+          "name": "mode",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "executionCalldata",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "delegationHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "afterHook",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "enforcers",
+          "type": "address[]"
+        }
+      ],
+      "name": "batchEnableEnforcers",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string[]",
+          "name": "enforcerTypes",
+          "type": "string[]"
+        },
+        {
+          "internalType": "address[]",
+          "name": "enforcers",
+          "type": "address[]"
+        }
+      ],
+      "name": "batchSetDefaultEnforcers",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "terms",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "args",
+          "type": "bytes"
+        },
+        {
+          "internalType": "uint256",
+          "name": "mode",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "executionCalldata",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "delegationHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "beforeHook",
+      "outputs": [],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "name": "defaultEnforcers",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "delegationEnforcers",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "enabledEnforcers",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "delegationHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getDelegationEnforcers",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "delegationHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "enforcer",
+          "type": "address"
+        }
+      ],
+      "name": "isEnforcerInDelegation",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "delegationHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "enforcer",
+          "type": "address"
+        }
+      ],
+      "name": "removeEnforcerFromDelegation",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "enforcerType",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "enforcer",
+          "type": "address"
+        }
+      ],
+      "name": "setDefaultEnforcer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "enforcer",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "enabled",
+          "type": "bool"
+        }
+      ],
+      "name": "setEnforcerEnabled",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xb20b1e2854503409aa2d67678c02bd20b0a8b72fdd2716d3f43aee45109f4f24",
+  "receipt": {
+    "to": null,
+    "from": "0x9bF68A0f0be9A9B6dCeb4D5675745c2f7cFb9483",
+    "contractAddress": "0x5B9247aAdF8A3bc7Dc6784BEf7ac261bbE6Eeae9",
+    "transactionIndex": 2,
+    "gasUsed": "1527176",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000400000000200000000000000000001000000000000001000000000000000000000000000000000000020000200000000000000800000000000000000000000000010000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000008000000000000000000000000000000000",
+    "blockHash": "0x079cfdaaaaca4b84fa1d5ca3f470f5501a407d4df602c2d1dc9a29156e555be7",
+    "transactionHash": "0xb20b1e2854503409aa2d67678c02bd20b0a8b72fdd2716d3f43aee45109f4f24",
+    "logs": [
+      {
+        "transactionIndex": 2,
+        "blockNumber": 44185770,
+        "transactionHash": "0xb20b1e2854503409aa2d67678c02bd20b0a8b72fdd2716d3f43aee45109f4f24",
+        "address": "0x5B9247aAdF8A3bc7Dc6784BEf7ac261bbE6Eeae9",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x0000000000000000000000009bf68a0f0be9a9b6dceb4d5675745c2f7cfb9483"
+        ],
+        "data": "0x",
+        "logIndex": 2,
+        "blockHash": "0x079cfdaaaaca4b84fa1d5ca3f470f5501a407d4df602c2d1dc9a29156e555be7"
+      }
+    ],
+    "blockNumber": 44185770,
+    "cumulativeGasUsed": "1777176",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x9bF68A0f0be9A9B6dCeb4D5675745c2f7cFb9483"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "ff740727392c95dbe8f9b1b72db3819d",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.23+commit.f704f362\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"initialOwner\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"string\",\"name\":\"enforcerType\",\"type\":\"string\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"enforcer\",\"type\":\"address\"}],\"name\":\"DefaultEnforcerSet\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"delegationHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"enforcer\",\"type\":\"address\"}],\"name\":\"EnforcerAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"enforcer\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"delegationHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"reason\",\"type\":\"string\"}],\"name\":\"EnforcerAfterHookFailed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"enforcer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"enabled\",\"type\":\"bool\"}],\"name\":\"EnforcerEnabled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"delegationHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"enforcer\",\"type\":\"address\"}],\"name\":\"EnforcerRemoved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"delegationHash\",\"type\":\"bytes32\"},{\"internalType\":\"string[]\",\"name\":\"enforcerTypes\",\"type\":\"string[]\"}],\"name\":\"addDefaultEnforcersToDelegation\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"delegationHash\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"enforcer\",\"type\":\"address\"}],\"name\":\"addEnforcerToDelegation\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"terms\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"args\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"mode\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"executionCalldata\",\"type\":\"bytes\"},{\"internalType\":\"bytes32\",\"name\":\"delegationHash\",\"type\":\"bytes32\"}],\"name\":\"afterHook\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"enforcers\",\"type\":\"address[]\"}],\"name\":\"batchEnableEnforcers\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string[]\",\"name\":\"enforcerTypes\",\"type\":\"string[]\"},{\"internalType\":\"address[]\",\"name\":\"enforcers\",\"type\":\"address[]\"}],\"name\":\"batchSetDefaultEnforcers\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"terms\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"args\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"mode\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"executionCalldata\",\"type\":\"bytes\"},{\"internalType\":\"bytes32\",\"name\":\"delegationHash\",\"type\":\"bytes32\"}],\"name\":\"beforeHook\",\"outputs\":[],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"name\":\"defaultEnforcers\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"delegationEnforcers\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"enabledEnforcers\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"delegationHash\",\"type\":\"bytes32\"}],\"name\":\"getDelegationEnforcers\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"delegationHash\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"enforcer\",\"type\":\"address\"}],\"name\":\"isEnforcerInDelegation\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"delegationHash\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"enforcer\",\"type\":\"address\"}],\"name\":\"removeEnforcerFromDelegation\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"enforcerType\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"enforcer\",\"type\":\"address\"}],\"name\":\"setDefaultEnforcer\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"enforcer\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"enabled\",\"type\":\"bool\"}],\"name\":\"setEnforcerEnabled\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Hub contract that coordinates multiple caveat enforcers Supports both MetaMask built-in enforcers and custom game enforcers\",\"errors\":{\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}]},\"kind\":\"dev\",\"methods\":{\"addDefaultEnforcersToDelegation(bytes32,string[])\":{\"details\":\"Add default enforcers to a delegation Anyone can add default enforcers to their own delegations\"},\"addEnforcerToDelegation(bytes32,address)\":{\"details\":\"Add an enforcer to a delegation Anyone can add enabled enforcers to their own delegations\"},\"afterHook(bytes,bytes,uint256,bytes,bytes32)\":{\"details\":\"Main afterHook that coordinates all enforcers\"},\"batchEnableEnforcers(address[])\":{\"details\":\"Batch enable multiple enforcers\"},\"batchSetDefaultEnforcers(string[],address[])\":{\"details\":\"Batch set default enforcers\"},\"beforeHook(bytes,bytes,uint256,bytes,bytes32)\":{\"details\":\"Main beforeHook that coordinates all enforcers\"},\"getDelegationEnforcers(bytes32)\":{\"details\":\"Get all enforcers for a delegation\"},\"isEnforcerInDelegation(bytes32,address)\":{\"details\":\"Check if an enforcer is in a delegation\"},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"removeEnforcerFromDelegation(bytes32,address)\":{\"details\":\"Remove an enforcer from a delegation Anyone can remove enforcers from their own delegations\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"setDefaultEnforcer(string,address)\":{\"details\":\"Set default enforcer for a type\"},\"setEnforcerEnabled(address,bool)\":{\"details\":\"Enable or disable an enforcer\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"title\":\"CaveatEnforcerHub\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/delegation/CaveatEnforcerHub.sol\":\"CaveatEnforcerHub\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {Context} from \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * The initial owner is set to the address provided by the deployer. This can\\n * later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    /**\\n     * @dev The caller account is not authorized to perform an operation.\\n     */\\n    error OwnableUnauthorizedAccount(address account);\\n\\n    /**\\n     * @dev The owner is not a valid owner account. (eg. `address(0)`)\\n     */\\n    error OwnableInvalidOwner(address owner);\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the address provided by the deployer as the initial owner.\\n     */\\n    constructor(address initialOwner) {\\n        if (initialOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(initialOwner);\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        if (owner() != _msgSender()) {\\n            revert OwnableUnauthorizedAccount(_msgSender());\\n        }\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby disabling any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        if (newOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    function _contextSuffixLength() internal view virtual returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\"},\"contracts/delegation/CaveatEnforcerHub.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.23;\\n\\nimport \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\n\\n// Interface for caveat enforcers\\ninterface ICaveatEnforcer {\\n    function beforeHook(\\n        bytes calldata terms,\\n        bytes calldata args,\\n        uint256 mode,\\n        bytes calldata executionCalldata,\\n        bytes32 delegationHash\\n    ) external view;\\n\\n    function afterHook(\\n        bytes calldata terms,\\n        bytes calldata args,\\n        uint256 mode,\\n        bytes calldata executionCalldata,\\n        bytes32 delegationHash\\n    ) external;\\n}\\n\\n/**\\n * @title CaveatEnforcerHub\\n * @dev Hub contract that coordinates multiple caveat enforcers\\n * Supports both MetaMask built-in enforcers and custom game enforcers\\n */\\ncontract CaveatEnforcerHub is Ownable {\\n    // Mapping from delegation hash to list of enforcer addresses\\n    mapping(bytes32 => address[]) public delegationEnforcers;\\n\\n    // Mapping from enforcer address to enabled status\\n    mapping(address => bool) public enabledEnforcers;\\n\\n    // Mapping from enforcer type to default enforcer address\\n    mapping(string => address) public defaultEnforcers;\\n\\n    // Events\\n    event EnforcerAdded(bytes32 indexed delegationHash, address indexed enforcer);\\n    event EnforcerRemoved(bytes32 indexed delegationHash, address indexed enforcer);\\n    event EnforcerEnabled(address indexed enforcer, bool enabled);\\n    event DefaultEnforcerSet(string indexed enforcerType, address indexed enforcer);\\n\\n    constructor(address initialOwner) Ownable(initialOwner) {}\\n\\n    /**\\n     * @dev Add an enforcer to a delegation\\n     * Anyone can add enabled enforcers to their own delegations\\n     */\\n    function addEnforcerToDelegation(bytes32 delegationHash, address enforcer) external {\\n        require(enabledEnforcers[enforcer], \\\"Enforcer not enabled\\\");\\n        require(!_isEnforcerInDelegation(delegationHash, enforcer), \\\"Enforcer already added\\\");\\n\\n        delegationEnforcers[delegationHash].push(enforcer);\\n        emit EnforcerAdded(delegationHash, enforcer);\\n    }\\n\\n    /**\\n     * @dev Remove an enforcer from a delegation\\n     * Anyone can remove enforcers from their own delegations\\n     */\\n    function removeEnforcerFromDelegation(bytes32 delegationHash, address enforcer) external {\\n        address[] storage enforcers = delegationEnforcers[delegationHash];\\n        for (uint256 i = 0; i < enforcers.length; i++) {\\n            if (enforcers[i] == enforcer) {\\n                enforcers[i] = enforcers[enforcers.length - 1];\\n                enforcers.pop();\\n                emit EnforcerRemoved(delegationHash, enforcer);\\n                break;\\n            }\\n        }\\n    }\\n\\n    /**\\n     * @dev Enable or disable an enforcer\\n     */\\n    function setEnforcerEnabled(address enforcer, bool enabled) external onlyOwner {\\n        enabledEnforcers[enforcer] = enabled;\\n        emit EnforcerEnabled(enforcer, enabled);\\n    }\\n\\n    /**\\n     * @dev Set default enforcer for a type\\n     */\\n    function setDefaultEnforcer(string calldata enforcerType, address enforcer) external onlyOwner {\\n        require(enabledEnforcers[enforcer], \\\"Enforcer not enabled\\\");\\n        defaultEnforcers[enforcerType] = enforcer;\\n        emit DefaultEnforcerSet(enforcerType, enforcer);\\n    }\\n\\n    /**\\n     * @dev Batch enable multiple enforcers\\n     */\\n    function batchEnableEnforcers(address[] calldata enforcers) external onlyOwner {\\n        for (uint256 i = 0; i < enforcers.length; i++) {\\n            enabledEnforcers[enforcers[i]] = true;\\n            emit EnforcerEnabled(enforcers[i], true);\\n        }\\n    }\\n\\n    /**\\n     * @dev Batch set default enforcers\\n     */\\n    function batchSetDefaultEnforcers(\\n        string[] calldata enforcerTypes,\\n        address[] calldata enforcers\\n    ) external onlyOwner {\\n        require(enforcerTypes.length == enforcers.length, \\\"Length mismatch\\\");\\n        for (uint256 i = 0; i < enforcerTypes.length; i++) {\\n            require(enabledEnforcers[enforcers[i]], \\\"Enforcer not enabled\\\");\\n            defaultEnforcers[enforcerTypes[i]] = enforcers[i];\\n            emit DefaultEnforcerSet(enforcerTypes[i], enforcers[i]);\\n        }\\n    }\\n\\n    /**\\n     * @dev Add default enforcers to a delegation\\n     * Anyone can add default enforcers to their own delegations\\n     */\\n    function addDefaultEnforcersToDelegation(\\n        bytes32 delegationHash,\\n        string[] calldata enforcerTypes\\n    ) external {\\n        for (uint256 i = 0; i < enforcerTypes.length; i++) {\\n            address enforcer = defaultEnforcers[enforcerTypes[i]];\\n            if (enforcer != address(0) && !_isEnforcerInDelegation(delegationHash, enforcer)) {\\n                delegationEnforcers[delegationHash].push(enforcer);\\n                emit EnforcerAdded(delegationHash, enforcer);\\n            }\\n        }\\n    }\\n\\n    /**\\n     * @dev Main beforeHook that coordinates all enforcers\\n     */\\n    function beforeHook(\\n        bytes calldata terms,\\n        bytes calldata args,\\n        uint256 mode,\\n        bytes calldata executionCalldata,\\n        bytes32 delegationHash\\n    ) external view {\\n        address[] memory enforcers = delegationEnforcers[delegationHash];\\n\\n        for (uint256 i = 0; i < enforcers.length; i++) {\\n            if (enabledEnforcers[enforcers[i]]) {\\n                try ICaveatEnforcer(enforcers[i]).beforeHook(terms, args, mode, executionCalldata, delegationHash) {\\n                    // Enforcer passed, continue to next\\n                } catch Error(string memory reason) {\\n                    // Re-throw with context\\n                    revert(string(abi.encodePacked(\\\"Enforcer \\\", _addressToString(enforcers[i]), \\\" failed: \\\", reason)));\\n                } catch {\\n                    revert(\\\"Enforcer execution failed\\\");\\n                }\\n            }\\n        }\\n    }\\n\\n    /**\\n     * @dev Main afterHook that coordinates all enforcers\\n     */\\n    function afterHook(\\n        bytes calldata terms,\\n        bytes calldata args,\\n        uint256 mode,\\n        bytes calldata executionCalldata,\\n        bytes32 delegationHash\\n    ) external {\\n        address[] memory enforcers = delegationEnforcers[delegationHash];\\n\\n        for (uint256 i = 0; i < enforcers.length; i++) {\\n            if (enabledEnforcers[enforcers[i]]) {\\n                try ICaveatEnforcer(enforcers[i]).afterHook(terms, args, mode, executionCalldata, delegationHash) {\\n                    // Enforcer passed, continue to next\\n                } catch Error(string memory reason) {\\n                    // Log error but don't revert (afterHook should be more lenient)\\n                    emit EnforcerAfterHookFailed(enforcers[i], delegationHash, reason);\\n                } catch {\\n                    emit EnforcerAfterHookFailed(enforcers[i], delegationHash, \\\"Unknown error\\\");\\n                }\\n            }\\n        }\\n    }\\n\\n    /**\\n     * @dev Get all enforcers for a delegation\\n     */\\n    function getDelegationEnforcers(bytes32 delegationHash) external view returns (address[] memory) {\\n        return delegationEnforcers[delegationHash];\\n    }\\n\\n    /**\\n     * @dev Check if an enforcer is in a delegation\\n     */\\n    function isEnforcerInDelegation(bytes32 delegationHash, address enforcer) external view returns (bool) {\\n        return _isEnforcerInDelegation(delegationHash, enforcer);\\n    }\\n\\n    /**\\n     * @dev Internal function to check if enforcer is in delegation\\n     */\\n    function _isEnforcerInDelegation(bytes32 delegationHash, address enforcer) internal view returns (bool) {\\n        address[] memory enforcers = delegationEnforcers[delegationHash];\\n        for (uint256 i = 0; i < enforcers.length; i++) {\\n            if (enforcers[i] == enforcer) {\\n                return true;\\n            }\\n        }\\n        return false;\\n    }\\n\\n    /**\\n     * @dev Convert address to string\\n     */\\n    function _addressToString(address addr) internal pure returns (string memory) {\\n        bytes32 value = bytes32(uint256(uint160(addr)));\\n        bytes memory alphabet = \\\"0123456789abcdef\\\";\\n        bytes memory str = new bytes(42);\\n        str[0] = \\\"0\\\";\\n        str[1] = \\\"x\\\";\\n        for (uint256 i = 0; i < 20; i++) {\\n            str[2 + i * 2] = alphabet[uint8(value[i + 12] >> 4)];\\n            str[3 + i * 2] = alphabet[uint8(value[i + 12] & 0x0f)];\\n        }\\n        return string(str);\\n    }\\n\\n    // Event for afterHook failures\\n    event EnforcerAfterHookFailed(address indexed enforcer, bytes32 indexed delegationHash, string reason);\\n}\\n\",\"keccak256\":\"0xb5c382bba331e0ed6ead372c08b8e4dfcb307c349084dd0ba54d35dc446a91cb\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60806040523480156200001157600080fd5b5060405162001af338038062001af38339810160408190526200003491620000c7565b806001600160a01b0381166200006457604051631e4fbdf760e01b81526000600482015260240160405180910390fd5b6200006f8162000077565b5050620000f9565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b600060208284031215620000da57600080fd5b81516001600160a01b0381168114620000f257600080fd5b9392505050565b6119ea80620001096000396000f3fe608060405234801561001057600080fd5b506004361061010b5760003560e01c80639148fecc116100a2578063c90ce3b411610071578063c90ce3b414610247578063e9c128001461025a578063f2fde38b1461026d578063f50429a114610280578063fe0fb736146102a057600080fd5b80639148fecc146101eb5780639a0c42271461020e5780639e8b9525146102215780639ffb99ca1461023457600080fd5b8063715018a6116100de578063715018a6146101ac57806377b6be1e146101b457806378aea844146101c75780638da5cb5b146101da57600080fd5b80633884ab8a1461011057806339796955146101385780633c20a71a1461014d57806361e7e36414610178575b600080fd5b61012361011e36600461126b565b6102b3565b60405190151581526020015b60405180910390f35b61014b6101463660046112e0565b6102c8565b005b61016061015b36600461138b565b6104e5565b6040516001600160a01b03909116815260200161012f565b6101606101863660046113f0565b80516020818301810180516003825292820191909301209152546001600160a01b031681565b61014b61051d565b61014b6101c23660046114ce565b610531565b61014b6101d536600461126b565b610714565b6000546001600160a01b0316610160565b6101236101f936600461153a565b60026020526000908152604090205460ff1681565b61014b61021c366004611555565b61085d565b61014b61022f3660046112e0565b61093e565b61014b610242366004611597565b610b83565b61014b61025536600461126b565b610c6a565b61014b6102683660046115e3565b610d5c565b61014b61027b36600461153a565b610e20565b61029361028e366004611637565b610e5e565b60405161012f9190611650565b61014b6102ae36600461169d565b610eca565b60006102bf8383610f31565b90505b92915050565b60008181526001602090815260408083208054825181850281018501909352808352919290919083018282801561032857602002820191906000526020600020905b81546001600160a01b0316815260019091019060200180831161030a575b5050505050905060005b81518110156104d95760026000838381518110610351576103516116d9565b6020908102919091018101516001600160a01b031682528101919091526040016000205460ff16156104d15781818151811061038f5761038f6116d9565b60200260200101516001600160a01b031663397969558b8b8b8b8b8b8b8b6040518963ffffffff1660e01b81526004016103d0989796959493929190611718565b60006040518083038186803b1580156103e857600080fd5b505afa9250505080156103f9575060015b6104d157610405611770565b806308c379a003610487575061041961178c565b806104245750610489565b610446838381518110610439576104396116d9565b6020026020010151610ff1565b8160405160200161045892919061183a565b60408051601f198184030181529082905262461bcd60e51b825261047e91600401611893565b60405180910390fd5b505b60405162461bcd60e51b815260206004820152601960248201527f456e666f7263657220657865637574696f6e206661696c656400000000000000604482015260640161047e565b600101610332565b50505050505050505050565b6001602052816000526040600020818154811061050157600080fd5b6000918252602090912001546001600160a01b03169150829050565b6105256111d2565b61052f60006111ff565b565b6105396111d2565b82811461057a5760405162461bcd60e51b815260206004820152600f60248201526e098cadccee8d040dad2e6dac2e8c6d608b1b604482015260640161047e565b60005b8381101561070d576002600084848481811061059b5761059b6116d9565b90506020020160208101906105b0919061153a565b6001600160a01b0316815260208101919091526040016000205460ff166105e95760405162461bcd60e51b815260040161047e906118c6565b8282828181106105fb576105fb6116d9565b9050602002016020810190610610919061153a565b6003868684818110610624576106246116d9565b905060200281019061063691906118f4565b60405161064492919061193b565b90815260405190819003602001902080546001600160a01b03929092166001600160a01b0319909216919091179055828282818110610685576106856116d9565b905060200201602081019061069a919061153a565b6001600160a01b03168585838181106106b5576106b56116d9565b90506020028101906106c791906118f4565b6040516106d592919061193b565b604051908190038120907f63e97543d139ad37cedf316f34d17b2ffc81468b722578bbbf69314cc23755a190600090a360010161057d565b5050505050565b6000828152600160205260408120905b815481101561085757826001600160a01b0316828281548110610749576107496116d9565b6000918252602090912001546001600160a01b03160361084f578154829061077390600190611961565b81548110610783576107836116d9565b9060005260206000200160009054906101000a90046001600160a01b03168282815481106107b3576107b36116d9565b9060005260206000200160006101000a8154816001600160a01b0302191690836001600160a01b03160217905550818054806107f1576107f1611974565b600082815260208120820160001990810180546001600160a01b03191690559091019091556040516001600160a01b0385169186917f69e7cf721a7620dafb16f352890f54d81019c80f4ab62909cae3c92877af44229190a3610857565b600101610724565b50505050565b6108656111d2565b60005b8181101561093957600160026000858585818110610888576108886116d9565b905060200201602081019061089d919061153a565b6001600160a01b031681526020810191909152604001600020805460ff19169115159190911790558282828181106108d7576108d76116d9565b90506020020160208101906108ec919061153a565b6001600160a01b03167f26d341fb88e9d80ea32fbe6ee50792fb5f5c1088143d112f0ce8f95ca7d98a9c6001604051610929911515815260200190565b60405180910390a2600101610868565b505050565b60008181526001602090815260408083208054825181850281018501909352808352919290919083018282801561099e57602002820191906000526020600020905b81546001600160a01b03168152600190910190602001808311610980575b5050505050905060005b81518110156104d957600260008383815181106109c7576109c76116d9565b6020908102919091018101516001600160a01b031682528101919091526040016000205460ff1615610b7b57818181518110610a0557610a056116d9565b60200260200101516001600160a01b0316639e8b95258b8b8b8b8b8b8b8b6040518963ffffffff1660e01b8152600401610a46989796959493929190611718565b600060405180830381600087803b158015610a6057600080fd5b505af1925050508015610a71575060015b610b7b57610a7d611770565b806308c379a003610afd5750610a9161178c565b80610a9c5750610aff565b83838381518110610aaf57610aaf6116d9565b60200260200101516001600160a01b03167f9a2ea00fc2edeb473182d139e1230b4e61279e88a69c40730221f85bccd76ecb83604051610aef9190611893565b60405180910390a350610b7b565b505b82828281518110610b1257610b126116d9565b60200260200101516001600160a01b03167f9a2ea00fc2edeb473182d139e1230b4e61279e88a69c40730221f85bccd76ecb604051610b72906020808252600d908201526c2ab735b737bbb71032b93937b960991b604082015260600190565b60405180910390a35b6001016109a8565b60005b818110156108575760006003848484818110610ba457610ba46116d9565b9050602002810190610bb691906118f4565b604051610bc492919061193b565b908152604051908190036020019020546001600160a01b031690508015801590610bf55750610bf38582610f31565b155b15610c6157600085815260016020818152604080842080549384018155845290832090910180546001600160a01b0319166001600160a01b0385169081179091559051909187917f2f68ba594cf636f64a51e2d10c52144a57a7ca021ed3e5943dc45cab3aeaf72b9190a35b50600101610b86565b6001600160a01b03811660009081526002602052604090205460ff16610ca25760405162461bcd60e51b815260040161047e906118c6565b610cac8282610f31565b15610cf25760405162461bcd60e51b8152602060048201526016602482015275115b999bdc98d95c88185b1c9958591e48185919195960521b604482015260640161047e565b600082815260016020818152604080842080549384018155845290832090910180546001600160a01b0319166001600160a01b0385169081179091559051909184917f2f68ba594cf636f64a51e2d10c52144a57a7ca021ed3e5943dc45cab3aeaf72b9190a35050565b610d646111d2565b6001600160a01b03811660009081526002602052604090205460ff16610d9c5760405162461bcd60e51b815260040161047e906118c6565b8060038484604051610daf92919061193b565b90815260405190819003602001812080546001600160a01b039384166001600160a01b031990911617905590821690610deb908590859061193b565b604051908190038120907f63e97543d139ad37cedf316f34d17b2ffc81468b722578bbbf69314cc23755a190600090a3505050565b610e286111d2565b6001600160a01b038116610e5257604051631e4fbdf760e01b81526000600482015260240161047e565b610e5b816111ff565b50565b600081815260016020908152604091829020805483518184028101840190945280845260609392830182828015610ebe57602002820191906000526020600020905b81546001600160a01b03168152600190910190602001808311610ea0575b50505050509050919050565b610ed26111d2565b6001600160a01b038216600081815260026020908152604091829020805460ff191685151590811790915591519182527f26d341fb88e9d80ea32fbe6ee50792fb5f5c1088143d112f0ce8f95ca7d98a9c910160405180910390a25050565b600082815260016020908152604080832080548251818502810185019093528083528493830182828015610f8e57602002820191906000526020600020905b81546001600160a01b03168152600190910190602001808311610f70575b5050505050905060005b8151811015610fe657836001600160a01b0316828281518110610fbd57610fbd6116d9565b60200260200101516001600160a01b031603610fde576001925050506102c2565b600101610f98565b506000949350505050565b604080518082018252601081526f181899199a1a9b1b9c1cb0b131b232b360811b60208201528151602a80825260608281019094526001600160a01b0385169291600091602082018180368337019050509050600360fc1b8160008151811061105c5761105c6116d9565b60200101906001600160f81b031916908160001a905350600f60fb1b8160018151811061108b5761108b6116d9565b60200101906001600160f81b031916908160001a90535060005b60148110156111c957826004856110bd84600c61198a565b602081106110cd576110cd6116d9565b1a60f81b6001600160f81b031916901c60f81c60ff16815181106110f3576110f36116d9565b01602001516001600160f81b0319168261110e83600261199d565b61111990600261198a565b81518110611129576111296116d9565b60200101906001600160f81b031916908160001a905350828461114d83600c61198a565b6020811061115d5761115d6116d9565b825191901a600f16908110611174576111746116d9565b01602001516001600160f81b0319168261118f83600261199d565b61119a90600361198a565b815181106111aa576111aa6116d9565b60200101906001600160f81b031916908160001a9053506001016110a5565b50949350505050565b6000546001600160a01b0316331461052f5760405163118cdaa760e01b815233600482015260240161047e565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b80356001600160a01b038116811461126657600080fd5b919050565b6000806040838503121561127e57600080fd5b8235915061128e6020840161124f565b90509250929050565b60008083601f8401126112a957600080fd5b50813567ffffffffffffffff8111156112c157600080fd5b6020830191508360208285010111156112d957600080fd5b9250929050565b60008060008060008060008060a0898b0312156112fc57600080fd5b883567ffffffffffffffff8082111561131457600080fd5b6113208c838d01611297565b909a50985060208b013591508082111561133957600080fd5b6113458c838d01611297565b909850965060408b0135955060608b013591508082111561136557600080fd5b506113728b828c01611297565b999c989b50969995989497949560800135949350505050565b6000806040838503121561139e57600080fd5b50508035926020909101359150565b634e487b7160e01b600052604160045260246000fd5b601f8201601f1916810167ffffffffffffffff811182821017156113e9576113e96113ad565b6040525050565b6000602080838503121561140357600080fd5b823567ffffffffffffffff8082111561141b57600080fd5b818501915085601f83011261142f57600080fd5b813581811115611441576114416113ad565b6040519150611459601f8201601f19168501836113c3565b808252868482850101111561146d57600080fd5b8084840185840137600090820190930192909252509392505050565b60008083601f84011261149b57600080fd5b50813567ffffffffffffffff8111156114b357600080fd5b6020830191508360208260051b85010111156112d957600080fd5b600080600080604085870312156114e457600080fd5b843567ffffffffffffffff808211156114fc57600080fd5b61150888838901611489565b9096509450602087013591508082111561152157600080fd5b5061152e87828801611489565b95989497509550505050565b60006020828403121561154c57600080fd5b6102bf8261124f565b6000806020838503121561156857600080fd5b823567ffffffffffffffff81111561157f57600080fd5b61158b85828601611489565b90969095509350505050565b6000806000604084860312156115ac57600080fd5b83359250602084013567ffffffffffffffff8111156115ca57600080fd5b6115d686828701611489565b9497909650939450505050565b6000806000604084860312156115f857600080fd5b833567ffffffffffffffff81111561160f57600080fd5b61161b86828701611297565b909450925061162e90506020850161124f565b90509250925092565b60006020828403121561164957600080fd5b5035919050565b6020808252825182820181905260009190848201906040850190845b818110156116915783516001600160a01b03168352928401929184019160010161166c565b50909695505050505050565b600080604083850312156116b057600080fd5b6116b98361124f565b9150602083013580151581146116ce57600080fd5b809150509250929050565b634e487b7160e01b600052603260045260246000fd5b81835281816020850137506000828201602090810191909152601f909101601f19169091010190565b60a08152600061172c60a083018a8c6116ef565b828103602084015261173f81898b6116ef565b9050866040840152828103606084015261175a8186886116ef565b9150508260808301529998505050505050505050565b600060033d11156117895760046000803e5060005160e01c5b90565b600060443d101561179a5790565b6040516003193d81016004833e81513d67ffffffffffffffff81602484011181841117156117ca57505050505090565b82850191508151818111156117e25750505050505090565b843d87010160208285010111156117fc5750505050505090565b61180b602082860101876113c3565b509095945050505050565b60005b83811015611831578181015183820152602001611819565b50506000910152565b68022b73337b931b2b9160bd1b81526000835161185e816009850160208801611816565b680103330b4b632b21d160bd1b6009918401918201528351611887816012840160208801611816565b01601201949350505050565b60208152600082518060208401526118b2816040850160208701611816565b601f01601f19169190910160400192915050565b602080825260149082015273115b999bdc98d95c881b9bdd08195b98589b195960621b604082015260600190565b6000808335601e1984360301811261190b57600080fd5b83018035915067ffffffffffffffff82111561192657600080fd5b6020019150368190038213156112d957600080fd5b8183823760009101908152919050565b634e487b7160e01b600052601160045260246000fd5b818103818111156102c2576102c261194b565b634e487b7160e01b600052603160045260246000fd5b808201808211156102c2576102c261194b565b80820281158282048414176102c2576102c261194b56fea26469706673582212200c46f8d2bb4f8ee3733e22a982056b0f6ee01894e2e69d14e259c070a86bd70664736f6c63430008170033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061010b5760003560e01c80639148fecc116100a2578063c90ce3b411610071578063c90ce3b414610247578063e9c128001461025a578063f2fde38b1461026d578063f50429a114610280578063fe0fb736146102a057600080fd5b80639148fecc146101eb5780639a0c42271461020e5780639e8b9525146102215780639ffb99ca1461023457600080fd5b8063715018a6116100de578063715018a6146101ac57806377b6be1e146101b457806378aea844146101c75780638da5cb5b146101da57600080fd5b80633884ab8a1461011057806339796955146101385780633c20a71a1461014d57806361e7e36414610178575b600080fd5b61012361011e36600461126b565b6102b3565b60405190151581526020015b60405180910390f35b61014b6101463660046112e0565b6102c8565b005b61016061015b36600461138b565b6104e5565b6040516001600160a01b03909116815260200161012f565b6101606101863660046113f0565b80516020818301810180516003825292820191909301209152546001600160a01b031681565b61014b61051d565b61014b6101c23660046114ce565b610531565b61014b6101d536600461126b565b610714565b6000546001600160a01b0316610160565b6101236101f936600461153a565b60026020526000908152604090205460ff1681565b61014b61021c366004611555565b61085d565b61014b61022f3660046112e0565b61093e565b61014b610242366004611597565b610b83565b61014b61025536600461126b565b610c6a565b61014b6102683660046115e3565b610d5c565b61014b61027b36600461153a565b610e20565b61029361028e366004611637565b610e5e565b60405161012f9190611650565b61014b6102ae36600461169d565b610eca565b60006102bf8383610f31565b90505b92915050565b60008181526001602090815260408083208054825181850281018501909352808352919290919083018282801561032857602002820191906000526020600020905b81546001600160a01b0316815260019091019060200180831161030a575b5050505050905060005b81518110156104d95760026000838381518110610351576103516116d9565b6020908102919091018101516001600160a01b031682528101919091526040016000205460ff16156104d15781818151811061038f5761038f6116d9565b60200260200101516001600160a01b031663397969558b8b8b8b8b8b8b8b6040518963ffffffff1660e01b81526004016103d0989796959493929190611718565b60006040518083038186803b1580156103e857600080fd5b505afa9250505080156103f9575060015b6104d157610405611770565b806308c379a003610487575061041961178c565b806104245750610489565b610446838381518110610439576104396116d9565b6020026020010151610ff1565b8160405160200161045892919061183a565b60408051601f198184030181529082905262461bcd60e51b825261047e91600401611893565b60405180910390fd5b505b60405162461bcd60e51b815260206004820152601960248201527f456e666f7263657220657865637574696f6e206661696c656400000000000000604482015260640161047e565b600101610332565b50505050505050505050565b6001602052816000526040600020818154811061050157600080fd5b6000918252602090912001546001600160a01b03169150829050565b6105256111d2565b61052f60006111ff565b565b6105396111d2565b82811461057a5760405162461bcd60e51b815260206004820152600f60248201526e098cadccee8d040dad2e6dac2e8c6d608b1b604482015260640161047e565b60005b8381101561070d576002600084848481811061059b5761059b6116d9565b90506020020160208101906105b0919061153a565b6001600160a01b0316815260208101919091526040016000205460ff166105e95760405162461bcd60e51b815260040161047e906118c6565b8282828181106105fb576105fb6116d9565b9050602002016020810190610610919061153a565b6003868684818110610624576106246116d9565b905060200281019061063691906118f4565b60405161064492919061193b565b90815260405190819003602001902080546001600160a01b03929092166001600160a01b0319909216919091179055828282818110610685576106856116d9565b905060200201602081019061069a919061153a565b6001600160a01b03168585838181106106b5576106b56116d9565b90506020028101906106c791906118f4565b6040516106d592919061193b565b604051908190038120907f63e97543d139ad37cedf316f34d17b2ffc81468b722578bbbf69314cc23755a190600090a360010161057d565b5050505050565b6000828152600160205260408120905b815481101561085757826001600160a01b0316828281548110610749576107496116d9565b6000918252602090912001546001600160a01b03160361084f578154829061077390600190611961565b81548110610783576107836116d9565b9060005260206000200160009054906101000a90046001600160a01b03168282815481106107b3576107b36116d9565b9060005260206000200160006101000a8154816001600160a01b0302191690836001600160a01b03160217905550818054806107f1576107f1611974565b600082815260208120820160001990810180546001600160a01b03191690559091019091556040516001600160a01b0385169186917f69e7cf721a7620dafb16f352890f54d81019c80f4ab62909cae3c92877af44229190a3610857565b600101610724565b50505050565b6108656111d2565b60005b8181101561093957600160026000858585818110610888576108886116d9565b905060200201602081019061089d919061153a565b6001600160a01b031681526020810191909152604001600020805460ff19169115159190911790558282828181106108d7576108d76116d9565b90506020020160208101906108ec919061153a565b6001600160a01b03167f26d341fb88e9d80ea32fbe6ee50792fb5f5c1088143d112f0ce8f95ca7d98a9c6001604051610929911515815260200190565b60405180910390a2600101610868565b505050565b60008181526001602090815260408083208054825181850281018501909352808352919290919083018282801561099e57602002820191906000526020600020905b81546001600160a01b03168152600190910190602001808311610980575b5050505050905060005b81518110156104d957600260008383815181106109c7576109c76116d9565b6020908102919091018101516001600160a01b031682528101919091526040016000205460ff1615610b7b57818181518110610a0557610a056116d9565b60200260200101516001600160a01b0316639e8b95258b8b8b8b8b8b8b8b6040518963ffffffff1660e01b8152600401610a46989796959493929190611718565b600060405180830381600087803b158015610a6057600080fd5b505af1925050508015610a71575060015b610b7b57610a7d611770565b806308c379a003610afd5750610a9161178c565b80610a9c5750610aff565b83838381518110610aaf57610aaf6116d9565b60200260200101516001600160a01b03167f9a2ea00fc2edeb473182d139e1230b4e61279e88a69c40730221f85bccd76ecb83604051610aef9190611893565b60405180910390a350610b7b565b505b82828281518110610b1257610b126116d9565b60200260200101516001600160a01b03167f9a2ea00fc2edeb473182d139e1230b4e61279e88a69c40730221f85bccd76ecb604051610b72906020808252600d908201526c2ab735b737bbb71032b93937b960991b604082015260600190565b60405180910390a35b6001016109a8565b60005b818110156108575760006003848484818110610ba457610ba46116d9565b9050602002810190610bb691906118f4565b604051610bc492919061193b565b908152604051908190036020019020546001600160a01b031690508015801590610bf55750610bf38582610f31565b155b15610c6157600085815260016020818152604080842080549384018155845290832090910180546001600160a01b0319166001600160a01b0385169081179091559051909187917f2f68ba594cf636f64a51e2d10c52144a57a7ca021ed3e5943dc45cab3aeaf72b9190a35b50600101610b86565b6001600160a01b03811660009081526002602052604090205460ff16610ca25760405162461bcd60e51b815260040161047e906118c6565b610cac8282610f31565b15610cf25760405162461bcd60e51b8152602060048201526016602482015275115b999bdc98d95c88185b1c9958591e48185919195960521b604482015260640161047e565b600082815260016020818152604080842080549384018155845290832090910180546001600160a01b0319166001600160a01b0385169081179091559051909184917f2f68ba594cf636f64a51e2d10c52144a57a7ca021ed3e5943dc45cab3aeaf72b9190a35050565b610d646111d2565b6001600160a01b03811660009081526002602052604090205460ff16610d9c5760405162461bcd60e51b815260040161047e906118c6565b8060038484604051610daf92919061193b565b90815260405190819003602001812080546001600160a01b039384166001600160a01b031990911617905590821690610deb908590859061193b565b604051908190038120907f63e97543d139ad37cedf316f34d17b2ffc81468b722578bbbf69314cc23755a190600090a3505050565b610e286111d2565b6001600160a01b038116610e5257604051631e4fbdf760e01b81526000600482015260240161047e565b610e5b816111ff565b50565b600081815260016020908152604091829020805483518184028101840190945280845260609392830182828015610ebe57602002820191906000526020600020905b81546001600160a01b03168152600190910190602001808311610ea0575b50505050509050919050565b610ed26111d2565b6001600160a01b038216600081815260026020908152604091829020805460ff191685151590811790915591519182527f26d341fb88e9d80ea32fbe6ee50792fb5f5c1088143d112f0ce8f95ca7d98a9c910160405180910390a25050565b600082815260016020908152604080832080548251818502810185019093528083528493830182828015610f8e57602002820191906000526020600020905b81546001600160a01b03168152600190910190602001808311610f70575b5050505050905060005b8151811015610fe657836001600160a01b0316828281518110610fbd57610fbd6116d9565b60200260200101516001600160a01b031603610fde576001925050506102c2565b600101610f98565b506000949350505050565b604080518082018252601081526f181899199a1a9b1b9c1cb0b131b232b360811b60208201528151602a80825260608281019094526001600160a01b0385169291600091602082018180368337019050509050600360fc1b8160008151811061105c5761105c6116d9565b60200101906001600160f81b031916908160001a905350600f60fb1b8160018151811061108b5761108b6116d9565b60200101906001600160f81b031916908160001a90535060005b60148110156111c957826004856110bd84600c61198a565b602081106110cd576110cd6116d9565b1a60f81b6001600160f81b031916901c60f81c60ff16815181106110f3576110f36116d9565b01602001516001600160f81b0319168261110e83600261199d565b61111990600261198a565b81518110611129576111296116d9565b60200101906001600160f81b031916908160001a905350828461114d83600c61198a565b6020811061115d5761115d6116d9565b825191901a600f16908110611174576111746116d9565b01602001516001600160f81b0319168261118f83600261199d565b61119a90600361198a565b815181106111aa576111aa6116d9565b60200101906001600160f81b031916908160001a9053506001016110a5565b50949350505050565b6000546001600160a01b0316331461052f5760405163118cdaa760e01b815233600482015260240161047e565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b80356001600160a01b038116811461126657600080fd5b919050565b6000806040838503121561127e57600080fd5b8235915061128e6020840161124f565b90509250929050565b60008083601f8401126112a957600080fd5b50813567ffffffffffffffff8111156112c157600080fd5b6020830191508360208285010111156112d957600080fd5b9250929050565b60008060008060008060008060a0898b0312156112fc57600080fd5b883567ffffffffffffffff8082111561131457600080fd5b6113208c838d01611297565b909a50985060208b013591508082111561133957600080fd5b6113458c838d01611297565b909850965060408b0135955060608b013591508082111561136557600080fd5b506113728b828c01611297565b999c989b50969995989497949560800135949350505050565b6000806040838503121561139e57600080fd5b50508035926020909101359150565b634e487b7160e01b600052604160045260246000fd5b601f8201601f1916810167ffffffffffffffff811182821017156113e9576113e96113ad565b6040525050565b6000602080838503121561140357600080fd5b823567ffffffffffffffff8082111561141b57600080fd5b818501915085601f83011261142f57600080fd5b813581811115611441576114416113ad565b6040519150611459601f8201601f19168501836113c3565b808252868482850101111561146d57600080fd5b8084840185840137600090820190930192909252509392505050565b60008083601f84011261149b57600080fd5b50813567ffffffffffffffff8111156114b357600080fd5b6020830191508360208260051b85010111156112d957600080fd5b600080600080604085870312156114e457600080fd5b843567ffffffffffffffff808211156114fc57600080fd5b61150888838901611489565b9096509450602087013591508082111561152157600080fd5b5061152e87828801611489565b95989497509550505050565b60006020828403121561154c57600080fd5b6102bf8261124f565b6000806020838503121561156857600080fd5b823567ffffffffffffffff81111561157f57600080fd5b61158b85828601611489565b90969095509350505050565b6000806000604084860312156115ac57600080fd5b83359250602084013567ffffffffffffffff8111156115ca57600080fd5b6115d686828701611489565b9497909650939450505050565b6000806000604084860312156115f857600080fd5b833567ffffffffffffffff81111561160f57600080fd5b61161b86828701611297565b909450925061162e90506020850161124f565b90509250925092565b60006020828403121561164957600080fd5b5035919050565b6020808252825182820181905260009190848201906040850190845b818110156116915783516001600160a01b03168352928401929184019160010161166c565b50909695505050505050565b600080604083850312156116b057600080fd5b6116b98361124f565b9150602083013580151581146116ce57600080fd5b809150509250929050565b634e487b7160e01b600052603260045260246000fd5b81835281816020850137506000828201602090810191909152601f909101601f19169091010190565b60a08152600061172c60a083018a8c6116ef565b828103602084015261173f81898b6116ef565b9050866040840152828103606084015261175a8186886116ef565b9150508260808301529998505050505050505050565b600060033d11156117895760046000803e5060005160e01c5b90565b600060443d101561179a5790565b6040516003193d81016004833e81513d67ffffffffffffffff81602484011181841117156117ca57505050505090565b82850191508151818111156117e25750505050505090565b843d87010160208285010111156117fc5750505050505090565b61180b602082860101876113c3565b509095945050505050565b60005b83811015611831578181015183820152602001611819565b50506000910152565b68022b73337b931b2b9160bd1b81526000835161185e816009850160208801611816565b680103330b4b632b21d160bd1b6009918401918201528351611887816012840160208801611816565b01601201949350505050565b60208152600082518060208401526118b2816040850160208701611816565b601f01601f19169190910160400192915050565b602080825260149082015273115b999bdc98d95c881b9bdd08195b98589b195960621b604082015260600190565b6000808335601e1984360301811261190b57600080fd5b83018035915067ffffffffffffffff82111561192657600080fd5b6020019150368190038213156112d957600080fd5b8183823760009101908152919050565b634e487b7160e01b600052601160045260246000fd5b818103818111156102c2576102c261194b565b634e487b7160e01b600052603160045260246000fd5b808201808211156102c2576102c261194b565b80820281158282048414176102c2576102c261194b56fea26469706673582212200c46f8d2bb4f8ee3733e22a982056b0f6ee01894e2e69d14e259c070a86bd70664736f6c63430008170033",
+  "devdoc": {
+    "details": "Hub contract that coordinates multiple caveat enforcers Supports both MetaMask built-in enforcers and custom game enforcers",
+    "errors": {
+      "OwnableInvalidOwner(address)": [
+        {
+          "details": "The owner is not a valid owner account. (eg. `address(0)`)"
+        }
+      ],
+      "OwnableUnauthorizedAccount(address)": [
+        {
+          "details": "The caller account is not authorized to perform an operation."
+        }
+      ]
+    },
+    "kind": "dev",
+    "methods": {
+      "addDefaultEnforcersToDelegation(bytes32,string[])": {
+        "details": "Add default enforcers to a delegation Anyone can add default enforcers to their own delegations"
+      },
+      "addEnforcerToDelegation(bytes32,address)": {
+        "details": "Add an enforcer to a delegation Anyone can add enabled enforcers to their own delegations"
+      },
+      "afterHook(bytes,bytes,uint256,bytes,bytes32)": {
+        "details": "Main afterHook that coordinates all enforcers"
+      },
+      "batchEnableEnforcers(address[])": {
+        "details": "Batch enable multiple enforcers"
+      },
+      "batchSetDefaultEnforcers(string[],address[])": {
+        "details": "Batch set default enforcers"
+      },
+      "beforeHook(bytes,bytes,uint256,bytes,bytes32)": {
+        "details": "Main beforeHook that coordinates all enforcers"
+      },
+      "getDelegationEnforcers(bytes32)": {
+        "details": "Get all enforcers for a delegation"
+      },
+      "isEnforcerInDelegation(bytes32,address)": {
+        "details": "Check if an enforcer is in a delegation"
+      },
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "removeEnforcerFromDelegation(bytes32,address)": {
+        "details": "Remove an enforcer from a delegation Anyone can remove enforcers from their own delegations"
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+      },
+      "setDefaultEnforcer(string,address)": {
+        "details": "Set default enforcer for a type"
+      },
+      "setEnforcerEnabled(address,bool)": {
+        "details": "Enable or disable an enforcer"
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "title": "CaveatEnforcerHub",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 387,
+        "contract": "contracts/delegation/CaveatEnforcerHub.sol:CaveatEnforcerHub",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 18761,
+        "contract": "contracts/delegation/CaveatEnforcerHub.sol:CaveatEnforcerHub",
+        "label": "delegationEnforcers",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_bytes32,t_array(t_address)dyn_storage)"
+      },
+      {
+        "astId": 18765,
+        "contract": "contracts/delegation/CaveatEnforcerHub.sol:CaveatEnforcerHub",
+        "label": "enabledEnforcers",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_address,t_bool)"
+      },
+      {
+        "astId": 18769,
+        "contract": "contracts/delegation/CaveatEnforcerHub.sol:CaveatEnforcerHub",
+        "label": "defaultEnforcers",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_string_memory_ptr,t_address)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_address)dyn_storage": {
+        "base": "t_address",
+        "encoding": "dynamic_array",
+        "label": "address[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_bytes32,t_array(t_address)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => address[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_address)dyn_storage"
+      },
+      "t_mapping(t_string_memory_ptr,t_address)": {
+        "encoding": "mapping",
+        "key": "t_string_memory_ptr",
+        "label": "mapping(string => address)",
+        "numberOfBytes": "32",
+        "value": "t_address"
+      },
+      "t_string_memory_ptr": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

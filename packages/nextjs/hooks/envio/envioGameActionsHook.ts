@@ -7,7 +7,6 @@ import {
   GET_FAUCET_ACTIONS,
   GET_GAME_ACTIONS_BY_PLAYER,
   GET_GAME_ACTIONS_BY_TBA,
-  GET_GAME_ACTIONS_BY_TYPE,
   GET_RAIL_ACTIONS,
   GET_ROLL_ACTIONS,
   PLAYER_GAME_ACTIONS_SUBSCRIPTION,
@@ -274,7 +273,7 @@ export const useEnvioPlayerStats = (playerAddress?: string, tbaAddress?: string)
     GET_PLAYER_STATS_BY_PLAYER,
     GET_PLAYER_STATS_BY_TBA,
     PLAYER_STATS_SUBSCRIPTION,
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
   } = require("./envioGameActionsQueries");
 
   const [playerStats, setPlayerStats] = useState<any>(null);

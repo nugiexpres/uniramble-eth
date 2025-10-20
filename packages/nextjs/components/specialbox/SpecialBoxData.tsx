@@ -103,7 +103,7 @@ const SpecialBoxData = ({ compact = false, tbaAddress }: Props) => {
         <div className="bg-gray-50 p-4 rounded-lg">
           <h4 className="font-semibold text-gray-800 mb-2">Your Box Token IDs</h4>
           <div className="flex flex-wrap gap-2">
-            {boxBalance.map((tokenId, index) => (
+            {boxBalance.map((tokenId: bigint, index: number) => (
               <span key={index} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
                 #{tokenId.toString()}
               </span>

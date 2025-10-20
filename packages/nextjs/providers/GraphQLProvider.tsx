@@ -94,6 +94,12 @@ const client = new ApolloClient({
               return [...incoming];
             },
           },
+          // NFT Transfer tracking
+          FoodNFT_Transfer: {
+            merge(_, incoming) {
+              return [...incoming];
+            },
+          },
         },
       },
     },

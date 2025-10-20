@@ -3,8 +3,12 @@ contracts:
   - name: BasicCaveatEnforcer
     handler: src/EventHandlers.ts
     events:
+      - event: FunctionAllowed(bytes32 indexed delegationHash, bytes4 functionSelector, bool allowed)
+      - event: GameActionLimitSet(bytes32 indexed delegationHash, uint256 maxRolls, uint256 maxBuys, uint256 maxRails, uint256 maxFaucets, uint256 maxCooks, uint256 validUntil)
       - event: OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+      - event: RateLimitSet(bytes32 indexed delegationHash, uint256 maxCallsPerHour)
       - event: SpendingLimitSet(bytes32 indexed delegationHash, address token, uint256 maxAmount, uint256 validUntil)
+      - event: TargetAddressesSet(bytes32 indexed delegationHash, address[] targets)
       - event: TargetAllowed(bytes32 indexed delegationHash, address target)
       - event: TimeLimitSet(bytes32 indexed delegationHash, uint256 validUntil)
   - name: BreadToken
@@ -13,6 +17,15 @@ contracts:
       - event: Approval(address indexed owner, address indexed spender, uint256 value)
       - event: OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
       - event: Transfer(address indexed from, address indexed to, uint256 value)
+  - name: CaveatEnforcerHub
+    handler: src/EventHandlers.ts
+    events:
+      - event: DefaultEnforcerSet(string indexed enforcerType, address indexed enforcer)
+      - event: EnforcerAdded(bytes32 indexed delegationHash, address indexed enforcer)
+      - event: EnforcerAfterHookFailed(address indexed enforcer, bytes32 indexed delegationHash, string reason)
+      - event: EnforcerEnabled(address indexed enforcer, bool enabled)
+      - event: EnforcerRemoved(bytes32 indexed delegationHash, address indexed enforcer)
+      - event: OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
   - name: ERC6551Account
     handler: src/EventHandlers.ts
     events:
@@ -28,6 +41,15 @@ contracts:
       - event: BalanceFunded(address indexed funder, uint256 amount)
       - event: BalanceWithdrawn(address indexed owner, uint256 amount)
       - event: FaucetUsed(address indexed recipient, uint256 amount)
+  - name: FinancialCaveatEnforcer
+    handler: src/EventHandlers.ts
+    events:
+      - event: OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+      - event: SpendingLimitSet(bytes32 indexed delegationHash, address indexed token, uint256 maxAmount, uint256 validUntil, uint256 periodLength)
+      - event: TimeLimitSet(bytes32 indexed delegationHash, uint256 validUntil)
+      - event: TokenSpent(bytes32 indexed delegationHash, address indexed token, uint256 amount)
+      - event: TokenWhitelistSet(bytes32 indexed delegationHash, address[] tokens)
+      - event: TransferLimitSet(bytes32 indexed delegationHash, address indexed token, uint256 maxTransferAmount, uint256 dailyLimit)
   - name: FoodNFT
     handler: src/EventHandlers.ts
     events:
@@ -50,6 +72,16 @@ contracts:
       - event: PlayerMoved(address indexed player, uint256 newPosition, uint256 roll)
       - event: RailTraveled(address indexed player, uint256 fromPosition, uint256 toPosition)
       - event: TokenBoundAccountCreated(address indexed eoa, address indexed tba, uint256 startPosition)
+  - name: GameCaveatEnforcer
+    handler: src/EventHandlers.ts
+    events:
+      - event: FunctionAllowed(bytes32 indexed delegationHash, bytes4 functionSelector, bool allowed)
+      - event: GameActionAllowed(bytes32 indexed delegationHash, string action, bool allowed)
+      - event: GameActionLimitSet(bytes32 indexed delegationHash, uint256 maxRolls, uint256 maxBuys, uint256 maxRails, uint256 maxFaucets, uint256 maxCooks, uint256 validUntil)
+      - event: GameStateSet(bytes32 indexed delegationHash, bool isActive, uint256 maxConsecutiveActions)
+      - event: OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+      - event: RateLimitSet(bytes32 indexed delegationHash, uint256 maxCallsPerHour)
+      - event: TargetAddressesSet(bytes32 indexed delegationHash, address[] targets)
   - name: LettuceToken
     handler: src/EventHandlers.ts
     events:
@@ -88,117 +120,57 @@ contracts:
       - event: Approval(address indexed owner, address indexed spender, uint256 value)
       - event: OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
       - event: Transfer(address indexed from, address indexed to, uint256 value)
-  - name: SpecialBox
-    handler: src/EventHandlers.ts
-    events:
-      - event: Approval(address indexed owner, address indexed approved, uint256 indexed tokenId)
-      - event: ApprovalForAll(address indexed owner, address indexed operator, bool approved)
-      - event: BoxPriceUpdated(uint256 newPrice)
-      - event: Burn(address indexed user, address indexed tba, uint256 tokenId)
-      - event: MintBox(address indexed user, address indexed tba, uint256 tokenId)
-      - event: OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
-      - event: PaymentGatewayUpdated(address newGateway)
-      - event: Transfer(address indexed from, address indexed to, uint256 indexed tokenId)
-  - name: SpecialBoxStake
-    handler: src/EventHandlers.ts
-    events:
-      - event: OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
-      - event: SpecialBoxMinted(address indexed user, address indexed tba, uint256 amount)
-      - event: Stake(address indexed user, address indexed tba, uint256 tokenId)
-      - event: StakeAll(address indexed user, address indexed tba, uint256[] tokenIds, uint256 totalStaked)
-      - event: StakeBatch(address indexed user, address indexed tba, uint256[] tokenIds)
-      - event: Unstake(address indexed user, address indexed tba, uint256 tokenId)
-      - event: UnstakeBatch(address indexed user, address indexed tba, uint256[] tokenIds)
 networks:
   - id: 10143
-    start_block: 41886015
+    start_block: 44185532
     contracts:
       - name: BasicCaveatEnforcer
         address:
-          - "0xbd813486C96b3E75720dAD05B683041dc6c86Fa9"
+          - '0x7049E72082e1141702EF8889bDE3E3a31Ccd4ae6'
       - name: BreadToken
         address:
-          - "0xcF7932Ba9A78C557048d1A3B27c724649ED85ff2"
+          - '0x7fB4937115fBf4d6549073E06F69762C7Ce5AD3d'
+      - name: CaveatEnforcerHub
+        address:
+          - '0x5B9247aAdF8A3bc7Dc6784BEf7ac261bbE6Eeae9'
       - name: ERC6551Account
         address:
-          - "0x7FB58EE97CA8a444Edfe0123708DaB97Db4AbcD5"
+          - '0x09199Fb0190bf91802565dD09B6594f41e6C8c6d'
       - name: ERC6551Registry
         address:
-          - "0x6df309dD5A334E590A17D0F558B4E1d5C6d658f8"
+          - '0x10394aBA8b053E2813e153cd7899E70FF2D4C06C'
       - name: FaucetMon
         address:
-          - "0x4c1C0AE60Cb4180EB46d67C77F0157011937fEb3"
+          - '0xD861c6d71DFaf9F4013a50a9b177C083e90BD006'
+      - name: FinancialCaveatEnforcer
+        address:
+          - '0xa63Bf373ADF07f6C2d6ea9c0C77309959AbDcfa6'
       - name: FoodNFT
         address:
-          - "0xAf9A5760AD420D8aA658bc3EF1B40B1a7eb57060"
+          - '0x1940ebea22dE78D3C091741557D5072C038dD09b'
       - name: FoodScramble
         address:
-          - "0xa2738c895bB55C3657002fB6C8867b7A304c65d1"
+          - '0x448e78a30509b93D57d013abb58dF44699F9f35a'
+      - name: GameCaveatEnforcer
+        address:
+          - '0x53D0f94f7d582622fD97DdB2E8a6c1bD4b91e35a'
       - name: LettuceToken
         address:
-          - "0xCecAC2c4aB0145E9119E9764Ed1D7adf75DBEF14"
+          - '0x7a1D4c76d170D388f7e0F0f5ca980526a6B20737'
       - name: MeatToken
         address:
-          - "0x87a44a9B6768709c56f0170968edA931E2da8292"
+          - '0x60fbcbA71083EEbB4E3C1B7175d79D56b73Ba5de'
       - name: PaymentGateway
         address:
-          - "0x1dCb189FF485223274987723f9c8E23B37f07DE7"
+          - '0x10ab736762ADFd7E3D1C8932c5d3313a862E0548'
       - name: RewardPool
         address:
-          - "0x15Eba07D1e0F18dceCa02367Fa9cD6138563F857"
+          - '0xB49A77881a7DBc039aD80592033fFD80cea117d1'
       - name: SpiceToken
         address:
-          - "0x63d5AbdA3A4356E5Bb295EC19751371737eC4358"
+          - '0x54DB2c6D6Df33F9B156061585F35A55759B61f95'
       - name: TomatoToken
         address:
-          - "0x472f4784934d39240F093938aD83CcEbCD5e1727"
-  - id: 11155111
-    start_block: 9278645
-    contracts:
-      - name: BasicCaveatEnforcer
-        address:
-          - "0xF6B400C7F9B5bdE70c86c1Da1560F67a423850b9"
-      - name: BreadToken
-        address:
-          - "0xe288906dAA6347bbACC84B10962bD86552cEb60D"
-      - name: ERC6551Account
-        address:
-          - "0x8328a8c35f7D8836B17d1aC53c9dF6cAc0957B8b"
-      - name: ERC6551Registry
-        address:
-          - "0xb4aCdbB0B15cb8A53C74752b9b2eF16E19Eab00A"
-      - name: FaucetMon
-        address:
-          - "0x4db4aF4d8Bdbe6B72D4Bf913f9D516c43646cb8a"
-      - name: FoodNFT
-        address:
-          - "0x2FF46E513a2991d1338014c911B1eA8E7710f48E"
-      - name: FoodScramble
-        address:
-          - "0x30aC836e65034893F55074bC1498505813ebBDe3"
-      - name: LettuceToken
-        address:
-          - "0xE1448b0804F722150Ea7aa437426bba1094847e5"
-      - name: MeatToken
-        address:
-          - "0x89468237dD190018818085CFBBDc20Cf761f6296"
-      - name: PaymentGateway
-        address:
-          - "0x875777Dfd5660e67A19E365AfAFE90144cb11464"
-      - name: RewardPool
-        address:
-          - "0x7bbb15b93749bd7879C26AB2175d8F5504349988"
-      - name: SpecialBox
-        address:
-          - "0x4D0A40CD80E36e86479B6006828bEf78e12D3e44"
-      - name: SpecialBoxStake
-        address:
-          - "0xe2d971375b8C126F49e3a4975A8C3c9f9DFF0A05"
-      - name: SpiceToken
-        address:
-          - "0x4Bb1A960E86B8Cbe666F14567dc26c2C3EE81Ee1"
-      - name: TomatoToken
-        address:
-          - "0xb64542C5f0c0977fEc8afEA8741034a9226E7153"
+          - '0xE4aE59B941C6d2881d28BD03f10Da57554FCC390'
 unordered_multichain_mode: true
 preload_handlers: true

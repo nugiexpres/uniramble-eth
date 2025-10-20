@@ -505,9 +505,14 @@ export const useGaslessGameActions = () => {
   const handleRoll = useCallback(async () => {
     // Check TBA existence
     if (!userTBA || userTBA === "0x0000000000000000000000000000000000000000") {
-      const errorMsg = "TBA not found. Please create TBA first.";
+      const errorMsg = "TBA not found. Please go to Account page and create your TBA first.";
       setState(prev => ({ ...prev, error: errorMsg }));
       notification.error(`🎲 Roll Failed: ${errorMsg}`);
+      console.error("❌ TBA Check Failed:", {
+        smartAccountAddress,
+        userTBA,
+        message: "Smart Account needs a TBA to play. Visit /account to create one.",
+      });
       return false;
     }
 
@@ -584,9 +589,14 @@ export const useGaslessGameActions = () => {
   // Buy ingredient action
   const handleBuy = useCallback(async () => {
     if (!userTBA || userTBA === "0x0000000000000000000000000000000000000000") {
-      const errorMsg = "TBA not found. Please create TBA first.";
+      const errorMsg = "TBA not found. Please go to Account page and create your TBA first.";
       setState(prev => ({ ...prev, error: errorMsg }));
       notification.error(`🛒 Buy Failed: ${errorMsg}`);
+      console.error("❌ TBA Check Failed:", {
+        smartAccountAddress,
+        userTBA,
+        message: "Smart Account needs a TBA to play. Visit /account to create one.",
+      });
       return false;
     }
 
@@ -674,9 +684,14 @@ export const useGaslessGameActions = () => {
   // Rail travel action
   const handleRail = useCallback(async () => {
     if (!userTBA || userTBA === "0x0000000000000000000000000000000000000000") {
-      const errorMsg = "TBA not found. Please create TBA first.";
+      const errorMsg = "TBA not found. Please go to Account page and create your TBA first.";
       setState(prev => ({ ...prev, error: errorMsg }));
       notification.error(`🚂 Rail Failed: ${errorMsg}`);
+      console.error("❌ TBA Check Failed:", {
+        smartAccountAddress,
+        userTBA,
+        message: "Smart Account needs a TBA to play. Visit /account to create one.",
+      });
       return false;
     }
 
@@ -723,14 +738,26 @@ export const useGaslessGameActions = () => {
       // Ensure loading state is always reset
       setState(prev => ({ ...prev, isRailTraveling: false }));
     }
-  }, [userTBA, executeGaslessTransaction, refetchPlayerPosition, refetchRandomRoll, refetchCanBuy]);
+  }, [
+    userTBA,
+    executeGaslessTransaction,
+    refetchPlayerPosition,
+    refetchRandomRoll,
+    refetchCanBuy,
+    smartAccountAddress,
+  ]);
 
   // Cook food action
   const handleCook = useCallback(async () => {
     if (!userTBA || userTBA === "0x0000000000000000000000000000000000000000") {
-      const errorMsg = "TBA not found. Please create TBA first.";
+      const errorMsg = "TBA not found. Please go to Account page and create your TBA first.";
       setState(prev => ({ ...prev, error: errorMsg }));
       notification.error(`👨‍🍳 Cook Failed: ${errorMsg}`);
+      console.error("❌ TBA Check Failed:", {
+        smartAccountAddress,
+        userTBA,
+        message: "Smart Account needs a TBA to play. Visit /account to create one.",
+      });
       return false;
     }
 
@@ -778,15 +805,27 @@ export const useGaslessGameActions = () => {
       // Ensure loading state is always reset
       setState(prev => ({ ...prev, isCooking: false }));
     }
-  }, [userTBA, executeGaslessTransaction, refetchPlayerPosition, refetchRandomRoll, refetchCanBuy]);
+  }, [
+    userTBA,
+    executeGaslessTransaction,
+    refetchPlayerPosition,
+    refetchRandomRoll,
+    refetchCanBuy,
+    smartAccountAddress,
+  ]);
 
   // Faucet action - sends to Smart Account
   const handleFaucetMon = useCallback(
     async (isOnStove: boolean) => {
       if (!userTBA || userTBA === "0x0000000000000000000000000000000000000000") {
-        const errorMsg = "TBA not found. Please create TBA first.";
+        const errorMsg = "TBA not found. Please go to Account page and create your TBA first.";
         setState(prev => ({ ...prev, error: errorMsg }));
         notification.error(`💧 Faucet Failed: ${errorMsg}`);
+        console.error("❌ TBA Check Failed:", {
+          smartAccountAddress,
+          userTBA,
+          message: "Smart Account needs a TBA to play. Visit /account to create one.",
+        });
         return false;
       }
 
@@ -825,7 +864,7 @@ export const useGaslessGameActions = () => {
 
           return txHash;
         } else {
-          throw new Error("💧 Faucet action failed - No transaction hash returned. Please try again.");
+          throw new Error("Transaction failed. No faucet tokens sent. Please try again or check your wallet.");
         }
       } catch (error: any) {
         const errorMessage = error.message || "💧 Faucet action failed. Please try again.";
@@ -841,7 +880,7 @@ export const useGaslessGameActions = () => {
         setState(prev => ({ ...prev, isUsingFaucet: false }));
       }
     },
-    [userTBA, executeGaslessTransaction, refetchPlayerPosition, refetchRandomRoll, refetchCanBuy],
+    [userTBA, executeGaslessTransaction, refetchPlayerPosition, refetchRandomRoll, refetchCanBuy, smartAccountAddress],
   );
   // Clear state
   const clearState = useCallback(() => {

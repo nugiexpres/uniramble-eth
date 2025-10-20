@@ -8,30 +8,76 @@ import { notification } from "~~/utils/scaffold-eth";
 export const useCaveatEnforcer = () => {
   const { address, isConnected } = useAccount();
   const { targetNetwork } = useTargetNetwork();
-  const { writeContractAsync: writeCaveatEnforcerAsync } = useScaffoldWriteContract({
+
+  // Use BasicCaveatEnforcer contract as the main enforcer
+  const { writeContractAsync: writeEnforcerAsync } = useScaffoldWriteContract({
     contractName: "BasicCaveatEnforcer",
   });
 
-  // Get contract address from deployedContracts based on current network
-  const contractAddress =
+  // Get contract addresses from deployedContracts based on current network
+  const enforcerAddress =
     deployedContracts[targetNetwork.id as keyof typeof deployedContracts]?.BasicCaveatEnforcer?.address;
 
+  // Setup delegation with BasicCaveatEnforcer
+  const setupHybridDelegation = async (delegationHash: string) => {
+    if (!isConnected || !address || !writeEnforcerAsync) {
+      notification.error("Wallet not connected or contract not available");
+      return false;
+    }
+
+    if (!enforcerAddress) {
+      notification.error(
+        "BasicCaveatEnforcer address not found. Ensure deployments are synced to deployedContracts.ts",
+      );
+      return false;
+    }
+
+    try {
+      // Set allowed function for delegation
+      const hash = await writeEnforcerAsync({
+        functionName: "setAllowedTarget",
+        args: [delegationHash as `0x${string}`, enforcerAddress as `0x${string}`],
+      });
+
+      notification.success(`Delegation setup completed! Hash: ${hash}`);
+      return true;
+    } catch (error: any) {
+      const errorMessage = error.message || "Failed to setup delegation";
+      notification.error(`Failed to setup delegation: ${errorMessage}`);
+      return false;
+    }
+  };
+
   // Set spending limit for a delegation
+  // Supports both BasicCaveatEnforcer (4 params) and FinancialCaveatEnforcer (5 params)
   const setSpendingLimit = async (
     delegationHash: string,
     tokenAddress: string,
     maxAmount: bigint,
     validUntil: number,
+    periodLength?: number,
   ) => {
-    if (!isConnected || !address || !writeCaveatEnforcerAsync) {
+    if (!isConnected || !address || !writeEnforcerAsync) {
       notification.error("Wallet not connected or contract not available");
       return false;
     }
 
     try {
-      const hash = await writeCaveatEnforcerAsync({
+      // Using setSpendingLimit function
+      const args =
+        periodLength !== undefined
+          ? [
+              delegationHash as `0x${string}`,
+              tokenAddress as `0x${string}`,
+              maxAmount,
+              BigInt(validUntil),
+              BigInt(periodLength),
+            ]
+          : [delegationHash as `0x${string}`, tokenAddress as `0x${string}`, maxAmount, BigInt(validUntil)];
+
+      const hash = await writeEnforcerAsync({
         functionName: "setSpendingLimit",
-        args: [delegationHash as `0x${string}`, tokenAddress as `0x${string}`, maxAmount, BigInt(validUntil)],
+        args: args as any,
       });
 
       notification.success(`Spending limit set! Hash: ${hash}`);
@@ -43,37 +89,83 @@ export const useCaveatEnforcer = () => {
     }
   };
 
-  // Set allowed target for a delegation
-  const setAllowedTarget = async (delegationHash: string, targetAddress: string) => {
-    if (!isConnected || !address || !writeCaveatEnforcerAsync) {
+  // Set game action limits for a delegation using BasicCaveatEnforcer
+  const setGameActionLimits = async (
+    delegationHash: string,
+    maxRolls: number,
+    maxBuys = 0,
+    maxRails = 0,
+    maxFaucets = 0,
+    maxCooks = 0,
+    validUntil: number,
+  ) => {
+    if (!isConnected || !address || !writeEnforcerAsync) {
       notification.error("Wallet not connected or contract not available");
       return false;
     }
 
     try {
-      const hash = await writeCaveatEnforcerAsync({
-        functionName: "setAllowedTarget",
-        args: [delegationHash as `0x${string}`, targetAddress as `0x${string}`],
+      // Call setGameActionLimit with all game action parameters
+      const hash = await writeEnforcerAsync({
+        functionName: "setGameActionLimit",
+        args: [
+          delegationHash as `0x${string}`,
+          BigInt(maxRolls),
+          BigInt(maxBuys),
+          BigInt(maxRails),
+          BigInt(maxFaucets),
+          BigInt(maxCooks),
+          BigInt(validUntil),
+        ],
       });
 
-      notification.success(`Allowed target set! Hash: ${hash}`);
+      notification.success(`Game action limits set! Hash: ${hash}`);
       return true;
     } catch (error: any) {
-      const errorMessage = error.message || "Failed to set allowed target";
-      notification.error(`Failed to set allowed target: ${errorMessage}`);
+      const errorMessage = error.message || "Failed to set game action limits";
+      notification.error(`Failed to set game action limits: ${errorMessage}`);
       return false;
     }
   };
 
-  // Set time limit for a delegation
-  const setTimeLimit = async (delegationHash: string, validUntil: number) => {
-    if (!isConnected || !address || !writeCaveatEnforcerAsync) {
+  // Set rate limit for a delegation using BasicCaveatEnforcer
+  const setRateLimit = async (delegationHash: string, maxCallsPerHour: number) => {
+    if (!isConnected || !address || !writeEnforcerAsync) {
       notification.error("Wallet not connected or contract not available");
       return false;
     }
 
     try {
-      const hash = await writeCaveatEnforcerAsync({
+      // Using setSpendingLimit function as a rate limit workaround
+      const hash = await writeEnforcerAsync({
+        functionName: "setSpendingLimit",
+        args: [
+          delegationHash as `0x${string}`,
+          "0x0000000000000000000000000000000000000000" as `0x${string}`, // ETH token address
+          BigInt(maxCallsPerHour),
+          BigInt(Date.now() + 3600000), // 1 hour from now
+        ],
+      });
+
+      notification.success(`Rate limit set! Hash: ${hash}`);
+      return true;
+    } catch (error: any) {
+      const errorMessage = error.message || "Failed to set rate limit";
+      notification.error(`Failed to set rate limit: ${errorMessage}`);
+      return false;
+    }
+  };
+
+  // Set time limit for a delegation using BasicCaveatEnforcer
+  const setTimeLimit = async (delegationHash: string, validUntil: number) => {
+    if (!isConnected || !address || !writeEnforcerAsync) {
+      notification.error("Wallet not connected or contract not available");
+      return false;
+    }
+
+    try {
+      // Using setTimeLimit function
+      const hash = await writeEnforcerAsync({
         functionName: "setTimeLimit",
         args: [delegationHash as `0x${string}`, BigInt(validUntil)],
       });
@@ -83,6 +175,56 @@ export const useCaveatEnforcer = () => {
     } catch (error: any) {
       const errorMessage = error.message || "Failed to set time limit";
       notification.error(`Failed to set time limit: ${errorMessage}`);
+      return false;
+    }
+  };
+
+  // Set allowed target addresses for a delegation using BasicCaveatEnforcer
+  const setAllowedTargetAddresses = async (delegationHash: string, targetAddresses: string[]) => {
+    if (!isConnected || !address || !writeEnforcerAsync) {
+      notification.error("Wallet not connected or contract not available");
+      return false;
+    }
+
+    try {
+      // Using setAllowedTarget for each address
+      for (const target of targetAddresses) {
+        await writeEnforcerAsync({
+          functionName: "setAllowedTarget",
+          args: [delegationHash as `0x${string}`, target as `0x${string}`],
+        });
+      }
+
+      notification.success(`Allowed target addresses set!`);
+      return true;
+    } catch (error: any) {
+      const errorMessage = error.message || "Failed to set allowed target addresses";
+      notification.error(`Failed to set allowed target addresses: ${errorMessage}`);
+      return false;
+    }
+  };
+
+  // Set token whitelist for a delegation using BasicCaveatEnforcer
+  const setTokenWhitelist = async (delegationHash: string, tokens: string[]) => {
+    if (!isConnected || !address || !writeEnforcerAsync) {
+      notification.error("Wallet not connected or contract not available");
+      return false;
+    }
+
+    try {
+      // Using setAllowedTarget for each token
+      for (const token of tokens) {
+        await writeEnforcerAsync({
+          functionName: "setAllowedTarget",
+          args: [delegationHash as `0x${string}`, token as `0x${string}`],
+        });
+      }
+
+      notification.success(`Token whitelist set!`);
+      return true;
+    } catch (error: any) {
+      const errorMessage = error.message || "Failed to set token whitelist";
+      notification.error(`Failed to set token whitelist: ${errorMessage}`);
       return false;
     }
   };
@@ -102,11 +244,52 @@ export const useCaveatEnforcer = () => {
     );
   };
 
+  // Revoke a delegation by disabling all functions
+  const revokeDelegation = async (delegationHash: string) => {
+    if (!isConnected || !address || !writeEnforcerAsync) {
+      notification.error("Wallet not connected or contract not available");
+      return false;
+    }
+
+    try {
+      // Disable all functions by setting time limit to current time
+      const currentTime = Math.floor(Date.now() / 1000);
+      const hash = await writeEnforcerAsync({
+        functionName: "setTimeLimit",
+        args: [delegationHash as `0x${string}`, BigInt(currentTime)],
+      });
+
+      notification.success(`Delegation revoked! Hash: ${hash}`);
+      return true;
+    } catch (error: any) {
+      const errorMessage = error.message || "Failed to revoke delegation";
+      notification.error(`Failed to revoke delegation: ${errorMessage}`);
+      return false;
+    }
+  };
+
   return {
-    contractAddress,
+    // Contract address
+    enforcerAddress,
+    contractAddress: enforcerAddress, // For backward compatibility
+
+    // Setup functions
+    setupHybridDelegation,
+
+    // Game enforcer functions
+    setGameActionLimits,
+    setRateLimit,
+    setAllowedTargetAddresses,
+
+    // Financial enforcer functions
     setSpendingLimit,
-    setAllowedTarget,
     setTimeLimit,
+    setTokenWhitelist,
+
+    // Delegation management
+    revokeDelegation,
+
+    // Utility functions
     generateDelegationHash,
   };
 };

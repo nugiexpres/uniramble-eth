@@ -11,7 +11,11 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "module": "CommonJS",
-    "types": ["node", "mocha"]
+    "types": ["node", "mocha"],
+    "paths": {
+      "generated": ["./generated"],
+      "generated/*": ["./generated/*"]
+    }
   },
   "include": ["src", "test", "se-integration", "scripts"]
 }

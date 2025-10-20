@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
-import { createPublicClient, http } from "viem";
+import { http } from "viem";
 import { createBundlerClient, createPaymasterClient } from "viem/account-abstraction";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { useAccount } from "wagmi";
+import { useAccount, usePublicClient } from "wagmi";
 import { getBundlerConfig } from "~~/config/bundler";
 import { getSmartAccountNonce } from "~~/config/client";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
@@ -21,7 +21,7 @@ interface SessionKeyState {
 export const useSessionKeyManager = (smartAccountAddress: string | null) => {
   const { address, isConnected } = useAccount();
   const { targetNetwork } = useTargetNetwork();
-
+  const publicClient = usePublicClient({ chainId: targetNetwork.id });
   const [state, setState] = useState<SessionKeyState>({
     sessionKeyAddress: null,
     sessionKeyPrivateKey: null,
@@ -145,11 +145,16 @@ export const useSessionKeyManager = (smartAccountAddress: string | null) => {
           transport: http(bundlerConfig.bundlerUrl),
         });
 
+        console.debug("Bundler client prepared for session key flow:", !!bundlerClient);
+        console.debug("Paymaster client prepared for session key flow:", !!paymasterClient);
+
         // Get current nonce
         const nonce = await getCurrentNonce();
 
         // Create session key account
         const sessionAccount = privateKeyToAccount(state.sessionKeyPrivateKey as `0x${string}`);
+
+        console.debug("Session account prepared for transaction:", sessionAccount.address);
 
         // For now, we'll use a mock transaction since MetaMask delegation toolkit
         // doesn't fully support session key transactions yet
@@ -196,6 +201,7 @@ export const useSessionKeyManager = (smartAccountAddress: string | null) => {
       state.sessionKeyAddress,
       targetNetwork,
       getCurrentNonce,
+      publicClient,
     ],
   );
 

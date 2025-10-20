@@ -18,6 +18,12 @@ export {
   useCompletePlayerData,
 } from "./usePlayerData";
 
+// NFT hooks
+export { useSmartAccountNFTs } from "./useSmartAccountNFTs";
+
+// Game events hooks
+export { useGameEvents, useSmartAccountTBA } from "./useGameEvents";
+
 // Types
 export type * from "./types";
 
